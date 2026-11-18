@@ -7,7 +7,7 @@
 (function () {
   "use strict";
 
-  const PASSWORD_SHA256 = "703f0ea51dd6e4b42b18e5fd2579cf67fb628fcf49fd26eed5b32cbc4e636105";
+  const PASSWORD_SHA256 = "4d29605f9d0b272933df651bd04b633108881462dbe2cb5da11aef86a8116893";
   const STORAGE_KEY = "suedkorea-unlocked";
   const root = document.documentElement;
 
