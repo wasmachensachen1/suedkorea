@@ -17,7 +17,9 @@ js/app.js         Navigation (Hash-Routing) und Darstellung
 js/github.js      gemeinsamer Lese-/Schreibzugriff auf JSON-Dateien im Repository
 js/todos.js       To-do-Liste mit GitHub-Sync und Kalender-Export
 data/todos.json   To-dos (wird von der Seite selbst gespeichert)
-js/hotels.js      Hotel-Konfigurator (Suche über Xotelo, Auswahl pro Station)
+js/hotels.js      Hotel-Konfigurator (Filter, Ergebnisliste, Auswahl pro Station)
+scripts/fetch-hotels.mjs   holt die Hoteldaten (läuft als GitHub Action)
+data/hotel-offers/         Hoteldaten pro Station (von der Action erzeugt)
 data/hotels.json  gewählte Hotels pro Station (wird von der Seite selbst gespeichert)
 js/gate.js        Passwortabfrage (Sichtschutz)
 ```
@@ -38,11 +40,13 @@ Das Repository ist öffentlich: keine Buchungsnummern, Passdaten oder Zugangsdat
 
 Unter „Planung → Hotels“ (oder über „Hotels vergleichen“ auf jeder Stationsseite). Station und Zeitraum kommen aus dem Reiseplan und lassen sich ändern, ebenso Erwachsene und Zimmer. Filter: Preis von/bis pro Nacht und Zimmer, Mindestbewertung, Entfernung zum Bezugspunkt der Station („zentrale Lage“, Luftlinie), Anzahl Bewertungen, Unterkunftsart, Name; Sortierung nach Beliebtheit, Preis, Bewertung oder Nähe.
 
-Datenquelle ist die kostenlose [Xotelo-API](https://xotelo.com) (TripAdvisor-Daten, ohne Anmeldung und Schlüssel). Für jeden angezeigten Treffer wird der Tagespreis für den Zeitraum abgefragt (günstigstes Angebot, pro Nacht und Zimmer). Gibt es keinen, steht die allgemeine Preisspanne als Richtwert da.
+Datenquelle ist die kostenlose [Xotelo-API](https://xotelo.com) (TripAdvisor-Daten, ohne Anmeldung und Schlüssel). Weil Browser die API nicht direkt abfragen dürfen (keine CORS-Freigabe), holt die GitHub Action **„Hoteldaten aktualisieren“** (`.github/workflows/hotel-offers.yml`, Skript `scripts/fetch-hotels.mjs`) die Daten und legt sie unter `data/hotel-offers/` ab. Sie läuft täglich, nach Änderungen an `js/data.js` und auf Knopfdruck (Actions → Hoteldaten aktualisieren → Run workflow). Fehler stehen in `data/hotel-offers/index.json` und im Actions-Log.
+
+Pro Station werden bis zu 300 Unterkünfte geladen. Tagespreise (günstigstes Angebot pro Nacht und Zimmer) holt die Action für die 70 beliebtesten und die 40 zentralsten Häuser, für den Zeitraum laut Reiseplan und 1–3 Erwachsene pro Zimmer. Für andere Häuser, Zeiträume oder Belegungen steht die allgemeine Preisspanne als Richtwert da.
 
 „In Reiseplan übernehmen“ speichert das Hotel in `data/hotels.json`, pro Station genau eins; eine neue Wahl ersetzt die alte, „Auf Planvorschlag zurücksetzen“ nimmt sie zurück. Das braucht denselben GitHub-Token wie die To-dos. Stationsseiten, Übersicht, Transfers und Kosten nehmen dann das gewählte Hotel; die Hotelkosten rechnen mit Preis × Zimmer × Nächte laut Reiseplan.
 
-Bezugspunkt und Suchort pro Station stehen in `data.js` unter `hotelSearch` (`center`, `centerName`, `locationKey` = TripAdvisor-Orts-ID oder `query` für die automatische Ortssuche). In Texten von `data.js` wird `{hotel:<station-id>}` durch das gewählte Hotel ersetzt.
+Bezugspunkt und Suchort pro Station stehen in `data.js` unter `hotelSearch` (`center`, `centerName`, `locationKey` = TripAdvisor-Orts-ID oder `query` für die automatische Ortssuche; nach einer Änderung die Action laufen lassen). In Texten von `data.js` wird `{hotel:<station-id>}` durch das gewählte Hotel ersetzt.
 
 ## Passwortabfrage
 

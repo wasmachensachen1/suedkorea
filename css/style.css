@@ -156,14 +156,11 @@ td.num { white-space: nowrap; }
 .h-form, .h-filters { padding: 1rem 1.1rem; margin-bottom: 1rem; }
 .h-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem 1rem; }
 .h-grid .span2 { grid-column: span 2; }
-.h-grid label, .h-adv label { display: grid; gap: .3rem; font-size: .82rem; font-weight: 600; color: var(--muted); }
-.h-grid input, .h-grid select, .h-adv input {
+.h-grid label { display: grid; gap: .3rem; font-size: .82rem; font-weight: 600; color: var(--muted); }
+.h-grid input, .h-grid select {
   font: inherit; font-size: .93rem; color: var(--ink); padding: .5rem .6rem; min-width: 0; width: 100%;
   border: 1px solid var(--line); border-radius: 9px; background: var(--surface);
 }
-.h-adv { margin-top: .75rem; }
-.h-adv summary { cursor: pointer; color: var(--muted); }
-.h-adv label { margin-top: .5rem; max-width: 360px; }
 #hSync { margin-bottom: 1rem; }
 #hSync .todo-sync { display: flex; align-items: center; gap: .5rem; }
 .h-current { display: flex; flex-wrap: wrap; gap: .75rem 1rem; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-left: 4px solid #16a34a; }
