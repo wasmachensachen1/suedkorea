@@ -19,6 +19,8 @@ data/todos.json   To-dos (wird von der Seite selbst gespeichert)
 js/gate.js        Passwortabfrage (Sichtschutz)
 ```
 
+Nach Änderungen an CSS oder JS in `index.html` die Versionsnummer `?v=…` an allen Dateien erhöhen (z. B. auf das aktuelle Datum). Sonst zeigen Browser bis zu 10 Minuten lang die alten Dateien aus dem Cache.
+
 Texte in `data.js` dürfen `**fett**` und `[Link](https://…)` enthalten.
 
 ## To-dos
