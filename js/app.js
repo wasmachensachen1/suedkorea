@@ -27,6 +27,28 @@
 
   window.TripUtil = { esc, md };
   const Todos = window.Todos;
+  const Hotels = window.Hotels;
+  const eur = Hotels.eur;
+  const range = (min, max) => (Math.round(min) === Math.round(max) ? eur(min) : `${Math.round(min).toLocaleString("de-DE")} – ${eur(max)}`);
+
+  // Kosten mit den Hotels aus dem Reiseplan (gewählt oder Planvorschlag)
+  function costSummary() {
+    const hotel = T.stations.reduce((a, s) => {
+      const c = Hotels.costRange(s);
+      a.min += c.min; a.max += c.max; if (c.fixed) a.chosen++;
+      return a;
+    }, { min: 0, max: 0, chosen: 0 });
+    const rows = T.costs.rows.map((r) => (r.id === "hotels"
+      ? { ...r, min: hotel.min, max: hotel.max,
+          label: `${r.label} (${hotel.chosen ? `${hotel.chosen} von ${T.stations.length} im Konfigurator gewählt` : "Planvorschläge, gehoben"})` }
+      : r));
+    const min = rows.reduce((n, r) => n + r.min, 0), max = rows.reduce((n, r) => n + r.max, 0);
+    return { rows, min, max, total: `ca. ${range(min, max)}` };
+  }
+
+  // {hotel:<station-id>} in Texten durch das Hotel im Reiseplan ersetzen
+  const hotelName = (id) => { const s = T.stations.find((x) => x.id === id); return s ? Hotels.effective(s).name : id; };
+  const withHotels = (text) => String(text).replace(/\{hotel:([a-z0-9-]+)\}/g, (_, id) => hotelName(id));
 
   const totalNights = T.stations.reduce((n, s) => n + s.nights, 0);
 
@@ -39,6 +61,7 @@
     kosten: renderCosts,
     tipps: renderTips,
     todos: () => "",
+    hotels: () => "",
   };
   T.stations.forEach((s) => (VIEWS[s.id] = () => renderStation(s)));
   (window.MODULES_PLANNED || []).forEach((m) => (VIEWS[m.id] = () => renderPlanned(m)));
@@ -55,6 +78,7 @@
       label: "Planung",
       items: [
         { id: "fluege", title: "Flüge", icon: "✈️" },
+        { id: "hotels", title: "Hotels", icon: "🏨" },
         { id: "transfers", title: "Transfers", icon: "🚆" },
         { id: "kosten", title: "Kosten", icon: "💶" },
         { id: "tipps", title: "Praktische Tipps", icon: "💡" },
@@ -65,7 +89,7 @@
       label: "Demnächst",
       items: (window.MODULES_PLANNED || []).map((m) => ({ id: m.id, title: m.title, icon: m.icon, soon: true })),
     },
-  ];
+  ].filter((g) => g.items.length);
 
   function renderNav(active) {
     sidebar.innerHTML = NAV.map((g) => `
@@ -106,7 +130,7 @@
             <div class="route-nr" style="background:${s.color}">${s.nr}</div>
             <div>
               <h3>${esc(s.name)} <span class="muted">(${esc(s.area)})</span></h3>
-              <div class="sub">${esc(s.hotel.name)} · ${esc(s.focus)}</div>
+              <div class="sub">${esc(Hotels.effective(s).name)} · ${esc(s.focus)}</div>
             </div>
             <div class="nights"><strong>${s.nights} Nächte</strong>${esc(s.dates)}</div>
           </a>`).join("")}
@@ -126,7 +150,7 @@
           <h3>✈️ Flüge</h3><p class="muted small" style="margin:0">LH712 / LH713 nonstop FRA–ICN, plus zwei Inlandsflüge.</p>
         </a>
         <a class="card" href="#kosten" style="text-decoration:none;color:inherit">
-          <h3>💶 Kosten</h3><p class="muted small" style="margin:0">${esc(T.costs.total)} für zwei Personen.</p>
+          <h3>💶 Kosten</h3><p class="muted small" style="margin:0">${esc(costSummary().total)} für zwei Personen.</p>
         </a>
         <a class="card" href="#todos" style="text-decoration:none;color:inherit">
           <h3>📅 Buchungsfristen</h3><p class="muted small" style="margin:0">Alle Fristen mit Status in der To-do-Liste.</p>
@@ -154,15 +178,7 @@
           <div class="chips">${s.focus.split(",").map((f) => `<span class="chip">${esc(f.trim())}</span>`).join("")}</div>
         </div>
 
-        <div class="card hotel">
-          <div class="hotel-icon">🏨</div>
-          <div>
-            <h3 style="margin-bottom:.3rem"><a href="${esc(s.hotel.url)}" target="_blank" rel="noopener">${esc(s.hotel.name)}</a></h3>
-            <p class="small" style="margin-bottom:.3rem">${md(s.hotel.text)}</p>
-            <span class="price">Richtwert: ${esc(s.hotel.price)}</span>
-            ${s.hotel.alt ? `<p class="small" style="margin:.75rem 0 0">${md(s.hotel.alt)}</p>` : ""}
-          </div>
-        </div>
+        ${hotelCard(s)}
 
         <div class="tabs" role="tablist">
           ${tabs.map((t, i) => `<button class="tab" role="tab" data-tab="${t[0]}" aria-selected="${i === 0}">${t[1]}</button>`).join("")}
@@ -174,6 +190,24 @@
           ${next ? `<a class="card" href="#${next.id}" style="text-decoration:none;color:inherit;text-align:right"><span class="muted small">Nächste Station →</span><br><strong>${esc(next.name)} (${esc(next.area)})</strong></a>` : ""}
         </div>
       </div>`;
+  }
+
+  function hotelCard(s) {
+    const h = Hotels.effective(s);
+    const c = Hotels.costRange(s);
+    return `
+        <div class="card hotel">
+          ${h.image ? `<img class="hotel-img" src="${esc(h.image)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<div class="hotel-icon">🏨</div>`}
+          <div>
+            <h3 style="margin-bottom:.3rem"><a href="${esc(h.url)}" target="_blank" rel="noopener">${esc(h.name)}</a>
+              ${h.selected ? `<span class="badge sel">im Konfigurator gewählt</span>` : ""}</h3>
+            <p class="small" style="margin-bottom:.3rem">${md(h.text)}</p>
+            <span class="price">${h.selected ? "" : "Richtwert: "}${esc(h.priceText)} · ${s.nights} Nächte: ${c.fixed ? "" : "ca. "}${range(c.min, c.max)}</span>
+            ${h.priceNote ? `<div class="small muted">${esc(h.priceNote)}</div>` : ""}
+            ${h.alt ? `<p class="small" style="margin:.75rem 0 0">${md(h.alt)}</p>` : ""}
+            <p class="small" style="margin:.6rem 0 0"><a href="#hotels/${s.id}">${h.selected ? "Anderes Hotel wählen" : "Hotels vergleichen und auswählen"} →</a></p>
+          </div>
+        </div>`;
   }
 
   function stationPanel(s, key) {
@@ -230,20 +264,32 @@
     return `
       <h1>Transfers zwischen den Stationen</h1>
       <p style="max-width:75ch">${md(X.intro)}</p>
-      ${table(X.head, X.rows)}
+      ${table(X.head, X.rows.map((r) => r.map(withHotels)))}
       <div class="card callout"><strong>KTX:</strong> ${md(X.note)}</div>`;
   }
 
   function renderCosts() {
     const C = T.costs;
+    const sum = costSummary();
+    const hotelRows = T.stations.map((s) => {
+      const h = Hotels.effective(s), c = Hotels.costRange(s);
+      return [
+        `${s.name} (${s.area})`,
+        `[${h.name}](${h.url})${h.selected ? " · **gewählt**" : " · Planvorschlag"}`,
+        String(s.nights),
+        h.priceText,
+        `${c.fixed ? "" : "ca. "}${range(c.min, c.max)}`,
+      ];
+    });
+    const hotelTotal = T.stations.reduce((a, s) => { const c = Hotels.costRange(s); a[0] += c.min; a[1] += c.max; return a; }, [0, 0]);
     return `
       <h1>Kosten</h1>
       <p class="muted">${esc(C.title)}</p>
-      ${table(["Posten", "Spanne"], C.rows, { total: ["Summe", C.total] })}
+      ${table(["Posten", "Spanne"], sum.rows.map((r) => [r.label, range(r.min, r.max)]), { total: ["Summe", sum.total] })}
       <p class="small">${md(C.note)}</p>
-      <h2>Hotels pro Nacht (Richtwerte)</h2>
-      ${table(["Station", "Hotel", "Nächte", "Preis pro Nacht"],
-        T.stations.map((s) => [`${s.name} (${s.area})`, `[${s.hotel.name}](${s.hotel.url})`, String(s.nights), s.hotel.price]))}`;
+      <h2>Hotels</h2>
+      ${table(["Station", "Hotel", "Nächte", "Preis pro Nacht", "Summe"], hotelRows, { total: ["Hotels gesamt", range(hotelTotal[0], hotelTotal[1])] })}
+      <p class="small"><a href="#hotels">Hotels im Konfigurator vergleichen und auswählen →</a></p>`;
   }
 
   function renderTips() {
@@ -288,18 +334,29 @@
     if (teaser) teaser.innerHTML = Todos.teaserHtml();
   });
 
+  // Hotel-Auswahl geändert: Seiten mit Hotels neu zeichnen (der Konfigurator aktualisiert sich selbst)
+  Hotels.subscribe(() => {
+    if (current && current !== "hotels" && current !== "todos") show(current, false);
+  });
+
+  function show(id, scroll) {
+    const [base, arg] = id.split("/");
+    const station = T.stations.find((s) => s.id === base);
+    view.innerHTML = station ? renderStation(station) : VIEWS[base]();
+    if (station) bindTabs(station);
+    if (base === "todos") Todos.mount(view);
+    if (base === "hotels") Hotels.mount(view, arg);
+    current = base;
+    renderNav(base);
+    if (scroll) window.scrollTo(0, 0);
+    document.title = (station ? `${station.name} (${station.area}) · ` : base === "hotels" ? "Hotels · " : "") + "Südkorea-Rundreise 2027";
+  }
+
   function route() {
     let id = (location.hash || "").slice(1);
-    if (!VIEWS[id]) id = "uebersicht";
-    const station = T.stations.find((s) => s.id === id);
-    view.innerHTML = station ? renderStation(station) : VIEWS[id]();
-    if (station) bindTabs(station);
-    if (id === "todos") Todos.mount(view);
-    current = id;
-    renderNav(id);
+    if (!VIEWS[id.split("/")[0]]) id = "uebersicht";
+    show(id, true);
     sidebar.classList.remove("open");
-    window.scrollTo(0, 0);
-    document.title = (station ? `${station.name} (${station.area}) · ` : "") + "Südkorea-Rundreise 2027";
   }
 
   function bindTabs(s) {

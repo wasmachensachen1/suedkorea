@@ -12,16 +12,17 @@ window.TRIP = {
 
   costs: {
     title: "Kostenschätzung für zwei Personen (gerundet, 1 € ≈ 1.500 KRW)",
+    // Beträge in Euro. Die Zeile "hotels" wird aus den Hotels der Stationen berechnet
+    // (gewähltes Hotel aus dem Konfigurator, sonst die Richtwerte priceMin/priceMax).
     rows: [
-      ["Flüge Business Class FRA–Seoul hin/zurück", "3.400 – 7.000 €"],
-      ["Hotels, 20 Nächte (gehoben)", "6.500 – 10.000 €"],
-      ["Inlandsflüge, Züge, Taxis, 2 Fahrertage auf Jeju", "700 – 1.100 €"],
-      ["Ausflüge, Touren, Eintritte", "800 – 1.300 €"],
-      ["Essen und Trinken (ca. 150–250 € pro Tag)", "3.000 – 5.000 €"],
+      { label: "Flüge Business Class FRA–Seoul hin/zurück", min: 3400, max: 7000 },
+      { id: "hotels", label: "Hotels, 20 Nächte" },
+      { label: "Inlandsflüge, Züge, Taxis, 2 Fahrertage auf Jeju", min: 700, max: 1100 },
+      { label: "Ausflüge, Touren, Eintritte", min: 800, max: 1300 },
+      { label: "Essen und Trinken (ca. 150–250 € pro Tag)", min: 3000, max: 5000 },
     ],
-    total: "ca. 14.400 – 24.400 €",
     note:
-      "Die Hotel- und Essenspreise sind Schätzungen. Die Flugspanne reicht von Angeboten (ab ca. 1.700 € p. P.) bis zum Normaltarif.",
+      "Die Essenspreise und die Hotel-Richtwerte sind Schätzungen. Für Hotels, die im Hotel-Konfigurator gewählt wurden, steht der dort ermittelte Preis drin. Die Flugspanne reicht von Angeboten (ab ca. 1.700 € p. P.) bis zum Normaltarif.",
   },
 
   stations: [
@@ -32,6 +33,11 @@ window.TRIP = {
       area: "Gwanghwamun",
       dates: "16.–21.9.",
       nights: 5,
+      checkIn: "2027-09-16",
+      checkOut: "2027-09-21",
+      // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
+      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { locationKey: "g294197", query: "Seoul", center: [37.5720, 126.9769], centerName: "Gwanghwamun-Platz" },
       focus: "Paläste, Märkte, Food-Tour, Tagesausflug ins Grüne",
       color: "#c2410c",
       intro:
@@ -42,6 +48,8 @@ window.TRIP = {
         text:
           "In Gwanghwamun. Zum Gyeongbokgung-Palast und zum Gwanghwamun-Platz sind es etwa 8 Minuten zu Fuß. Es gibt eine koreanische Sauna, einen Pool und das Sternerestaurant Yu Yuan (kantonesisch).",
         price: "ca. 450–650 € pro Nacht",
+        priceMin: 450,
+        priceMax: 650,
       },
       sights: [
         ["Gyeongbokgung", "der größte Königspalast, mit Wachwechsel am Gwanghwamun-Tor. Dienstags geschlossen."],
@@ -75,6 +83,11 @@ window.TRIP = {
       area: "Jungmun",
       dates: "21.–26.9.",
       nights: 5,
+      checkIn: "2027-09-21",
+      checkOut: "2027-09-26",
+      // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
+      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { query: "The Shilla Jeju", center: [33.2475, 126.4115], centerName: "Jungmun-Resortgebiet" },
       focus: "Strand, Olle-Küstenwege, Vulkanlandschaft",
       color: "#0e7490",
       intro:
@@ -85,6 +98,8 @@ window.TRIP = {
         text:
           "Ein Fünf-Sterne-Resort mit tropischem Garten auf der Klippe und Blick auf den Pazifik, Mitglied der Leading Hotels of the World. Zum Strand Jungmun Saekdal sind es etwa 10 Minuten zu Fuß. Pools, Spa, Restaurants.",
         price: "ca. 350–500 € pro Nacht",
+        priceMin: 350,
+        priceMax: 500,
       },
       sights: [
         ["Jungmun Saekdal Beach", "Sandstrand vor dem Hotel, gut zum Baden und Sonnenuntergang."],
@@ -122,6 +137,11 @@ window.TRIP = {
       area: "Haeundae",
       dates: "26.–30.9.",
       nights: 4,
+      checkIn: "2027-09-26",
+      checkOut: "2027-09-30",
+      // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
+      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { locationKey: "g297884", query: "Busan", center: [35.1587, 129.1604], centerName: "Haeundae Beach" },
       focus: "Stadtstrand, Fischmarkt, Küstenwanderung",
       color: "#1d4ed8",
       intro:
@@ -132,6 +152,8 @@ window.TRIP = {
         text:
           "Fünf Sterne, direkt am Haeundae Beach, mit Balkonen zum Meer, Thermalbad im Freien, Pool und dem Spa Cimer. Das Spa ist am vierten Mittwoch im Monat geschlossen, im September 2027 ist das der 22.9., also bevor ihr ankommt.",
         price: "ca. 250–400 € pro Nacht",
+        priceMin: 250,
+        priceMax: 400,
       },
       sights: [
         ["Haeundae Beach und Dongbaekseom", "Uferweg rund um die kleine Kamelien-Insel, vorbei am Nurimaru-Pavillon, mit Blick auf die Hochhäuser von Marine City."],
@@ -166,6 +188,11 @@ window.TRIP = {
       area: "Bomun",
       dates: "30.9.–3.10.",
       nights: 3,
+      checkIn: "2027-09-30",
+      checkOut: "2027-10-03",
+      // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
+      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { query: "Gyeongju", center: [35.8357, 129.2129], centerName: "historisches Zentrum (Daereungwon)" },
       focus: "UNESCO-Tempel, Königsgräber, Hanok-Nächte",
       color: "#7c3aed",
       intro:
@@ -176,6 +203,8 @@ window.TRIP = {
         text:
           "Das erste Hanok-Hotel Koreas, gebaut im Stil eines Silla-Palastes, mit nur 16 Zimmern. Jedes Zimmer hat ein eigenes Thermalbad im Innenhof, Ondol-Fußbodenheizung und einen Holzpavillon. Es liegt beim Bomun-See, ins Zentrum fährt man 10 Minuten mit dem Taxi. Buchbar z. B. über [Yanolja/NOL](https://nol.yanolja.com/stay/domestic/3013831). Aktuelle Gäste schreiben, dass es kein Restaurant im Haus gibt. Abends nehmt ihr also ein Taxi zum Essen nach Hwangnidan-gil.",
         price: "ca. 150–300 € pro Nacht",
+        priceMin: 150,
+        priceMax: 300,
         alt:
           "**Alternative im Zentrum:** [Hwangnamguan Hanok Village](https://www.bamboo-travel.co.uk/tours-of-south-korea/hotels/hwangnamguan-hanok). Es ist einfacher und eher Mittelklasse, dafür erreicht ihr die Königsgräber und Hwangnidan-gil zu Fuß.",
       },
@@ -207,6 +236,11 @@ window.TRIP = {
       area: "Gangnam",
       dates: "3.–6.10.",
       nights: 3,
+      checkIn: "2027-10-03",
+      checkOut: "2027-10-06",
+      // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
+      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { locationKey: "g294197", query: "Seoul", center: [37.5115, 127.0595], centerName: "COEX / Bongeunsa" },
       focus: "Modernes Seoul, Shopping, Abschied",
       color: "#be185d",
       intro:
@@ -217,6 +251,8 @@ window.TRIP = {
         text:
           "In Gangnam. Es setzt die Tradition des ersten Luxushotels Koreas von 1914 fort und hat einen MICHELIN Key. Es gibt einen Innenpool mit Blick auf die Skyline, die COEX Mall und der Tempel Bongeunsa sind in der Nähe.",
         price: "ca. 350–550 € pro Nacht",
+        priceMin: 350,
+        priceMax: 550,
       },
       sights: [
         ["Bongeunsa", "Tempel aus dem 8. Jahrhundert mitten zwischen den Bürotürmen."],
@@ -274,21 +310,22 @@ window.TRIP = {
     intro:
       "Alle Transfers zusammen kosten für zwei Personen rund 700–1.100 €, darin sind die Inlandsflüge und zwei Fahrertage auf Jeju enthalten. Mit Gepäck ist von Tür zu Tür meist das Taxi die bequemste Lösung. In Korea sind Taxis günstig, und die App Kakao T funktioniert auch mit ausländischer Kreditkarte.",
     head: ["Datum", "Von → Nach", "Verkehrsmittel", "Dauer", "Preis (2 Pers., Richtwert)"],
+    // {hotel:<station-id>} wird durch den Namen des gewählten Hotels ersetzt.
     rows: [
       ["Mi 15.9.", "Köln/Düsseldorf → Flughafen Frankfurt", "ICE bzw. Lufthansa Express Rail", "1 – 1,5 Std.", "im LH-Ticket enthalten bzw. ca. 60 – 180 €"],
-      ["Do 16.9.", "Incheon → Four Seasons Seoul", "Taxi oder Hotellimousine; Alternative: [AREX Express](https://www.arex.or.kr) bis Seoul Station + Taxi", "60 – 75 Min.", "Taxi ca. 80.000 – 110.000 KRW (55 – 75 €); AREX 13.000 KRW p. P."],
-      ["Di 21.9.", "Four Seasons → Flughafen Gimpo", "Taxi", "ca. 35 Min.", "ca. 30.000 – 40.000 KRW (20 – 27 €)"],
+      ["Do 16.9.", "Incheon → {hotel:seoul}", "Taxi oder Hotellimousine; Alternative: [AREX Express](https://www.arex.or.kr) bis Seoul Station + Taxi", "60 – 75 Min.", "Taxi ca. 80.000 – 110.000 KRW (55 – 75 €); AREX 13.000 KRW p. P."],
+      ["Di 21.9.", "{hotel:seoul} → Flughafen Gimpo", "Taxi", "ca. 35 Min.", "ca. 30.000 – 40.000 KRW (20 – 27 €)"],
       ["Di 21.9.", "Gimpo → Jeju", "Inlandsflug", "1 Std. 10 Min.", "ca. 120.000 – 300.000 KRW (80 – 200 €)"],
-      ["Di 21.9.", "Flughafen Jeju → The Shilla Jeju", "Taxi; Alternative: Flughafen-Limousinenbus 600", "ca. 50 Min.", "Taxi ca. 50.000 – 60.000 KRW (35 – 40 €)"],
+      ["Di 21.9.", "Flughafen Jeju → {hotel:jeju}", "Taxi; Alternative: Flughafen-Limousinenbus 600", "ca. 50 Min.", "Taxi ca. 50.000 – 60.000 KRW (35 – 40 €)"],
       ["Do 23.9. + Sa 25.9.", "Inselrundfahrten Jeju", "[Privatwagen mit Fahrer, 9 Std.](https://www.klook.com/activity/174339-jeju-private-transfer/)", "ganztägig", "ca. 250.000 – 350.000 KRW pro Tag (170 – 235 €) inkl. Benzin, Maut, Parken"],
-      ["So 26.9.", "The Shilla Jeju → Flughafen Jeju", "Taxi", "ca. 50 Min.", "ca. 50.000 – 60.000 KRW (35 – 40 €)"],
+      ["So 26.9.", "{hotel:jeju} → Flughafen Jeju", "Taxi", "ca. 50 Min.", "ca. 50.000 – 60.000 KRW (35 – 40 €)"],
       ["So 26.9.", "Jeju → Busan", "Inlandsflug", "55 Min.", "ca. 100.000 – 240.000 KRW (70 – 160 €)"],
-      ["So 26.9.", "Flughafen Gimhae → Paradise Hotel Busan", "Taxi", "35 – 50 Min.", "ca. 40.000 – 50.000 KRW (27 – 33 €)"],
-      ["Do 30.9.", "Haeundae → Ragung, Gyeongju", "Taxi direkt (bequemste Lösung); Alternative: KTX Busan → Gyeongju (30 Min., 11.900 KRW p. P.) plus zwei Taxis", "60 – 70 Min.", "Taxi ca. 110.000 – 140.000 KRW (75 – 95 €)"],
-      ["So 3.10.", "Ragung → Bahnhof Gyeongju (früher Singyeongju)", "Taxi", "ca. 25 Min.", "ca. 20.000 – 25.000 KRW (15 €)"],
+      ["So 26.9.", "Flughafen Gimhae → {hotel:busan}", "Taxi", "35 – 50 Min.", "ca. 40.000 – 50.000 KRW (27 – 33 €)"],
+      ["Do 30.9.", "{hotel:busan} → {hotel:gyeongju}", "Taxi direkt (bequemste Lösung); Alternative: KTX Busan → Gyeongju (30 Min., 11.900 KRW p. P.) plus zwei Taxis", "60 – 70 Min.", "Taxi ca. 110.000 – 140.000 KRW (75 – 95 €)"],
+      ["So 3.10.", "{hotel:gyeongju} → Bahnhof Gyeongju (früher Singyeongju)", "Taxi", "ca. 25 Min.", "ca. 20.000 – 25.000 KRW (15 €)"],
       ["So 3.10.", "Gyeongju → Seoul Station", "[KTX](https://www.letskorail.com), First Class empfohlen", "ca. 2 Std.", "Standard ca. 89.000 KRW, First ca. 128.000 KRW (60 bzw. 85 €)"],
-      ["So 3.10.", "Seoul Station → Josun Palace, Gangnam", "Taxi", "30 – 40 Min.", "ca. 20.000 – 25.000 KRW (15 €)"],
-      ["Mi 6.10.", "Josun Palace → Incheon", "Taxi oder Flughafen-Limousinenbus", "70 – 80 Min.", "Taxi ca. 90.000 – 120.000 KRW (60 – 80 €)"],
+      ["So 3.10.", "Seoul Station → {hotel:gangnam}", "Taxi", "30 – 40 Min.", "ca. 20.000 – 25.000 KRW (15 €)"],
+      ["Mi 6.10.", "{hotel:gangnam} → Incheon", "Taxi oder Flughafen-Limousinenbus", "70 – 80 Min.", "Taxi ca. 90.000 – 120.000 KRW (60 – 80 €)"],
     ],
     note:
       "Seit dem 1.9.2026 sind KTX und SRT zusammengelegt, und die KTX-Preise sind im Schnitt um etwa 10 % gesunken. Laut [aktueller Preisübersicht](https://www.seoultourism.org/?p=1841) kostet Seoul–Gyeongju rund 44.500 KRW in der Standardklasse, First Class kostet etwa 40–50 % mehr. Tickets gibt es ab einem Monat vor der Fahrt. Am 3.10. ist ein langes Feiertagswochenende, bucht die Züge also gleich zum Verkaufsstart.",
@@ -358,5 +395,4 @@ window.TRIP = {
 // Geplante Module – werden später ergänzt
 window.MODULES_PLANNED = [
   { id: "flugsuche", title: "Flugsuche", icon: "🔎", text: "Flüge FRA–ICN vergleichen und Preisalarme im Blick behalten." },
-  { id: "hotels", title: "Hotel-Konfigurator", icon: "🏨", text: "Hotels pro Station nach Budget, Lage und Ausstattung zusammenstellen." },
 ];

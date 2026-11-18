@@ -1,17 +1,12 @@
-// To-do-Liste mit Sync über GitHub.
+// To-do-Liste mit Sync über GitHub (Zugriff über js/github.js).
 // Die Liste liegt in data/todos.json im Repository. Ohne Token wird sie nur gelesen,
 // mit einem persönlichen GitHub-Token (Contents: Read and write) speichert die Seite
 // jede Änderung als Commit in diese Datei.
 (function () {
   "use strict";
 
-  const CFG = {
-    owner: "wasmachensachen1",
-    repo: "suedkorea",
-    branch: "main",
-    path: "data/todos.json",
-  };
-  const TOKEN_KEY = "suedkorea-gh-token";
+  const GH = window.GitHubStore;
+  const CFG = { ...GH.CFG, path: "data/todos.json" };
   const FILTER_KEY = "suedkorea-todo-filter";
 
   const STATUS = [
@@ -38,9 +33,9 @@
 
   // ---------- Helfer ----------
   const U = () => window.TripUtil; // esc, md aus app.js
-  const lsGet = (k) => { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } };
-  const lsSet = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) { /* egal */ } };
-  const token = () => lsGet(TOKEN_KEY);
+  const lsGet = GH.lsGet;
+  const lsSet = GH.lsSet;
+  const token = GH.token;
 
   function todayStr() {
     const d = new Date();
@@ -77,59 +72,10 @@
   const byDue = (a, b) => (a.due || "9999").localeCompare(b.due || "9999") || a.title.localeCompare(b.title, "de");
   const newId = () => "t-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
-  function b64encode(str) {
-    const bytes = new TextEncoder().encode(str);
-    let bin = "";
-    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
-    return btoa(bin);
-  }
-  function b64decode(b64) {
-    const bin = atob(b64.replace(/\s/g, ""));
-    return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
-  }
-
   function notify() { listeners.forEach((fn) => { try { fn(); } catch (e) { console.error(e); } }); }
 
   // ---------- GitHub ----------
-  const API = `https://api.github.com/repos/${CFG.owner}/${CFG.repo}/contents/${CFG.path}`;
-
-  async function gh(method, body, tok) {
-    const res = await fetch(method === "GET" ? `${API}?ref=${CFG.branch}&t=${Date.now()}` : API, {
-      method,
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${tok || token()}`,
-        "X-GitHub-Api-Version": "2022-11-28",
-        ...(body ? { "Content-Type": "application/json" } : {}),
-      },
-      body: body ? JSON.stringify(body) : undefined,
-      cache: "no-store",
-    });
-    if (!res.ok) {
-      const err = new Error(ghMessage(res.status, method));
-      err.status = res.status;
-      throw err;
-    }
-    return res.json();
-  }
-  function ghMessage(status, method) {
-    if (status === 401) return "Der GitHub-Token ist ungültig oder abgelaufen.";
-    if (status === 403 || (status === 404 && method !== "GET"))
-      return "Der Token darf nicht in das Repository schreiben. Er braucht für „suedkorea“ die Berechtigung „Contents: Read and write“.";
-    if (status === 404) return "Die Datei data/todos.json oder das Repository wurde nicht gefunden – oder der Token hat keinen Zugriff darauf.";
-    if (status === 409) return "Die Liste wurde gleichzeitig woanders geändert.";
-    return `GitHub hat mit Fehler ${status} geantwortet.`;
-  }
-
-  async function fetchRemote(tok) {
-    if (tok || token()) {
-      const j = await gh("GET", null, tok);
-      return { data: JSON.parse(b64decode(j.content)), sha: j.sha };
-    }
-    const res = await fetch(`${CFG.path}?t=${Date.now()}`, { cache: "no-store" });
-    if (!res.ok) throw new Error(`Die To-do-Liste konnte nicht geladen werden (${res.status}).`);
-    return { data: await res.json(), sha: null };
-  }
+  const fetchRemote = (tok) => GH.readJson(CFG.path, tok);
 
   async function load() {
     state.loading = true; state.error = ""; notify();
@@ -155,23 +101,16 @@
     state.items = optimistic;
     notify();
     try {
-      for (let attempt = 0; attempt < 3; attempt++) {
-        const { data, sha } = await fetchRemote();
+      const res = await GH.updateJson(CFG.path, (data) => {
         const items = Array.isArray(data.items) ? data.items : [];
         fn(items);
         items.sort(byDue);
-        const content = JSON.stringify({ version: 1, items }, null, 2) + "\n";
-        try {
-          const j = await gh("PUT", { message, content: b64encode(content), sha, branch: CFG.branch });
-          state.items = items;
-          state.sha = j.content && j.content.sha;
-          state.loadedAt = new Date();
-          return true;
-        } catch (e) {
-          if ((e.status === 409 || e.status === 422) && attempt < 2) continue;
-          throw e;
-        }
-      }
+        return { version: 1, items };
+      }, message);
+      state.items = res.data.items;
+      state.sha = res.sha;
+      state.loadedAt = new Date();
+      return true;
     } catch (e) {
       state.error = `Nicht gespeichert: ${e.message || e}`;
       await load().catch(() => {});
@@ -179,7 +118,6 @@
     } finally {
       state.saving = false; notify();
     }
-    return false;
   }
 
   // ---------- Kalender (.ics) ----------
@@ -462,7 +400,7 @@
       </form>`;
     dlg.querySelector("[data-close]").addEventListener("click", () => dlg.close());
     const rm = dlg.querySelector("[data-remove]");
-    if (rm) rm.addEventListener("click", () => { lsSet(TOKEN_KEY, ""); dlg.close(); load(); });
+    if (rm) rm.addEventListener("click", () => { GH.setToken(""); dlg.close(); load(); });
     dlg.querySelector("form").addEventListener("submit", async (ev) => {
       ev.preventDefault();
       const val = ev.target.elements.namedItem("token").value.trim();
@@ -471,7 +409,7 @@
       msg.hidden = false; msg.textContent = "Prüfe …";
       try {
         await fetchRemote(val);
-        lsSet(TOKEN_KEY, val);
+        GH.setToken(val);
         dlg.close();
         load();
       } catch (e) {
