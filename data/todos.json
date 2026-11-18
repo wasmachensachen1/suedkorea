@@ -1,0 +1,347 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "flug-preisalarm",
+      "title": "Preisalarme für Frankfurt–Seoul einrichten",
+      "category": "Flüge",
+      "due": "2026-11-30",
+      "status": "offen",
+      "description": "Für den Hinflug am Mi 15.9.2027 und den Rückflug am Mi 6.10.2027 in Business Class. Den Kalender für ±3 Tage beobachten: Ist der 14.9. oder 16.9. deutlich günstiger, verschiebt sich der Plan nur um einen Tag.",
+      "links": [
+        {
+          "title": "Google Flights",
+          "url": "https://www.google.com/travel/flights"
+        },
+        {
+          "title": "Frankfurtflyer – Angebote Seoul",
+          "url": "https://frankfurtflyer.de/tag/seoul-icn"
+        }
+      ]
+    },
+    {
+      "id": "hotel-ragung",
+      "title": "Ragung in Gyeongju buchen (30.9.–3.10.)",
+      "category": "Hotels",
+      "due": "2026-12-31",
+      "status": "offen",
+      "description": "Nur 16 Zimmer, deshalb als erstes Hotel buchen. 3 Nächte, jedes Zimmer hat ein eigenes Thermalbad im Innenhof. Falls ausgebucht: Hwangnamguan Hanok Village im Zentrum als Alternative.",
+      "links": [
+        {
+          "title": "Ragung bei Yanolja/NOL",
+          "url": "https://nol.yanolja.com/stay/domestic/3013831"
+        },
+        {
+          "title": "Ragung – Beschreibung",
+          "url": "https://bamboo-travel.co.uk/tours-of-south-korea/hotels/ragung"
+        },
+        {
+          "title": "Alternative: Hwangnamguan Hanok Village",
+          "url": "https://www.bamboo-travel.co.uk/tours-of-south-korea/hotels/hwangnamguan-hanok"
+        }
+      ]
+    },
+    {
+      "id": "pass",
+      "title": "Reisepässe prüfen",
+      "category": "Einreise",
+      "due": "2027-03-01",
+      "status": "offen",
+      "description": "Gültigkeit für die ganze Reise prüfen, am besten mit 6 Monaten Reserve. Ein neuer Pass braucht einige Wochen.",
+      "links": [
+        {
+          "title": "Auswärtiges Amt – Republik Korea",
+          "url": "https://www.auswaertiges-amt.de/de/service/laender/korearepublik-node"
+        }
+      ]
+    },
+    {
+      "id": "hotel-fourseasons",
+      "title": "Four Seasons Seoul buchen (16.–21.9.)",
+      "category": "Hotels",
+      "due": "2027-03-15",
+      "status": "offen",
+      "description": "5 Nächte. Ihr landet am 16.9. gegen 10 Uhr: einen frühen Check-in anfragen.",
+      "links": [
+        {
+          "title": "Four Seasons Hotel Seoul",
+          "url": "https://www.fourseasons.com/seoul/"
+        }
+      ]
+    },
+    {
+      "id": "hotel-shilla",
+      "title": "The Shilla Jeju buchen (21.–26.9.)",
+      "category": "Hotels",
+      "due": "2027-03-21",
+      "status": "offen",
+      "description": "5 Nächte, möglichst ein Zimmer mit Meerblick.",
+      "links": [
+        {
+          "title": "The Shilla Jeju",
+          "url": "https://www.shilla.net/jeju"
+        }
+      ]
+    },
+    {
+      "id": "hotel-paradise",
+      "title": "Paradise Hotel Busan buchen (26.–30.9.)",
+      "category": "Hotels",
+      "due": "2027-03-26",
+      "status": "offen",
+      "description": "4 Nächte, Zimmer mit Balkon zum Meer. Einen späten Check-out am 30.9. anfragen.",
+      "links": [
+        {
+          "title": "Paradise Hotel Busan",
+          "url": "https://www.hotels.com/ho196599"
+        }
+      ]
+    },
+    {
+      "id": "flug-langstrecke",
+      "title": "Langstreckenflüge buchen (LH712 / LH713)",
+      "category": "Flüge",
+      "due": "2027-03-31",
+      "status": "offen",
+      "description": "Vorschlag: LH712 am 15.9. ab Frankfurt ca. 16:05 Uhr, LH713 am 6.10. ab Incheon ca. 13:00 Uhr. Alternativ Korean Air, falls sie an den Tagen fliegt. Uhrzeiten vor der Buchung prüfen. Die Zugfahrt nach Frankfurt als **Lufthansa Express Rail** gleich mitbuchen und Sitzplätze bei der Buchung wählen.",
+      "links": [
+        {
+          "title": "Lufthansa",
+          "url": "https://www.lufthansa.com"
+        },
+        {
+          "title": "Korean Air",
+          "url": "https://www.koreanair.com"
+        }
+      ]
+    },
+    {
+      "id": "hotel-josun",
+      "title": "Josun Palace Seoul buchen (3.–6.10.)",
+      "category": "Hotels",
+      "due": "2027-04-03",
+      "status": "offen",
+      "description": "3 Nächte. Am 3.10. ist Nationalfeiertag mit langem Wochenende, deshalb nicht zu spät buchen.",
+      "links": [
+        {
+          "title": "Josun Palace (MICHELIN Guide)",
+          "url": "https://guide.michelin.com/ch/de/hotels-stays/seoul/josun-palace-a-luxury-collection-hotel-seoul-12550"
+        }
+      ]
+    },
+    {
+      "id": "versicherung",
+      "title": "Reiserücktritts- und Auslandskrankenversicherung prüfen",
+      "category": "Vorbereitung",
+      "due": "2027-04-15",
+      "status": "offen",
+      "description": "Direkt nach der Flugbuchung: Reicht der Schutz über Kreditkarte oder bestehende Verträge, oder braucht ihr eine eigene Police? Die Auslandskrankenversicherung muss die ganze Reise (15.9.–6.10.) abdecken.",
+      "links": []
+    },
+    {
+      "id": "inlandsfluege",
+      "title": "Inlandsflüge buchen: Gimpo → Jeju (21.9.) und Jeju → Busan (26.9.)",
+      "category": "Flüge",
+      "due": "2027-06-30",
+      "status": "offen",
+      "description": "Jeweils vormittags, das ist meist günstiger. Economy reicht bei rund einer Stunde Flugzeit. Freigepäck prüfen, besonders bei Billigairlines.",
+      "links": [
+        {
+          "title": "Korean Air",
+          "url": "https://www.koreanair.com"
+        },
+        {
+          "title": "Asiana",
+          "url": "https://flyasiana.com"
+        }
+      ]
+    },
+    {
+      "id": "jeju-fahrer",
+      "title": "Fahrer auf Jeju buchen (23.9. und 25.9.)",
+      "category": "Touren",
+      "due": "2027-07-01",
+      "status": "offen",
+      "description": "Zwei Tage Privatwagen mit Fahrer, je 9 Stunden, Abholung am The Shilla Jeju. Tag 1 in den Osten (Seongsan Ilchulbong, Seopjikoji, Saryeoni), Tag 2 in den Westen (Eoseungsaengak, Osulloc, Hyeopjae, Sanbangsan).",
+      "links": [
+        {
+          "title": "Klook – Jeju Private Car Charter",
+          "url": "https://www.klook.com/activity/174339-jeju-private-transfer/"
+        }
+      ]
+    },
+    {
+      "id": "tour-nami",
+      "title": "Tagesausflug Nami-Insel und Garden of Morning Calm buchen (19.9.)",
+      "category": "Touren",
+      "due": "2027-07-31",
+      "status": "offen",
+      "description": "Privat ca. 300–400 € für zwei, als Gruppentour ca. 60 € p. P.",
+      "links": [
+        {
+          "title": "Lokalee – Private Tour",
+          "url": "https://www.lokalee.app/en/tours/nami-island-and-garden-of-morning-calm-private-tour-from-seoul"
+        },
+        {
+          "title": "Klook – Gruppentour",
+          "url": "https://www.klook.com/activity/8962-nami-island-petite-france-railbike-garden-of-morning-calm-day-tour-seoul/"
+        }
+      ]
+    },
+    {
+      "id": "tour-bukhansan",
+      "title": "Bukhansan-Wanderung mit Spa anfragen (20.9.)",
+      "category": "Touren",
+      "due": "2027-07-31",
+      "status": "offen",
+      "description": "Private Tour, Preis auf Anfrage. Bei der Anfrage die Kondition angeben, damit die Route passt.",
+      "links": [
+        {
+          "title": "Trazy – Bukhansan Hiking & Korean Spa",
+          "url": "https://www.trazy.com/experience/detail/private-bukhansan-hiking-tour-with-korean-spa"
+        }
+      ]
+    },
+    {
+      "id": "tour-ongo",
+      "title": "Night Dining Tour in Jongno buchen (18.9., 17 Uhr)",
+      "category": "Touren",
+      "due": "2027-08-15",
+      "status": "offen",
+      "description": "Start an der Station Anguk, 3,5–4 Stunden, ca. 95 € p. P.",
+      "links": [
+        {
+          "title": "O'ngo Night Food Tour",
+          "url": "https://www.expedia.com.au/things-to-do/small-group-korean-night-food-tour.a48906096.activity-details"
+        }
+      ]
+    },
+    {
+      "id": "tour-gyeongju",
+      "title": "Private UNESCO-Tour in Gyeongju buchen (1.10.)",
+      "category": "Touren",
+      "due": "2027-08-15",
+      "status": "offen",
+      "description": "Bulguksa und Seokguram am Morgen, danach Nationalmuseum. Abholung am Ragung.",
+      "links": [
+        {
+          "title": "Private Gyeongju UNESCO Heritage Tour",
+          "url": "https://www.expedia.ie/things-to-do/private-gyeongju-unesco-heritage-tour-with-a-local-guide.a52620643.activity-details"
+        }
+      ]
+    },
+    {
+      "id": "einreise",
+      "title": "K-ETA bzw. Einreiseformalitäten klären",
+      "category": "Einreise",
+      "due": "2027-08-15",
+      "status": "offen",
+      "description": "Die Befreiung von der K-ETA gilt bisher bis 31.12.2026, für 2027 gibt es noch keine Entscheidung. Falls nötig, die K-ETA beantragen (10.000 KRW, Bearbeitung bis zu 72 Std.). Ohne K-ETA vor der Ankunft die elektronische Ankunftskarte ausfüllen.",
+      "links": [
+        {
+          "title": "K-ETA (offiziell)",
+          "url": "https://www.k-eta.go.kr"
+        },
+        {
+          "title": "e-Arrival Card (offiziell)",
+          "url": "https://www.e-arrivalcard.go.kr"
+        },
+        {
+          "title": "Passport Index – K-ETA-Befreiung",
+          "url": "https://discover.passportindex.org/policy-and-regulations/south-korea-extends-k-eta-exemption-until-end-of-2026/"
+        }
+      ]
+    },
+    {
+      "id": "huwon",
+      "title": "Tickets Geheimer Garten (Changdeokgung) reservieren (17.9.)",
+      "category": "Touren",
+      "due": "2027-08-27",
+      "status": "offen",
+      "description": "Den Garten sieht man nur mit Führung. Online reservieren, sobald der Verkauf für den 17.9. startet. Montags ist der Palast geschlossen.",
+      "links": []
+    },
+    {
+      "id": "skycapsule",
+      "title": "Sky Capsule in Busan buchen (27.9.)",
+      "category": "Touren",
+      "due": "2027-08-31",
+      "status": "offen",
+      "description": "Tickets werden jeden Dienstag um 7 Uhr koreanischer Zeit (Mitternacht in Deutschland) für vier Wochen im Voraus freigeschaltet und sind schnell weg. Ab Ende August dienstags nachsehen.",
+      "links": [
+        {
+          "title": "Haeundae Blueline Park",
+          "url": "https://www.bluelinepark.com"
+        },
+        {
+          "title": "Buchungs-Tipps (Trvlogue)",
+          "url": "https://www.trvlogue.com/en/busan-haeundae-blueline-park-booking-guide"
+        }
+      ]
+    },
+    {
+      "id": "ktx",
+      "title": "KTX Gyeongju → Seoul buchen (3.10.)",
+      "category": "Transport",
+      "due": "2027-09-03",
+      "status": "offen",
+      "description": "Der Verkauf startet einen Monat vorher. Am 3.10. ist langes Feiertagswochenende, deshalb gleich am ersten Verkaufstag buchen. First Class empfohlen.",
+      "links": [
+        {
+          "title": "Korail",
+          "url": "https://www.letskorail.com"
+        }
+      ]
+    },
+    {
+      "id": "abschiedsessen",
+      "title": "Abschiedsessen in Seoul reservieren (5.10.)",
+      "category": "Touren",
+      "due": "2027-09-05",
+      "status": "offen",
+      "description": "Restaurant mit koreanischer Fine-Dining-Küche, Reservierung über die App **CatchTable**. Viele Restaurants öffnen die Reservierung etwa einen Monat vorher.",
+      "links": []
+    },
+    {
+      "id": "esim",
+      "title": "eSIM für Korea kaufen",
+      "category": "Vorbereitung",
+      "due": "2027-09-08",
+      "status": "offen",
+      "description": "Vor der Reise kaufen und installieren, damit Navigation und Taxi-App ab der Landung funktionieren.",
+      "links": []
+    },
+    {
+      "id": "apps",
+      "title": "Apps installieren und einrichten",
+      "category": "Vorbereitung",
+      "due": "2027-09-08",
+      "status": "offen",
+      "description": "Naver Map, Kakao T (Kreditkarte hinterlegen), Papago, CatchTable, Korail Talk.",
+      "links": []
+    },
+    {
+      "id": "geld",
+      "title": "Kreditkarten und Bargeld vorbereiten",
+      "category": "Vorbereitung",
+      "due": "2027-09-08",
+      "status": "offen",
+      "description": "Prüfen, ob die Kreditkarten im Ausland gebührenfrei sind, und das Limit für die Reise anpassen. Etwas Won-Bargeld für Märkte besorgen oder am Flughafen abheben.",
+      "links": []
+    },
+    {
+      "id": "checkin",
+      "title": "Online-Check-in für LH712",
+      "category": "Flüge",
+      "due": "2027-09-14",
+      "status": "offen",
+      "description": "Sobald der Check-in öffnet (bei Lufthansa etwa 23 Stunden vor Abflug). Abflug am 15.9. um ca. 16:05 Uhr.",
+      "links": [
+        {
+          "title": "Lufthansa",
+          "url": "https://www.lufthansa.com"
+        }
+      ]
+    }
+  ]
+}
