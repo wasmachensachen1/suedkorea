@@ -6,8 +6,20 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Südkorea-Rundreise 2027</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/gate.js"></script>
 </head>
 <body>
+  <form class="gate" id="gate" autocomplete="off">
+    <span class="brand-mark">한</span>
+    <h1>Südkorea 2027</h1>
+    <p>Bitte Passwort eingeben.</p>
+    <label for="gatePw" class="sr-only">Passwort</label>
+    <input type="password" id="gatePw" placeholder="Passwort" required>
+    <label class="gate-remember"><input type="checkbox" id="gateRemember" checked> Auf diesem Gerät merken</label>
+    <button type="submit">Öffnen</button>
+    <p class="gate-error" id="gateError" role="alert" hidden>Das Passwort stimmt nicht.</p>
+  </form>
+
   <header class="topbar">
     <button class="menu-btn" id="menuBtn" aria-label="Menü öffnen">☰</button>
     <a href="#uebersicht" class="brand">

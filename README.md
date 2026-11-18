@@ -14,9 +14,16 @@ index.html        Grundgerüst
 css/style.css     Gestaltung
 js/data.js        alle Reiseinhalte (hier Texte, Preise, Links pflegen)
 js/app.js         Navigation (Hash-Routing) und Darstellung
+js/gate.js        Passwortabfrage (Sichtschutz)
 ```
 
 Texte in `data.js` dürfen `**fett**` und `[Link](https://…)` enthalten.
+
+## Passwortabfrage
+
+Vor der Seite steht eine Passwortabfrage. Sie ist **nur ein Sichtschutz**: Die Inhalte stehen im Klartext in `js/data.js` und sind im öffentlichen Repository für jeden lesbar.
+
+Passwort ändern: SHA-256 des neuen Passworts erzeugen (`printf '%s' 'neues-passwort' | sha256sum`) und in `js/gate.js` bei `PASSWORD_SHA256` eintragen.
 
 ## Geplante Module
 
