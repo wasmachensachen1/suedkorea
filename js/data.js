@@ -359,5 +359,4 @@ window.TRIP = {
 window.MODULES_PLANNED = [
   { id: "flugsuche", title: "Flugsuche", icon: "🔎", text: "Flüge FRA–ICN vergleichen und Preisalarme im Blick behalten." },
   { id: "hotels", title: "Hotel-Konfigurator", icon: "🏨", text: "Hotels pro Station nach Budget, Lage und Ausstattung zusammenstellen." },
-  { id: "todos", title: "To-dos & Erinnerungen", icon: "✅", text: "Buchungsfristen als Checkliste mit Erinnerungen." },
 ];

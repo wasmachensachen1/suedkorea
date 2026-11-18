@@ -25,6 +25,9 @@
     return `<div class="table-wrap"><table><thead><tr>${th}</tr></thead><tbody>${tr}${total}</tbody></table></div>`;
   }
 
+  window.TripUtil = { esc, md };
+  const Todos = window.Todos;
+
   const totalNights = T.stations.reduce((n, s) => n + s.nights, 0);
 
   // ---------- Views ----------
@@ -35,6 +38,7 @@
     transfers: renderTransfers,
     kosten: renderCosts,
     tipps: renderTips,
+    todos: () => "",
   };
   T.stations.forEach((s) => (VIEWS[s.id] = () => renderStation(s)));
   (window.MODULES_PLANNED || []).forEach((m) => (VIEWS[m.id] = () => renderPlanned(m)));
@@ -54,6 +58,7 @@
         { id: "transfers", title: "Transfers", icon: "🚆" },
         { id: "kosten", title: "Kosten", icon: "💶" },
         { id: "tipps", title: "Praktische Tipps", icon: "💡" },
+        { id: "todos", title: "To-dos", icon: "✅", count: () => Todos.attentionCount(), alert: () => Todos.hasOverdue() },
       ],
     },
     {
@@ -72,6 +77,7 @@
             <span>${esc(i.title)}</span>
             ${i.meta ? `<span class="meta">${esc(i.meta)}</span>` : ""}
             ${i.soon ? `<span class="badge">bald</span>` : ""}
+            ${i.count && i.count() ? `<span class="badge count${i.alert && i.alert() ? " alert" : ""}" title="überfällig oder bald fällig">${i.count()}</span>` : ""}
           </a>`).join("")}
       </div>`).join("");
   }
@@ -106,6 +112,11 @@
           </a>`).join("")}
       </div>
 
+      <h2>Nächste To-dos</h2>
+      <a class="card todo-teaser-card" href="#todos" style="display:block;text-decoration:none;color:inherit">
+        <div id="todoTeaser">${Todos.teaserHtml()}</div>
+      </a>
+
       <h2>Warum diese Daten</h2>
       <div class="card callout"><p style="margin:0">${md(T.why)}</p></div>
 
@@ -117,8 +128,8 @@
         <a class="card" href="#kosten" style="text-decoration:none;color:inherit">
           <h3>💶 Kosten</h3><p class="muted small" style="margin:0">${esc(T.costs.total)} für zwei Personen.</p>
         </a>
-        <a class="card" href="#tipps" style="text-decoration:none;color:inherit">
-          <h3>📅 Buchungsfristen</h3><p class="muted small" style="margin:0">Flüge bis Frühjahr 2027, Ragung zuerst buchen.</p>
+        <a class="card" href="#todos" style="text-decoration:none;color:inherit">
+          <h3>📅 Buchungsfristen</h3><p class="muted small" style="margin:0">Alle Fristen mit Status in der To-do-Liste.</p>
         </a>
       </div>`;
   }
@@ -270,12 +281,21 @@
   }
 
   // ---------- Router ----------
+  let current = "";
+  Todos.subscribe(() => {
+    renderNav(current);
+    const teaser = document.getElementById("todoTeaser");
+    if (teaser) teaser.innerHTML = Todos.teaserHtml();
+  });
+
   function route() {
     let id = (location.hash || "").slice(1);
     if (!VIEWS[id]) id = "uebersicht";
     const station = T.stations.find((s) => s.id === id);
     view.innerHTML = station ? renderStation(station) : VIEWS[id]();
     if (station) bindTabs(station);
+    if (id === "todos") Todos.mount(view);
+    current = id;
     renderNav(id);
     sidebar.classList.remove("open");
     window.scrollTo(0, 0);

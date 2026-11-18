@@ -14,10 +14,20 @@ index.html        Grundgerüst
 css/style.css     Gestaltung
 js/data.js        alle Reiseinhalte (hier Texte, Preise, Links pflegen)
 js/app.js         Navigation (Hash-Routing) und Darstellung
+js/todos.js       To-do-Liste mit GitHub-Sync und Kalender-Export
+data/todos.json   To-dos (wird von der Seite selbst gespeichert)
 js/gate.js        Passwortabfrage (Sichtschutz)
 ```
 
 Texte in `data.js` dürfen `**fett**` und `[Link](https://…)` enthalten.
+
+## To-dos
+
+Die Liste steht in `data/todos.json`. Ohne Token zeigt die Seite sie nur an. Zum Bearbeiten legt man unter „To-dos → Bearbeiten aktivieren“ einmal pro Gerät einen GitHub-Token ab: Fine-grained token, nur für das Repository `suedkorea`, Berechtigung „Contents: Read and write“. Jede Änderung wird dann als Commit auf `main` gespeichert.
+
+Fristen lassen sich einzeln oder gesammelt als `.ics` in den Kalender übernehmen, mit Erinnerung eine Woche vorher und am Fristtag.
+
+Das Repository ist öffentlich: keine Buchungsnummern, Passdaten oder Zugangsdaten in die To-dos schreiben.
 
 ## Passwortabfrage
 
@@ -29,6 +39,5 @@ Passwort ändern: SHA-256 des neuen Passworts erzeugen (`printf '%s' 'neues-pass
 
 - Flugsuche
 - Hotel-Konfigurator
-- To-dos & Erinnerungen
 
 Neue Module: Eintrag in `MODULES_PLANNED` (data.js) bzw. eine Render-Funktion in `VIEWS` (app.js) ergänzen.
