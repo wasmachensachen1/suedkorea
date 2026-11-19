@@ -60,13 +60,13 @@ window.TRIP = {
         ["[N Seoul Tower](https://www.seoultower.co.kr/en/intro/index) am Namsan", "zum Sonnenuntergang, für den Blick über die Stadt."],
       ],
       hikes: [
-        ["Seoul City Wall am Inwangsan", "2–3 Stunden, gut ausgebaute Stufen, schräge Felsen und Blick auf den Palast. Startpunkt ist 15 Minuten vom Hotel entfernt."],
-        ["Bukhansan-Nationalpark", "die bequeme Variante durch das Gugi-dong-Tal, geführt und mit anschließendem Saunabesuch: [Private Bukhansan Hiking Tour & Korean Spa (Trazy)](https://www.trazy.com/experience/detail/private-bukhansan-hiking-tour-with-korean-spa). Die Route wird an die Kondition angepasst, Mittagessen und Hotelabholung sind inklusive."],
+        ["[Seoul City Wall am Inwangsan](https://seoulcitywall.seoul.go.kr/en/wallcourse/6.do)", "2–3 Stunden, gut ausgebaute Stufen, schräge Felsen und Blick auf den Palast. Startpunkt ist 15 Minuten vom Hotel entfernt."],
+        ["[Bukhansan-Nationalpark](https://english.visitseoul.net/nature/BukhansanNationalPark/ENP000369)", "die bequeme Variante durch das Gugi-dong-Tal, geführt und mit anschließendem Saunabesuch: [Private Bukhansan Hiking Tour & Korean Spa (Trazy)](https://www.trazy.com/experience/detail/private-bukhansan-hiking-tour-with-korean-spa). Die Route wird an die Kondition angepasst, Mittagessen und Hotelabholung sind inklusive."],
       ],
       tours: [
-        ["Night Dining Tour in Jongno mit Korean BBQ", "[O'ngo Food Communications](https://www.expedia.com.au/things-to-do/small-group-korean-night-food-tour.a48906096.activity-details)", "3,5 – 4 Std., Start 17 Uhr an der Station Anguk", "ca. 95 € p. P."],
-        ["Nami-Insel und Garden of Morning Calm, privat", "[Lokalee – Private Tour](https://www.lokalee.app/en/tours/nami-island-and-garden-of-morning-calm-private-tour-from-seoul) oder als Gruppentour über [Klook](https://www.klook.com/activity/8962-nami-island-petite-france-railbike-garden-of-morning-calm-day-tour-seoul/)", "9 – 10 Std.", "privat ca. 300 – 400 € für 2, Gruppe ca. 60 € p. P."],
-        ["Bukhansan-Wanderung mit Spa", "[Trazy](https://www.trazy.com/experience/detail/private-bukhansan-hiking-tour-with-korean-spa)", "ca. 6 Std.", "auf Anfrage, privat"],
+        ["[Night Dining Tour in Jongno mit Korean BBQ](https://ongofood.com/)", "[O'ngo Food Communications](https://www.expedia.com.au/things-to-do/small-group-korean-night-food-tour.a48906096.activity-details)", "3,5 – 4 Std., Start 17 Uhr an der Station Anguk", "ca. 95 € p. P."],
+        ["[Nami-Insel](https://namisum-en.imweb.me/71) und [Garden of Morning Calm](http://www.morningcalm.co.kr/), privat", "[Lokalee – Private Tour](https://www.lokalee.app/en/tours/nami-island-and-garden-of-morning-calm-private-tour-from-seoul) oder als Gruppentour über [Klook](https://www.klook.com/activity/8962-nami-island-petite-france-railbike-garden-of-morning-calm-day-tour-seoul/)", "9 – 10 Std.", "privat ca. 300 – 400 € für 2, Gruppe ca. 60 € p. P."],
+        ["[Bukhansan-Wanderung mit Spa](https://english.visitseoul.net/nature/BukhansanNationalPark/ENP000369)", "[Trazy](https://www.trazy.com/experience/detail/private-bukhansan-hiking-tour-with-korean-spa)", "ca. 6 Std.", "auf Anfrage, privat"],
       ],
       days: [
         ["Do 16.9.", "Landung ca. 10 Uhr, Check-in. Nachmittags Gyeongbokgung (letzter Chuseok-Tag, oft mit Festprogramm), dann Spaziergang am Cheonggyecheon. Früh schlafen."],
@@ -114,10 +114,10 @@ window.TRIP = {
       ],
       hikes: [
         ["[Jeju Olle Trail](http://www.jejuolle.org/trail/eng/), Route 7, erster Teil", "von Oedolgae (einer 20 m hohen Felsnadel) bis zum Hafen Beophwan. Etwa 2–3 Stunden an der Steilküste, gilt als schönster Abschnitt. Mehr Planungstipps im [Olle Trail Guide](https://jejuolletrailguide.net/)."],
-        ["Eoseungsaengak am Hallasan", "1,3 km zum Kraterrand, etwa 30 Minuten pro Strecke, mit Blick auf den Gipfel des Hallasan. Das ist die leichte Variante, der Gipfelweg ist ganztägig."],
+        ["[Eoseungsaengak am Hallasan](https://www.visitjeju.net/en/detail/view?contentsid=CONT_000000000500685)", "1,3 km zum Kraterrand, etwa 30 Minuten pro Strecke, mit Blick auf den Gipfel des Hallasan. Das ist die leichte Variante, ohne Reservierung. Der Gipfelweg ist ganztägig und muss über das [offizielle Hallasan-Reservierungssystem](https://visithalla.jeju.go.kr/contents/contents.do?id=49&language=en_US) gebucht werden."],
       ],
       tours: [
-        ["Privatwagen mit Fahrer, eigene Route (2 Tage)", "[Klook – Jeju Private Car Charter](https://www.klook.com/activity/174339-jeju-private-transfer/)", "9 Std. pro Tag", "ca. 170 – 235 € pro Tag"],
+        ["Privatwagen mit Fahrer, eigene Route (2 Tage)", "[Klook – Jeju Private Car Charter](https://www.klook.com/activity/174339-jeju-private-transfer/) oder der [Global Taxi Tour der Provinz Jeju](https://www.visitjeju.net/en/themtour/view?contentsid=CNTS_200000000012778) mit englischsprachigem Fahrer", "9 Std. pro Tag", "ca. 170 – 235 € pro Tag"],
         ["UNESCO-Stätten auf Jeju (Hintergrund)", "[UNESCO – Jeju Volcanic Island and Lava Tubes](https://whc.unesco.org/en/list/1264)", "–", "–"],
         ["Olle-Wanderung (selbst geführt)", "[Jeju Olle Foundation](http://www.jejuolle.org/trail/eng/)", "2 – 3 Std.", "kostenlos"],
       ],
@@ -166,12 +166,12 @@ window.TRIP = {
         ["[Essen](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000302003001000&uc_seq=1008)", "Dwaeji-gukbap (Schweinesuppe, Busans Klassiker), Milmyeon (kalte Weizennudeln), roher Fisch in Millak."],
       ],
       hikes: [
-        ["Igidae Coastal Walk", "etwa 4,7 km und 2 Stunden auf Holzstegen und Pfaden an der Steilküste, mit Blick auf Gwangan-Brücke und Haeundae. Er endet am Oryukdo Skywalk, einer Glasplattform über dem Meer."],
-        ["Mipo – Cheongsapo am Meer", "der ebene Fußweg auf der alten Bahntrasse unter den Sky Capsules, etwa 2 km."],
+        ["[Igidae Coastal Walk](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000302002001000&uc_seq=323)", "etwa 4,7 km und 2 Stunden auf Holzstegen und Pfaden an der Steilküste, mit Blick auf Gwangan-Brücke und Haeundae. Er endet am [Oryukdo Skywalk](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000301001001000&uc_seq=278), einer Glasplattform über dem Meer."],
+        ["[Mipo – Cheongsapo am Meer](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000302002001000&uc_seq=980)", "der ebene Fußweg auf der alten Bahntrasse unter den Sky Capsules, etwa 2 km."],
       ],
       tours: [
         ["Sky Capsule und Beach Train", "[Haeundae Blueline Park (offiziell)](https://www.bluelinepark.com)", "ca. 30 Min. pro Strecke", "Sky Capsule ca. 35.000–50.000 KRW pro Kapsel für 2, Beach Train ca. 10.000–17.000 KRW p. P."],
-        ["Selbst organisiert mit Taxi: Haedong Yonggungsa, Gamcheon, Jagalchi", "–", "halbe Tage", "Taxi ca. 15.000–30.000 KRW pro Fahrt"],
+        ["Selbst organisiert mit Taxi: [Haedong Yonggungsa](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000301001001000&uc_seq=261), [Gamcheon](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000301001001000&uc_seq=365), [Jagalchi](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000301003001000&uc_seq=412)", "Taxi über die App Kakao T oder am Taxistand", "halbe Tage", "Taxi ca. 15.000–30.000 KRW pro Fahrt"],
       ],
       days: [
         ["So 26.9.", "Ankunft, Strand von Haeundae, Uferweg um Dongbaekseom. Abends Blick von The Bay 101 auf Marine City."],
@@ -220,7 +220,7 @@ window.TRIP = {
       hikes: [],
       tours: [
         ["Private UNESCO-Tour mit Guide, Abholung im Hotel", "[Private Gyeongju UNESCO Heritage Tour (Expedia)](https://www.expedia.ie/things-to-do/private-gyeongju-unesco-heritage-tour-with-a-local-guide.a52620643.activity-details)", "ca. 4,5 Std.", "auf Anfrage, privat"],
-        ["Radtour durch die historische Zone", "selbst organisiert, Verleih an der Daereungwon/Cheomseongdae-Zone", "2 – 4 Std.", "ca. 5.000 – 10.000 KRW p. P."],
+        ["[Radtour durch die historische Zone](https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=221789)", "selbst organisiert, Verleih am Haupttor von Daereungwon ([Infos der Stadt Gyeongju](https://www.gyeongju.go.kr/tour/eng/page.do?mnu_uid=2768))", "2 – 4 Std.", "ca. 5.000 – 10.000 KRW p. P."],
       ],
       days: [
         ["Do 30.9.", "Ankunft gegen Mittag, Check-in. Nachmittags Tumuli-Park, Cheomseongdae und Dorf Gyochon. Abends Donggung und Wolji-Teich, Abendessen in Hwangnidan-gil."],
