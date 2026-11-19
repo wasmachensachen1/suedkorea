@@ -1,0 +1,34 @@
+{
+  "updatedAt": "2026-11-19T11:14:58.631Z",
+  "source": "Xotelo (TripAdvisor)",
+  "stations": {
+    "seoul": {
+      "ok": true,
+      "updatedAt": "2026-11-19T11:24:20.769Z",
+      "count": 300,
+      "locationKey": "g294197"
+    },
+    "jeju": {
+      "ok": false,
+      "error": "search (https://data.xotelo.com/api/search?query=The+Shilla+Jeju): API-Fehler: {\"status_code\":401,\"message\":\"This endpoint is available only for RapidAPI (see more at https://rapidapi.com/anastue-pGK7lGUO-Wo/api/xotelo-hotel-prices)\"}",
+      "failedAt": "2026-11-19T11:24:26.085Z"
+    },
+    "busan": {
+      "ok": true,
+      "updatedAt": "2026-11-19T11:34:22.240Z",
+      "count": 300,
+      "locationKey": "g297884"
+    },
+    "gyeongju": {
+      "ok": false,
+      "error": "search (https://data.xotelo.com/api/search?query=Gyeongju): API-Fehler: {\"status_code\":401,\"message\":\"This endpoint is available only for RapidAPI (see more at https://rapidapi.com/anastue-pGK7lGUO-Wo/api/xotelo-hotel-prices)\"}",
+      "failedAt": "2026-11-19T11:34:27.558Z"
+    },
+    "gangnam": {
+      "ok": true,
+      "updatedAt": "2026-11-19T11:44:08.933Z",
+      "count": 300,
+      "locationKey": "g294197"
+    }
+  }
+}
