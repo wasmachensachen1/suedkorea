@@ -57,17 +57,27 @@
     },
     {
       "id": "hotel-fourseasons",
-      "title": "Four Seasons Seoul buchen (16.–21.9.)",
+      "title": "GLAD Mapo buchen (16.–21.9.)",
       "category": "Hotels",
       "due": "2027-03-15",
       "status": "offen",
-      "description": "5 Nächte. Ihr landet am 16.9. gegen 10 Uhr: einen frühen Check-in anfragen.",
+      "description": "5 Nächte, 1 Zimmer für 2 Personen. Im Hotel-Konfigurator gewählt: ca. 174 € pro Nacht und Zimmer, zusammen ca. 870 €. Geschätzt (Schätzung: aktueller Preis 129 € (7.1.–12.1.) × Saisonfaktor 1,35), Stand 19.11.2026",
       "links": [
         {
-          "title": "Four Seasons Hotel Seoul",
-          "url": "https://www.fourseasons.com/seoul/"
+          "title": "GLAD Mapo (Details und Angebote)",
+          "url": "https://www.tripadvisor.com/Hotel_Review-g294197-d13819581-Reviews-GLAD_Mapo-Seoul.html"
         }
-      ]
+      ],
+      "planned": {
+        "title": "Four Seasons Seoul buchen (16.–21.9.)",
+        "description": "5 Nächte. Ihr landet am 16.9. gegen 10 Uhr: einen frühen Check-in anfragen.",
+        "links": [
+          {
+            "title": "Four Seasons Hotel Seoul",
+            "url": "https://www.fourseasons.com/seoul/"
+          }
+        ]
+      }
     },
     {
       "id": "hotel-shilla",

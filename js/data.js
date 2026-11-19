@@ -45,6 +45,7 @@ window.TRIP = {
       intro:
         "Im ersten Teil seht ihr das historische Seoul. Paläste, Hanok-Viertel und Märkte erreicht ihr vom Hotel aus zu Fuß. Dazu kommen eine abendliche Food-Tour und ein Tag im Grünen.",
       hotel: {
+        todoId: "hotel-fourseasons", // zugehöriges To-do in data/todos.json, wird bei Hotelwechsel angepasst
         name: "Four Seasons Hotel Seoul",
         url: "https://www.fourseasons.com/seoul/",
         text:
@@ -97,6 +98,7 @@ window.TRIP = {
       intro:
         "Jeju ist eine Vulkaninsel und UNESCO-Welterbe. Ende September ist das Meer noch warm genug zum Baden, und die Küstenwege sind angenehm zu gehen. Ihr wohnt im Resortgebiet Jungmun an der Südküste. An zwei Tagen fährt euch ein Fahrer über die Insel, die übrigen Tage sind für Strand, Pool und kurze Wege da.",
       hotel: {
+        todoId: "hotel-shilla", // zugehöriges To-do in data/todos.json, wird bei Hotelwechsel angepasst
         name: "The Shilla Jeju",
         url: "https://www.shilla.net/jeju",
         text:
@@ -153,6 +155,7 @@ window.TRIP = {
       intro:
         "In Busan kommen Großstadt und Meer zusammen. Ihr wohnt direkt am Strand von Haeundae und erkundet von dort Fischmärkte, Tempel an der Küste, bunte Hügelviertel und eine der schönsten Küstenwanderungen des Landes.",
       hotel: {
+        todoId: "hotel-paradise", // zugehöriges To-do in data/todos.json, wird bei Hotelwechsel angepasst
         name: "Paradise Hotel Busan",
         url: "https://www.hotels.com/ho196599",
         text:
@@ -206,6 +209,7 @@ window.TRIP = {
       intro:
         "Gyeongju war fast 1.000 Jahre lang die Hauptstadt des Silla-Reiches. Man nennt die Stadt auch ein „Museum ohne Mauern“. Königsgräber, Tempel und Paläste liegen nah beieinander und sind leicht mit dem Fahrrad zu erreichen. Hier übernachtet ihr im Hanok.",
       hotel: {
+        todoId: "hotel-ragung", // zugehöriges To-do in data/todos.json, wird bei Hotelwechsel angepasst
         name: "Ragung (Hanok-Hotel)",
         url: "https://bamboo-travel.co.uk/tours-of-south-korea/hotels/ragung",
         text:
@@ -256,6 +260,7 @@ window.TRIP = {
       intro:
         "Zum Schluss lernt ihr die moderne Seite Seouls kennen: Gangnam, Wolkenkratzer, Design-Viertel und der Han-Fluss. Am Ende bleibt noch Zeit zum Einkaufen und für ein Abschiedsessen.",
       hotel: {
+        todoId: "hotel-josun", // zugehöriges To-do in data/todos.json, wird bei Hotelwechsel angepasst
         name: "Josun Palace, a Luxury Collection Hotel",
         url: "https://guide.michelin.com/ch/de/hotels-stays/seoul/josun-palace-a-luxury-collection-hotel-seoul-12550",
         text:

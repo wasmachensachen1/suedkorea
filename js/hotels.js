@@ -60,13 +60,69 @@
     }
   }
 
-  function select(station, entry) {
-    return save((sel) => { sel[station.id] = entry; },
+  async function select(station, entry) {
+    const prev = effective(station).name;
+    const ok = await save((sel) => { sel[station.id] = entry; },
       `Hotel für ${station.name} (${station.area}): ${entry.name}`);
+    if (ok) await syncTodoReport(station, entry, prev);
+    return ok;
   }
-  function reset(station) {
-    return save((sel) => { delete sel[station.id]; },
+  async function reset(station) {
+    const prev = effective(station).name;
+    const ok = await save((sel) => { delete sel[station.id]; },
       `Hotel für ${station.name} (${station.area}) auf Planvorschlag zurückgesetzt`);
+    if (ok) await syncTodoReport(station, null, prev);
+    return ok;
+  }
+
+  async function syncTodoReport(s, entry, prev) {
+    const done = await syncTodo(s, entry, prev);
+    if (!done) {
+      const why = (window.Todos && window.Todos.state.error) || "";
+      state.error = `${L("Hotel gespeichert, aber das To-do wurde nicht angepasst", "Hodel gspeichert, awwer's To-do is net agepasst worre")}${why ? `: ${why}` : "."}`;
+      notify();
+    }
+  }
+
+  // Das Buchungs-To-do der Station an das Hotel im Reiseplan anpassen. Frist und Status bleiben;
+  // war das alte Hotel schon gebucht (erledigt), geht das To-do mit Storno-Hinweis zurück auf offen.
+  // Der ursprüngliche Text wird in "planned" aufgehoben, damit "Zurücksetzen" ihn wiederherstellt.
+  function syncTodo(s, entry, prevName) {
+    const Todos = window.Todos;
+    if (!Todos || !Todos.update) return Promise.resolve(false);
+    const id = s.hotel.todoId || `hotel-${s.id}`;
+    const newName = entry ? entry.name : s.hotel.name;
+    const day = new Date().toLocaleDateString("de-DE");
+    return Todos.update((items) => {
+      let t = items.find((x) => x.id === id);
+      if (!t) {
+        t = { id, title: "", category: "Hotels", due: "", status: "offen", description: "", links: [] };
+        items.push(t);
+      } else if (!t.planned) {
+        t.planned = { title: t.title, description: t.description || "", links: t.links || [] };
+      }
+      if (entry) {
+        const rooms = entry.rooms || 1, adults = entry.adults || 2;
+        const total = entry.pricePerNight * rooms * s.nights;
+        t.title = `${entry.name} buchen (${s.dates})`;
+        t.description = `${s.nights} Nächte, ${rooms} Zimmer für ${adults} ${adults === 1 ? "Person" : "Personen"}. ` +
+          `Im Hotel-Konfigurator gewählt: ${entry.estimate ? "ca. " : ""}${eur(entry.pricePerNight)} pro Nacht und Zimmer, ` +
+          `zusammen ${entry.estimate ? "ca. " : ""}${eur(total)}. ${entry.priceSource || ""}`.trim();
+        t.links = entry.url ? [{ title: `${entry.name} (Details und Angebote)`, url: entry.url }] : [];
+      } else if (t.planned) {
+        t.title = t.planned.title;
+        t.description = t.planned.description;
+        t.links = t.planned.links;
+        delete t.planned;
+      } else {
+        t.title = `${s.hotel.name} buchen (${s.dates})`;
+        t.links = s.hotel.url ? [{ title: s.hotel.name, url: s.hotel.url }] : [];
+      }
+      if (t.status === "erledigt" && prevName && prevName !== newName) {
+        t.status = "offen";
+        t.description = `**Hotel gewechselt am ${day}:** vorher ${prevName}. Falls das schon gebucht war, bitte stornieren.\n\n${t.description}`;
+      }
+    }, `To-do angepasst: ${newName} für ${s.name} (${s.area})`);
   }
 
   // ---------- Werte für Reiseplan und Kosten ----------
@@ -558,6 +614,7 @@
     effective,
     costRange,
     eur,
+    syncTodo,
     subscribe(fn) { listeners.push(fn); },
     mount(el, stationId) {
       if (stationId && T.stations.some((s) => s.id === stationId)) { form.stationId = stationId; persistForm(); }
