@@ -1,4 +1,27 @@
 {
   "version": 1,
-  "requests": []
+  "requests": [
+    {
+      "id": "r-mwo0d6aq-o4zw",
+      "kind": "search",
+      "createdAt": "2026-11-19T20:34:07.778Z",
+      "params": {
+        "origins": [
+          "FRA"
+        ],
+        "destinations": [
+          "ICN"
+        ],
+        "date": "2027-09-15",
+        "flex": true,
+        "tripDays": 21,
+        "cls": "business",
+        "stops": "any",
+        "airlines": [],
+        "depFrom": 0,
+        "depTo": 23,
+        "maxDuration": null
+      }
+    }
+  ]
 }
