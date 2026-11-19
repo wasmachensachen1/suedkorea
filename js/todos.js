@@ -9,13 +9,17 @@
   const CFG = { ...GH.CFG, path: "data/todos.json" };
   const FILTER_KEY = "suedkorea-todo-filter";
 
-  const STATUS = [
+  const L = (hd, kp) => window.Theme.t(hd, kp); // hochdeutsch / kurpfälzisch
+  const STATUS_HD = [
     ["offen", "Offen"],
     ["in_arbeit", "In Arbeit"],
     ["erledigt", "Erledigt"],
     ["entfaellt", "Entfällt"],
   ];
-  const STATUS_LABEL = Object.fromEntries(STATUS);
+  const STATUS_KP = { offen: "Offe", in_arbeit: "Am Schaffe", erledigt: "Erledischt", entfaellt: "Fällt flach" };
+  const STATUS_LABEL = Object.fromEntries(STATUS_HD); // für Commit-Nachrichten (immer Hochdeutsch)
+  const statusList = () => STATUS_HD.map(([v, l]) => [v, L(l, STATUS_KP[v])]);
+  const statusLabel = (v) => L(STATUS_LABEL[v] || v, STATUS_KP[v] || v);
   const OPEN = (t) => t.status === "offen" || t.status === "in_arbeit";
   const CATEGORIES = ["Flüge", "Hotels", "Transport", "Touren", "Einreise", "Vorbereitung"];
   const SOON_DAYS = 14;
@@ -59,14 +63,14 @@
     return "";
   }
   function dueText(t) {
-    if (!t.due) return "ohne Frist";
+    if (!t.due) return L("ohne Frist", "ohne Frischd");
     if (!OPEN(t)) return fmtDate(t.due);
     const n = daysUntil(t.due);
-    if (n < -1) return `${fmtDate(t.due)} · seit ${-n} Tagen überfällig`;
-    if (n === -1) return `${fmtDate(t.due)} · seit gestern überfällig`;
-    if (n === 0) return `${fmtDate(t.due)} · heute fällig`;
-    if (n === 1) return `${fmtDate(t.due)} · morgen`;
-    if (n <= 60) return `${fmtDate(t.due)} · in ${n} Tagen`;
+    if (n < -1) return `${fmtDate(t.due)} · ${L(`seit ${-n} Tagen überfällig`, `seit ${-n} Dääch iwwerfällisch`)}`;
+    if (n === -1) return `${fmtDate(t.due)} · ${L("seit gestern überfällig", "seit geschdern iwwerfällisch")}`;
+    if (n === 0) return `${fmtDate(t.due)} · ${L("heute fällig", "heit fällisch")}`;
+    if (n === 1) return `${fmtDate(t.due)} · ${L("morgen", "morje")}`;
+    if (n <= 60) return `${fmtDate(t.due)} · ${L(`in ${n} Tagen`, `in ${n} Dääch`)}`;
     return fmtDate(t.due);
   }
   const byDue = (a, b) => (a.due || "9999").localeCompare(b.due || "9999") || a.title.localeCompare(b.title, "de");
@@ -94,7 +98,7 @@
 
   // Änderung frisch auf den aktuellen Stand anwenden und speichern; bei Konflikt neu versuchen.
   async function mutate(fn, message) {
-    if (!token()) { state.error = "Zum Bearbeiten zuerst einen GitHub-Token hinterlegen."; notify(); return false; }
+    if (!token()) { state.error = L("Zum Bearbeiten zuerst einen GitHub-Token hinterlegen.", "Zum Bearbeide erschd mol en GitHub-Token hinnerlege."); notify(); return false; }
     state.saving = true; state.error = "";
     const optimistic = JSON.parse(JSON.stringify(state.items));
     fn(optimistic);
@@ -112,7 +116,7 @@
       state.loadedAt = new Date();
       return true;
     } catch (e) {
-      state.error = `Nicht gespeichert: ${e.message || e}`;
+      state.error = `${L("Nicht gespeichert", "Net gspeichert")}: ${e.message || e}`;
       await load().catch(() => {});
       return false;
     } finally {
@@ -156,7 +160,7 @@
       const desc = [
         plain(t.description),
         ...(t.links || []).map((l) => (l.title ? `${l.title}: ${l.url}` : l.url)),
-        `Status: ${STATUS_LABEL[t.status] || t.status}`,
+        `${L("Status", "Schdatus")}: ${statusLabel(t.status)}`,
       ].filter(Boolean).join("\n\n");
       L.push(
         "BEGIN:VEVENT",
@@ -170,8 +174,8 @@
         ...(t.category ? [`CATEGORIES:${icsEscape(t.category)}`] : []),
         "TRANSP:TRANSPARENT",
         // Erinnerung eine Woche vorher um 9 Uhr und am Fristtag um 9 Uhr
-        "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEscape("In einer Woche fällig: " + t.title)}`, "TRIGGER:-P6DT15H", "END:VALARM",
-        "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEscape("Heute fällig: " + t.title)}`, "TRIGGER:PT9H", "END:VALARM",
+        "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEscape(L("In einer Woche fällig: ", "In ännere Woch fällisch: ") + t.title)}`, "TRIGGER:-P6DT15H", "END:VALARM",
+        "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEscape(L("Heute fällig: ", "Heit fällisch: ") + t.title)}`, "TRIGGER:PT9H", "END:VALARM",
         "END:VEVENT",
       );
     });
@@ -218,8 +222,8 @@
         <div class="todo-main">
           <div class="todo-top">
             <h3>${esc(t.title)}</h3>
-            <select class="todo-status st-${esc(t.status)}" data-act="status" aria-label="Status" ${canEdit ? "" : "disabled title=\"Zum Ändern GitHub-Token hinterlegen\""}>
-              ${STATUS.map(([v, l]) => `<option value="${v}"${v === t.status ? " selected" : ""}>${l}</option>`).join("")}
+            <select class="todo-status st-${esc(t.status)}" data-act="status" aria-label="${L("Status", "Schdatus")}" ${canEdit ? "" : `disabled title="${L("Zum Ändern GitHub-Token hinterlegen", "Zum Ännere GitHub-Token hinnerlege")}"`}>
+              ${statusList().map(([v, l]) => `<option value="${v}"${v === t.status ? " selected" : ""}>${l}</option>`).join("")}
             </select>
           </div>
           <div class="todo-meta">
@@ -229,24 +233,25 @@
           ${t.description ? `<p class="todo-desc">${md(t.description)}</p>` : ""}
           ${t.links && t.links.length ? `<ul class="todo-links">${t.links.map((l) => `<li>${linkHtml(l)}</li>`).join("")}</ul>` : ""}
           <div class="todo-actions">
-            ${t.due ? `<button type="button" class="btn-link" data-act="ics">Kalendereintrag</button>` : ""}
-            ${canEdit ? `<button type="button" class="btn-link" data-act="edit">Bearbeiten</button>
-            <button type="button" class="btn-link danger" data-act="delete">Löschen</button>` : ""}
+            ${t.due ? `<button type="button" class="btn-link" data-act="ics">${L("Kalendereintrag", "In de Kalenner")}</button>` : ""}
+            ${canEdit ? `<button type="button" class="btn-link" data-act="edit">${L("Bearbeiten", "Bearbeide")}</button>
+            <button type="button" class="btn-link danger" data-act="delete">${L("Löschen", "Wegmache")}</button>` : ""}
           </div>
         </div>
       </article>`;
   }
 
   function groupsFor(items) {
-    if (filter === "erledigt") return [["Erledigt und entfallen", items.filter((t) => !OPEN(t))]];
+    const done = L("Erledigt und entfallen", "Erledischt un flachgfalle");
+    if (filter === "erledigt") return [[done, items.filter((t) => !OPEN(t))]];
     const open = items.filter(OPEN);
     const g = [
-      ["Überfällig", open.filter((t) => urgency(t) === "overdue")],
-      [`Fällig in den nächsten ${SOON_DAYS} Tagen`, open.filter((t) => urgency(t) === "soon")],
-      ["Später", open.filter((t) => t.due && !urgency(t))],
-      ["Ohne Frist", open.filter((t) => !t.due)],
+      [L("Überfällig", "Iwwerfällisch"), open.filter((t) => urgency(t) === "overdue")],
+      [L(`Fällig in den nächsten ${SOON_DAYS} Tagen`, `Fällisch in de nägschde ${SOON_DAYS} Dääch`), open.filter((t) => urgency(t) === "soon")],
+      [L("Später", "Schbäder"), open.filter((t) => t.due && !urgency(t))],
+      [L("Ohne Frist", "Ohne Frischd"), open.filter((t) => !t.due)],
     ];
-    if (filter === "alle") g.push(["Erledigt und entfallen", items.filter((t) => !OPEN(t))]);
+    if (filter === "alle") g.push([done, items.filter((t) => !OPEN(t))]);
     return g;
   }
 
@@ -258,45 +263,45 @@
     const items = state.items.slice().sort(byDue);
 
     let sync;
-    if (state.saving) sync = `<span class="sync-dot busy"></span> Speichere auf GitHub …`;
-    else if (state.loading) sync = `<span class="sync-dot busy"></span> Lade …`;
-    else if (tok) sync = `<span class="sync-dot ok"></span> Bearbeiten aktiv · synchronisiert mit GitHub${state.loadedAt ? ` · Stand ${state.loadedAt.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}` : ""}`;
-    else sync = `<span class="sync-dot"></span> Nur lesen. Zum Bearbeiten einen GitHub-Token hinterlegen.`;
+    if (state.saving) sync = `<span class="sync-dot busy"></span> ${L("Speichere auf GitHub …", "Schbeicher uff GitHub …")}`;
+    else if (state.loading) sync = `<span class="sync-dot busy"></span> ${L("Lade …", "Lad …")}`;
+    else if (tok) sync = `<span class="sync-dot ok"></span> ${L("Bearbeiten aktiv · synchronisiert mit GitHub", "Bearbeide is aa · mit GitHub abgeglische")}${state.loadedAt ? ` · ${L("Stand", "Schdand")} ${state.loadedAt.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}` : ""}`;
+    else sync = `<span class="sync-dot"></span> ${L("Nur lesen. Zum Bearbeiten einen GitHub-Token hinterlegen.", "Nur gugge. Zum Bearbeide en GitHub-Token hinnerlege.")}`;
 
     const groups = state.loaded ? groupsFor(items).filter(([, list]) => list.length) : [];
 
     mounted.innerHTML = `
       <h1>✅ To-dos</h1>
-      <p class="muted" style="max-width:70ch">Alles, was vor der Reise zu buchen und zu erledigen ist, mit Frist und Links. Änderungen werden im Repository gespeichert, so sehen alle Geräte denselben Stand.</p>
+      <p class="muted" style="max-width:70ch">${L("Alles, was vor der Reise zu buchen und zu erledigen ist, mit Frist und Links. Änderungen werden im Repository gespeichert, so sehen alle Geräte denselben Stand.", "Alles, was mer vor de Reis noch buche un erledische muss, mit Frischd un Links. Was ihr ännert, landet im Repository, so hänn all Gerät denselwe Schdand.")}</p>
 
       <div class="todo-bar card">
         <div class="todo-sync">${sync}</div>
         <div class="todo-bar-actions">
-          <button type="button" class="btn" data-act="reload">Neu laden</button>
-          <button type="button" class="btn" data-act="ics-all">Alle Fristen als Kalender (.ics)</button>
-          <button type="button" class="btn" data-act="token">${tok ? "GitHub-Token" : "Bearbeiten aktivieren"}</button>
+          <button type="button" class="btn" data-act="reload">${L("Neu laden", "Nei lade")}</button>
+          <button type="button" class="btn" data-act="ics-all">${L("Alle Fristen als Kalender (.ics)", "All Frischde als Kalenner (.ics)")}</button>
+          <button type="button" class="btn" data-act="token">${tok ? "GitHub-Token" : L("Bearbeiten aktivieren", "Bearbeide oschalde")}</button>
         </div>
       </div>
 
       ${state.error ? `<div class="card todo-error" role="alert">${esc(state.error)}</div>` : ""}
 
       <div class="todo-stats">
-        <div class="stat-box${c.overdue ? " overdue" : ""}"><strong>${c.overdue}</strong><span>überfällig</span></div>
-        <div class="stat-box${c.soon ? " soon" : ""}"><strong>${c.soon}</strong><span>in ${SOON_DAYS} Tagen fällig</span></div>
-        <div class="stat-box"><strong>${c.offen + c.in_arbeit}</strong><span>offen</span></div>
-        <div class="stat-box"><strong>${c.erledigt}</strong><span>erledigt</span></div>
+        <div class="stat-box${c.overdue ? " overdue" : ""}"><strong>${c.overdue}</strong><span>${L("überfällig", "iwwerfällisch")}</span></div>
+        <div class="stat-box${c.soon ? " soon" : ""}"><strong>${c.soon}</strong><span>${L(`in ${SOON_DAYS} Tagen fällig`, `in ${SOON_DAYS} Dääch fällisch`)}</span></div>
+        <div class="stat-box"><strong>${c.offen + c.in_arbeit}</strong><span>${L("offen", "offe")}</span></div>
+        <div class="stat-box"><strong>${c.erledigt}</strong><span>${L("erledigt", "erledischt")}</span></div>
       </div>
 
       <div class="todo-toolbar">
         <div class="seg" role="group" aria-label="Filter">
-          ${[["offen", "Offen"], ["erledigt", "Erledigt"], ["alle", "Alle"]].map(([v, l]) =>
+          ${[["offen", L("Offen", "Offe")], ["erledigt", L("Erledigt", "Erledischt")], ["alle", L("Alle", "All")]].map(([v, l]) =>
             `<button type="button" data-filter="${v}" aria-pressed="${filter === v}">${l}</button>`).join("")}
         </div>
-        ${tok ? `<button type="button" class="btn primary" data-act="new">+ To-do hinzufügen</button>` : ""}
+        ${tok ? `<button type="button" class="btn primary" data-act="new">${L("+ To-do hinzufügen", "+ To-do dezu due")}</button>` : ""}
       </div>
 
-      ${!state.loaded && state.loading ? `<p class="muted">Lade To-dos …</p>` : ""}
-      ${state.loaded && !groups.length ? `<div class="card soon-card"><p style="margin:0">Hier ist nichts – ${filter === "erledigt" ? "noch nichts erledigt" : "alles erledigt"}.</p></div>` : ""}
+      ${!state.loaded && state.loading ? `<p class="muted">${L("Lade To-dos …", "Lad To-dos …")}</p>` : ""}
+      ${state.loaded && !groups.length ? `<div class="card soon-card"><p style="margin:0">${filter === "erledigt" ? L("Hier ist nichts – noch nichts erledigt.", "Do is nix – noch nix erledischt.") : L("Hier ist nichts – alles erledigt.", "Do is nix – alles erledischt. Allemol!")}</p></div>` : ""}
       ${groups.map(([title, list]) => `
         <h2 class="todo-group">${esc(title)} <span class="muted">${list.length}</span></h2>
         <div class="todo-list">${list.map(itemHtml).join("")}</div>`).join("")}
@@ -325,23 +330,23 @@
     t = t || { title: "", category: "", due: "", status: "offen", description: "", links: [] };
     dlg.innerHTML = `
       <form method="dialog" class="todo-form">
-        <h2>${isNew ? "Neues To-do" : "To-do bearbeiten"}</h2>
-        <label>Titel<input name="title" required value="${esc(t.title)}"></label>
+        <h2>${isNew ? L("Neues To-do", "Neies To-do") : L("To-do bearbeiten", "To-do bearbeide")}</h2>
+        <label>${L("Titel", "Didel")}<input name="title" required value="${esc(t.title)}"></label>
         <div class="form-row">
-          <label>Frist<input type="date" name="due" value="${esc(t.due || "")}"></label>
-          <label>Status<select name="status">${STATUS.map(([v, l]) => `<option value="${v}"${v === t.status ? " selected" : ""}>${l}</option>`).join("")}</select></label>
+          <label>${L("Frist", "Frischd")}<input type="date" name="due" value="${esc(t.due || "")}"></label>
+          <label>${L("Status", "Schdatus")}<select name="status">${statusList().map(([v, l]) => `<option value="${v}"${v === t.status ? " selected" : ""}>${l}</option>`).join("")}</select></label>
         </div>
-        <label>Kategorie<input name="category" list="todoCats" value="${esc(t.category || "")}" placeholder="z. B. Hotels">
+        <label>${L("Kategorie", "Kadegorie")}<input name="category" list="todoCats" value="${esc(t.category || "")}" placeholder="${L("z. B. Hotels", "z. B. Hodels")}">
           <datalist id="todoCats">${[...new Set([...CATEGORIES, ...state.items.map((x) => x.category).filter(Boolean)])].map((c) => `<option value="${esc(c)}">`).join("")}</datalist>
         </label>
-        <label>Beschreibung<textarea name="description" rows="4" placeholder="**fett** und [Linktext](https://…) sind möglich">${esc(t.description || "")}</textarea></label>
-        <label>Links <span class="muted small">(einer pro Zeile: Titel | https://…)</span>
-          <textarea name="links" rows="3" placeholder="Hotel-Website | https://…">${esc((t.links || []).map((l) => (l.title ? `${l.title} | ${l.url}` : l.url)).join("\n"))}</textarea>
+        <label>${L("Beschreibung", "Beschreiwung")}<textarea name="description" rows="4" placeholder="${L("**fett** und [Linktext](https://…) sind möglich", "**fett** un [Linktext](https://…) gehn aa")}">${esc(t.description || "")}</textarea></label>
+        <label>Links <span class="muted small">${L("(einer pro Zeile: Titel | https://…)", "(ääner pro Zeil: Didel | https://…)")}</span>
+          <textarea name="links" rows="3" placeholder="${L("Hotel-Website | https://…", "Hodel-Webseit | https://…")}">${esc((t.links || []).map((l) => (l.title ? `${l.title} | ${l.url}` : l.url)).join("\n"))}</textarea>
         </label>
-        <p class="small muted" style="margin:0">Hinweis: Das Repository ist öffentlich. Bitte keine Buchungsnummern, Passdaten oder Zugangsdaten eintragen.</p>
+        <p class="small muted" style="margin:0">${L("Hinweis: Das Repository ist öffentlich. Bitte keine Buchungsnummern, Passdaten oder Zugangsdaten eintragen.", "Uffbasse: Des Repository is öffentlich. Kää Buchungsnummern, Passdaten odder Zugangsdaten neischreiwe!")}</p>
         <div class="form-actions">
-          <button type="button" class="btn" value="cancel" data-close>Abbrechen</button>
-          <button type="submit" class="btn primary" value="save">Speichern</button>
+          <button type="button" class="btn" value="cancel" data-close>${L("Abbrechen", "Loss es")}</button>
+          <button type="submit" class="btn primary" value="save">${L("Speichern", "Schbeichere")}</button>
         </div>
       </form>`;
     dlg.querySelector("[data-close]").addEventListener("click", () => dlg.close());
@@ -380,22 +385,22 @@
     const newUrl = "https://github.com/settings/personal-access-tokens/new";
     dlg.innerHTML = `
       <form method="dialog" class="todo-form">
-        <h2>Bearbeiten aktivieren</h2>
-        <p class="small">Damit die Seite Änderungen speichern kann, braucht sie auf diesem Gerät einmalig einen persönlichen GitHub-Token. So legst du ihn an:</p>
+        <h2>${L("Bearbeiten aktivieren", "Bearbeide oschalde")}</h2>
+        <p class="small">${L("Damit die Seite Änderungen speichern kann, braucht sie auf diesem Gerät einmalig einen persönlichen GitHub-Token. So legst du ihn an:", "Dass die Seit ebbes schbeichere kann, braucht's uff dem Gerät ämol en persönliche GitHub-Token. So legsch'n o:")}</p>
         <ol class="small">
-          <li><a href="${newUrl}" target="_blank" rel="noopener">Neuen „Fine-grained token“ anlegen</a> (als <strong>${esc(CFG.owner)}</strong> angemeldet).</li>
-          <li>Name z. B. „Südkorea To-dos“, Ablaufdatum z. B. nach der Reise.</li>
+          <li><a href="${newUrl}" target="_blank" rel="noopener">${L("Neuen „Fine-grained token“ anlegen", "En neie „Fine-grained token“ olege")}</a> (${L("als", "als")} <strong>${esc(CFG.owner)}</strong> ${L("angemeldet", "ogemeldet")}).</li>
+          <li>${L("Name z. B. „Südkorea To-dos“, Ablaufdatum z. B. nach der Reise.", "Name z. B. „Südkorea To-dos“, Ablaufdatum z. B. nach de Reis.")}</li>
           <li>Repository access: <strong>Only select repositories</strong> → <strong>${esc(CFG.repo)}</strong>.</li>
           <li>Permissions → Repository permissions → <strong>Contents: Read and write</strong>.</li>
-          <li>„Generate token“ und den Token hier einfügen.</li>
+          <li>${L("„Generate token“ und den Token hier einfügen.", "„Generate token“ un de Token do neidue.")}</li>
         </ol>
         <label>GitHub-Token<input name="token" type="password" autocomplete="off" placeholder="github_pat_…" value="${esc(tok)}"></label>
-        <p class="small muted" style="margin:0">Der Token wird nur in diesem Browser gespeichert. Auf geteilten Geräten nicht verwenden.</p>
+        <p class="small muted" style="margin:0">${L("Der Token wird nur in diesem Browser gespeichert. Auf geteilten Geräten nicht verwenden.", "De Token bleibt nur in dem Browser do. Uff Gerät, wo aa annere dran gehn, net nemme.")}</p>
         <p class="small todo-error-inline" id="tokenMsg" hidden></p>
         <div class="form-actions">
-          ${tok ? `<button type="button" class="btn danger" data-remove>Token entfernen</button>` : ""}
-          <button type="button" class="btn" data-close>Abbrechen</button>
-          <button type="submit" class="btn primary">Prüfen und speichern</button>
+          ${tok ? `<button type="button" class="btn danger" data-remove>${L("Token entfernen", "Token wegmache")}</button>` : ""}
+          <button type="button" class="btn" data-close>${L("Abbrechen", "Loss es")}</button>
+          <button type="submit" class="btn primary">${L("Prüfen und speichern", "Brife un schbeichere")}</button>
         </div>
       </form>`;
     dlg.querySelector("[data-close]").addEventListener("click", () => dlg.close());
@@ -406,7 +411,7 @@
       const val = ev.target.elements.namedItem("token").value.trim();
       const msg = dlg.querySelector("#tokenMsg");
       if (!val) return;
-      msg.hidden = false; msg.textContent = "Prüfe …";
+      msg.hidden = false; msg.textContent = L("Prüfe …", "Brif …");
       try {
         await fetchRemote(val);
         GH.setToken(val);
@@ -433,7 +438,7 @@
     else if (act === "ics" && t) download(`todo-${t.id}.ics`, buildIcs([t]));
     else if (act === "edit" && t) openEditor(t);
     else if (act === "delete" && t) {
-      if (confirm(`„${t.title}“ löschen?`)) {
+      if (confirm(L(`„${t.title}“ löschen?`, `„${t.title}“ werklich wegmache?`))) {
         const id = t.id;
         mutate((items) => { const i = items.findIndex((x) => x.id === id); if (i >= 0) items.splice(i, 1); }, `To-do gelöscht: ${t.title}`);
       }
@@ -472,12 +477,12 @@
     // Kurzübersicht für die Startseite
     teaserHtml() {
       const { esc } = U();
-      if (!state.loaded) return `<p class="muted small" style="margin:0">Lade To-dos …</p>`;
+      if (!state.loaded) return `<p class="muted small" style="margin:0">${L("Lade To-dos …", "Lad To-dos …")}</p>`;
       const c = counts();
       const next = state.items.filter((t) => OPEN(t) && t.due).sort(byDue).slice(0, 4);
       return `
-        <p class="small" style="margin:0 0 .6rem">${c.overdue ? `<strong class="txt-overdue">${c.overdue} überfällig</strong> · ` : ""}${c.offen + c.in_arbeit} offen · ${c.erledigt} erledigt</p>
-        ${next.length ? `<ul class="todo-teaser">${next.map((t) => `<li class="${urgency(t)}"><span>${esc(t.title)}</span><span class="muted">${esc(fmtDate(t.due))}</span></li>`).join("")}</ul>` : `<p class="muted small" style="margin:0">Nichts offen.</p>`}`;
+        <p class="small" style="margin:0 0 .6rem">${c.overdue ? `<strong class="txt-overdue">${c.overdue} ${L("überfällig", "iwwerfällisch")}</strong> · ` : ""}${c.offen + c.in_arbeit} ${L("offen", "offe")} · ${c.erledigt} ${L("erledigt", "erledischt")}</p>
+        ${next.length ? `<ul class="todo-teaser">${next.map((t) => `<li class="${urgency(t)}"><span>${esc(t.title)}</span><span class="muted">${esc(fmtDate(t.due))}</span></li>`).join("")}</ul>` : `<p class="muted small" style="margin:0">${L("Nichts offen.", "Nix offe.")}</p>`}`;
     },
   };
 
