@@ -36,8 +36,9 @@ window.TRIP = {
       checkIn: "2027-09-16",
       checkOut: "2027-09-21",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { locationKey: "g294197", query: "Seoul", center: [37.5720, 126.9769], centerName: "Gwanghwamun-Platz" },
+      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { locationKey: "g294197", center: [37.5720, 126.9769], centerName: "Gwanghwamun-Platz" },
       focus: "Paläste, Märkte, Food-Tour, Tagesausflug ins Grüne",
       color: "#c2410c",
       intro:
@@ -86,8 +87,9 @@ window.TRIP = {
       checkIn: "2027-09-21",
       checkOut: "2027-09-26",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { query: "The Shilla Jeju", center: [33.2475, 126.4115], centerName: "Jungmun-Resortgebiet" },
+      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { urlMatch: "Seogwipo", center: [33.2475, 126.4115], centerName: "Jungmun-Resortgebiet" },
       focus: "Strand, Olle-Küstenwege, Vulkanlandschaft",
       color: "#0e7490",
       intro:
@@ -140,8 +142,9 @@ window.TRIP = {
       checkIn: "2027-09-26",
       checkOut: "2027-09-30",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { locationKey: "g297884", query: "Busan", center: [35.1587, 129.1604], centerName: "Haeundae Beach" },
+      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { locationKey: "g297884", center: [35.1587, 129.1604], centerName: "Haeundae Beach" },
       focus: "Stadtstrand, Fischmarkt, Küstenwanderung",
       color: "#1d4ed8",
       intro:
@@ -191,8 +194,9 @@ window.TRIP = {
       checkIn: "2027-09-30",
       checkOut: "2027-10-03",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { query: "Gyeongju", center: [35.8357, 129.2129], centerName: "historisches Zentrum (Daereungwon)" },
+      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { urlMatch: "Gyeongju", center: [35.8357, 129.2129], centerName: "historisches Zentrum (Daereungwon)" },
       focus: "UNESCO-Tempel, Königsgräber, Hanok-Nächte",
       color: "#7c3aed",
       intro:
@@ -239,8 +243,9 @@ window.TRIP = {
       checkIn: "2027-10-03",
       checkOut: "2027-10-06",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, wird sie über query ermittelt. center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { locationKey: "g294197", query: "Seoul", center: [37.5115, 127.0595], centerName: "COEX / Bongeunsa" },
+      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // center ist der Bezugspunkt für "zentrale Lage".
+      hotelSearch: { locationKey: "g294197", center: [37.5115, 127.0595], centerName: "COEX / Bongeunsa" },
       focus: "Modernes Seoul, Shopping, Abschied",
       color: "#be185d",
       intro:
