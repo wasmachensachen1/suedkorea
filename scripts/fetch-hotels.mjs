@@ -13,7 +13,7 @@
 // so füllt sich die Liste über mehrere Tage auf.
 //
 // Aufruf: node scripts/fetch-hotels.mjs [station-id ...]
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
 import vm from "node:vm";
 
 const XO = "https://data.xotelo.com/api";
@@ -93,25 +93,43 @@ async function loadList(loc, pages = LIST_PAGES) {
 
 // Orts-ID: aus data.js, aus dem letzten Lauf, sonst über die Landesliste ermitteln
 // (die Suche der API ist inzwischen nur noch über RapidAPI nutzbar).
-async function locationKey(s, prevIndex) {
+// Orts-ID und Ortsname stehen in jedem TripAdvisor-Link:
+//   …/Hotel_Review-g297892-d307389-Reviews-The_Shilla_Jeju-Seogwipo_Jeju_Island.html
+// (Der "key" der API taugt dafür nicht: bei der Landesliste beginnt er immer mit der Landes-ID.)
+function urlGeo(url) {
+  const m = String(url || "").match(/Hotel_Review-(g\d+)-d\d+-Reviews-.*-([A-Za-z_]+)\.html/);
+  return m ? { geo: m[1], place: m[2] } : null;
+}
+
+// Orts-ID: aus data.js, sonst über die Landesliste anhand des Ortsnamens in den Links ermitteln
+// (die Suche der API ist inzwischen nur noch über RapidAPI nutzbar).
+async function locationKey(s) {
   if (s.hotelSearch.locationKey) return s.hotelSearch.locationKey;
-  const prev = prevIndex.stations && prevIndex.stations[s.id];
-  if (prev && prev.locationKey) return prev.locationKey;
   const match = s.hotelSearch.urlMatch;
   if (!match) throw new Error(`Für ${s.id} fehlt hotelSearch.locationKey oder hotelSearch.urlMatch in js/data.js.`);
   const list = await loadList(COUNTRY, 5);
   const counts = {};
   for (const h of list) {
-    const key = String(h.key || h.hotel_key || "");
-    if (String(h.url || "").includes(`-${match}`) && /^g\d+-/.test(key)) {
-      const g = key.split("-")[0];
-      counts[g] = (counts[g] || 0) + 1;
-    }
+    const u = urlGeo(h.url);
+    if (u && u.place.startsWith(match)) counts[u.geo] = (counts[u.geo] || 0) + 1;
   }
   const best = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
   if (!best) throw new Error(`Keine Orts-ID für „${match}“ in der Landesliste gefunden. Bitte hotelSearch.locationKey in js/data.js eintragen.`);
-  console.log(`[${secs()}] ${s.id}: Orts-ID ${best[0]} ermittelt (über „${match}“). Kann in js/data.js als locationKey eingetragen werden.`);
+  console.log(`[${secs()}] ${s.id}: Orts-ID ${best[0]} ermittelt (über „${match}“). Bitte in js/data.js als locationKey eintragen.`);
   return best[0];
+}
+
+// Prüft, ob die geladene Liste wirklich zum Ort gehört (mindestens die Hälfte der Links)
+function checkPlace(s, loc, hotels) {
+  const match = s.hotelSearch.urlMatch;
+  const geos = hotels.map((h) => urlGeo(h.url)).filter(Boolean);
+  if (!geos.length) return;
+  const hits = geos.filter((u) => u.geo === loc || (match && u.place.startsWith(match))).length;
+  if (hits / geos.length < 0.5) {
+    const top = Object.entries(geos.reduce((a, u) => ((a[`${u.geo} ${u.place}`] = (a[`${u.geo} ${u.place}`] || 0) + 1), a), {}))
+      .sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${k} (${n})`).join(", ");
+    throw new Error(`Die Hotelliste für ${loc} passt nicht zu ${s.name}: nur ${hits} von ${geos.length} Hotels liegen dort. Häufigste Orte: ${top}. Bitte hotelSearch.locationKey in js/data.js prüfen.`);
+  }
 }
 
 // Grobe Kategorie aus Name und Art: 2 = Luxus/Marke, 1 = normal, 0 = einfach
@@ -168,7 +186,7 @@ async function readJson(path) { try { return JSON.parse(await readFile(path, "ut
 
 // Schritt 1: Hotelliste (gespeicherte Preise aus dem letzten Lauf übernehmen)
 async function loadStation(s, prevIndex) {
-  const loc = await locationKey(s, prevIndex);
+  const loc = await locationKey(s);
   const prev = await readJson(`${OUT}/${s.id}.json`);
   const prevBy = new Map(((prev && prev.locationKey === loc && prev.hotels) || []).map((h) => [h.key, h]));
   const seen = new Set();
@@ -176,6 +194,7 @@ async function loadStation(s, prevIndex) {
     .map((h, i) => normalize(h, s, i))
     .filter((h) => h.key && !seen.has(h.key) && seen.add(h.key));
   if (!hotels.length) throw new Error(`Die Hotelliste für ${loc} ist leer.`);
+  checkPlace(s, loc, hotels);
   for (const h of hotels) {
     const p = prevBy.get(h.key);
     if (!p) continue;
@@ -218,9 +237,8 @@ async function loadRates(s, r, deadline) {
   const st = { plan: 0, ref: 0, occ: 0, failed: 0, requested: 0 };
   let lastError = "";
   const job = (fn) => async () => {
-    st.requested++;
     try { await fn(); } catch (e) { st.failed++; lastError = e.message; }
-    if (st.requested % 50 === 0) console.log(`[${secs()}] ${s.id}: ${st.requested} Preisabfragen (${st.plan} Reisezeitraum, ${st.ref} Referenz, ${st.failed} Fehler)`);
+    if (++st.requested % 50 === 0) console.log(`[${secs()}] ${s.id}: ${st.requested} Preisabfragen (${st.plan} Reisezeitraum, ${st.ref} Referenz, ${st.failed} Fehler)`);
   };
   const jobs = [];
   // a) Tagespreise im Reisezeitraum, 2 Personen
@@ -331,7 +349,8 @@ for (const s of stations) {
   } catch (e) {
     failures++;
     console.error(`[${secs()}] ${s.id}: FEHLER ${e.message}`);
-    index.stations[s.id] = { ...(index.stations[s.id] || {}), ok: false, error: e.message.slice(0, 500), failedAt: new Date().toISOString() };
+    index.stations[s.id] = { ok: false, error: e.message.slice(0, 500), failedAt: new Date().toISOString() };
+    await rm(`${OUT}/${s.id}.json`, { force: true }); // keine veralteten oder falschen Daten stehen lassen
   }
 }
 

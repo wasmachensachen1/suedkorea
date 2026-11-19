@@ -36,9 +36,10 @@ window.TRIP = {
       checkIn: "2027-09-16",
       checkOut: "2027-09-21",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // urlMatch ist der Ortsname in den TripAdvisor-Links; die Action prüft damit, dass die
+      // geladene Liste wirklich zum Ort gehört (und ermittelt so die ID, falls sie fehlt).
       // center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { locationKey: "g294197", center: [37.5720, 126.9769], centerName: "Gwanghwamun-Platz" },
+      hotelSearch: { locationKey: "g294197", urlMatch: "Seoul", center: [37.5720, 126.9769], centerName: "Gwanghwamun-Platz" },
       focus: "Paläste, Märkte, Food-Tour, Tagesausflug ins Grüne",
       color: "#c2410c",
       intro:
@@ -87,9 +88,10 @@ window.TRIP = {
       checkIn: "2027-09-21",
       checkOut: "2027-09-26",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // urlMatch ist der Ortsname in den TripAdvisor-Links; die Action prüft damit, dass die
+      // geladene Liste wirklich zum Ort gehört (und ermittelt so die ID, falls sie fehlt).
       // center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { urlMatch: "Seogwipo", center: [33.2475, 126.4115], centerName: "Jungmun-Resortgebiet" },
+      hotelSearch: { locationKey: "g297892", urlMatch: "Seogwipo", center: [33.2475, 126.4115], centerName: "Jungmun-Resortgebiet" },
       focus: "Strand, Olle-Küstenwege, Vulkanlandschaft",
       color: "#0e7490",
       intro:
@@ -142,9 +144,10 @@ window.TRIP = {
       checkIn: "2027-09-26",
       checkOut: "2027-09-30",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // urlMatch ist der Ortsname in den TripAdvisor-Links; die Action prüft damit, dass die
+      // geladene Liste wirklich zum Ort gehört (und ermittelt so die ID, falls sie fehlt).
       // center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { locationKey: "g297884", center: [35.1587, 129.1604], centerName: "Haeundae Beach" },
+      hotelSearch: { locationKey: "g297884", urlMatch: "Busan", center: [35.1587, 129.1604], centerName: "Haeundae Beach" },
       focus: "Stadtstrand, Fischmarkt, Küstenwanderung",
       color: "#1d4ed8",
       intro:
@@ -194,9 +197,10 @@ window.TRIP = {
       checkIn: "2027-09-30",
       checkOut: "2027-10-03",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // urlMatch ist der Ortsname in den TripAdvisor-Links; die Action prüft damit, dass die
+      // geladene Liste wirklich zum Ort gehört (und ermittelt so die ID, falls sie fehlt).
       // center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { urlMatch: "Gyeongju", center: [35.8357, 129.2129], centerName: "historisches Zentrum (Daereungwon)" },
+      hotelSearch: { locationKey: "g297888", urlMatch: "Gyeongju", center: [35.8357, 129.2129], centerName: "historisches Zentrum (Daereungwon)" },
       focus: "UNESCO-Tempel, Königsgräber, Hanok-Nächte",
       color: "#7c3aed",
       intro:
@@ -243,9 +247,10 @@ window.TRIP = {
       checkIn: "2027-10-03",
       checkOut: "2027-10-06",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
-      // fehlt sie, ermittelt die Action sie über urlMatch (Ortsname in TripAdvisor-Links).
+      // urlMatch ist der Ortsname in den TripAdvisor-Links; die Action prüft damit, dass die
+      // geladene Liste wirklich zum Ort gehört (und ermittelt so die ID, falls sie fehlt).
       // center ist der Bezugspunkt für "zentrale Lage".
-      hotelSearch: { locationKey: "g294197", center: [37.5115, 127.0595], centerName: "COEX / Bongeunsa" },
+      hotelSearch: { locationKey: "g294197", urlMatch: "Seoul", center: [37.5115, 127.0595], centerName: "COEX / Bongeunsa" },
       focus: "Modernes Seoul, Shopping, Abschied",
       color: "#be185d",
       intro:
