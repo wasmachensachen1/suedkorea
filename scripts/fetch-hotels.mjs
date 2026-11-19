@@ -11,10 +11,14 @@ const XO = "https://data.xotelo.com/api";
 const OUT = "data/hotel-offers";
 const LIST_PAGE = 100;
 const LIST_PAGES = 3;          // bis zu 300 Unterkünfte pro Ort
-const RATE_TOP = 70;           // Tagespreise für die beliebtesten …
-const RATE_NEAR = 40;          // … und die zentralsten Unterkünfte
-const ADULTS_PER_ROOM = [1, 2, 3];
-const CONCURRENCY = 3;
+const RATE_TOP = 40;           // Tagespreise für die beliebtesten …
+const RATE_NEAR = 25;          // … und die zentralsten Unterkünfte
+const ADULTS_PER_ROOM = [2, 1, 3]; // 2 zuerst: die übliche Belegung
+const CONCURRENCY = 4;
+const TIMEOUT_MS = 20000;      // höchstens so lange auf eine Antwort warten
+const RATE_BUDGET_MS = 15 * 60 * 1000; // danach keine weiteren Tagespreise mehr abfragen
+const T0 = Date.now();
+const secs = () => `${Math.round((Date.now() - T0) / 1000)} s`;
 
 // Reisedaten aus js/data.js lesen
 const sandbox = { window: {} };
@@ -27,14 +31,18 @@ async function xo(endpoint, params, tries = 3) {
   const url = `${XO}/${endpoint}?${new URLSearchParams(params)}`;
   for (let i = 1; ; i++) {
     try {
-      const res = await fetch(url, { headers: { "User-Agent": "suedkorea-reiseplan/1.0", Accept: "application/json" } });
+      const res = await fetch(url, {
+        headers: { "User-Agent": "suedkorea-reiseplan/1.0", Accept: "application/json" },
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
       const text = await res.text();
       if (!res.ok) throw new Error(`HTTP ${res.status}: ${text.slice(0, 200)}`);
       const j = JSON.parse(text);
       if (j.error) throw new Error(`API-Fehler: ${JSON.stringify(j.error).slice(0, 200)}`);
       return j.result || {};
     } catch (e) {
-      if (i >= tries) throw new Error(`${endpoint} (${url}): ${e.message}`);
+      const msg = e.name === "TimeoutError" ? `keine Antwort nach ${TIMEOUT_MS / 1000} s` : e.message;
+      if (i >= tries) throw new Error(`${endpoint} (${url}): ${msg}`);
       await sleep(1500 * i);
     }
   }
@@ -100,36 +108,50 @@ async function bestRate(key, s, adults) {
   return offers.length ? { price: Math.round(offers[0].price), provider: offers[0].name, offers: offers.length } : null;
 }
 
-async function pool(jobs, n) {
+async function pool(jobs, n, stop) {
   let i = 0;
   await Promise.all(Array.from({ length: n }, async () => {
-    while (i < jobs.length) { const job = jobs[i++]; await job(); await sleep(150); }
+    while (i < jobs.length && !stop()) { const job = jobs[i++]; await job(); await sleep(150); }
   }));
 }
 
-async function station(s) {
+// Schritt 1: Hotelliste einer Station (schnell, wenige Anfragen)
+async function loadStation(s) {
   const loc = await locationKey(s);
   const seen = new Set();
   const hotels = (await loadList(loc))
     .map((h, i) => normalize(h, s, i))
     .filter((h) => h.key && !seen.has(h.key) && seen.add(h.key));
   if (!hotels.length) throw new Error(`Die Hotelliste für ${loc} ist leer.`);
+  console.log(`[${secs()}] ${s.id}: ${hotels.length} Unterkünfte geladen (Ort ${loc})`);
+  return { locationKey: loc, hotels, rateStats: { ok: 0, failed: 0, skipped: true } };
+}
 
-  const near = hotels.filter((h) => h.dist != null).sort((a, b) => a.dist - b.dist).slice(0, RATE_NEAR);
-  const pick = [...new Set([...hotels.slice(0, RATE_TOP), ...near])];
-  let ok = 0, failed = 0, lastError = "";
+// Schritt 2: Tagespreise für die beliebtesten und zentralsten Häuser
+async function loadRates(s, r) {
+  const near = r.hotels.filter((h) => h.dist != null).sort((a, b) => a.dist - b.dist).slice(0, RATE_NEAR);
+  const pick = [...new Set([...r.hotels.slice(0, RATE_TOP), ...near])];
+  let ok = 0, failed = 0, done = 0, lastError = "", reason = "";
   const jobs = [];
-  for (const h of pick) {
-    h.rates = {};
-    for (const a of ADULTS_PER_ROOM) {
+  for (const a of ADULTS_PER_ROOM) {
+    for (const h of pick) {
       jobs.push(async () => {
-        try { h.rates[a] = await bestRate(h.key, s, a); if (h.rates[a]) ok++; } catch (e) { failed++; lastError = e.message; }
+        try {
+          const rate = await bestRate(h.key, s, a);
+          if (rate) { (h.rates = h.rates || {})[a] = rate; ok++; }
+        } catch (e) { failed++; lastError = e.message; }
+        if (++done % 25 === 0) console.log(`[${secs()}] ${s.id}: Tagespreise ${done}/${jobs.length} (${ok} gefunden, ${failed} Fehler)`);
       });
     }
   }
-  await pool(jobs, CONCURRENCY);
-  console.log(`${s.id}: ${hotels.length} Unterkünfte (Ort ${loc}), ${ok} Tagespreise, ${failed} Fehler${lastError ? ` – zuletzt: ${lastError}` : ""}`);
-  return { locationKey: loc, hotels, rateStats: { ok, failed } };
+  const stop = () => {
+    if (Date.now() - T0 > RATE_BUDGET_MS) { reason = "Zeitbudget erschöpft"; return true; }
+    if (failed >= 12 && ok === 0) { reason = "API liefert keine Tagespreise"; return true; }
+    return false;
+  };
+  await pool(jobs, CONCURRENCY, stop);
+  r.rateStats = { ok, failed, requested: done, planned: jobs.length, ...(reason ? { stopped: reason } : {}) };
+  console.log(`[${secs()}] ${s.id}: ${ok} Tagespreise, ${failed} Fehler${reason ? `, abgebrochen: ${reason}` : ""}${lastError ? ` – letzter Fehler: ${lastError}` : ""}`);
 }
 
 await mkdir(OUT, { recursive: true });
@@ -137,21 +159,39 @@ const only = process.argv.slice(2);
 const index = { updatedAt: new Date().toISOString(), source: "Xotelo (TripAdvisor)", stations: {} };
 try { Object.assign(index.stations, JSON.parse(await readFile(`${OUT}/index.json`, "utf8")).stations || {}); } catch { /* neu */ }
 
+async function write(s, r) {
+  await writeFile(`${OUT}/${s.id}.json`, JSON.stringify({
+    station: s.id, updatedAt: new Date().toISOString(), checkIn: s.checkIn, checkOut: s.checkOut,
+    currency: "EUR", usdToEur: 0.92, ...r,
+  }) + "\n");
+  index.stations[s.id] = { ok: true, updatedAt: new Date().toISOString(), count: r.hotels.length, locationKey: r.locationKey, rates: r.rateStats };
+  await writeFile(`${OUT}/index.json`, JSON.stringify(index, null, 2) + "\n");
+}
+
+const stations = TRIP.stations.filter((s) => !only.length || only.includes(s.id));
+const loaded = [];
 let failures = 0;
-for (const s of TRIP.stations) {
-  if (only.length && !only.includes(s.id)) continue;
+let ratesDead = false;
+
+// Erst alle Listen (damit jede Station sicher Hotels hat), dann die Tagespreise.
+for (const s of stations) {
   try {
-    const r = await station(s);
-    await writeFile(`${OUT}/${s.id}.json`, JSON.stringify({
-      station: s.id, updatedAt: new Date().toISOString(), checkIn: s.checkIn, checkOut: s.checkOut,
-      currency: "EUR", usdToEur: 0.92, ...r,
-    }) + "\n");
-    index.stations[s.id] = { ok: true, updatedAt: new Date().toISOString(), count: r.hotels.length, locationKey: r.locationKey };
+    const r = await loadStation(s);
+    await write(s, r);
+    loaded.push([s, r]);
   } catch (e) {
     failures++;
-    console.error(`${s.id}: FEHLER ${e.message}`);
+    console.error(`[${secs()}] ${s.id}: FEHLER ${e.message}`);
     index.stations[s.id] = { ...(index.stations[s.id] || {}), ok: false, error: e.message.slice(0, 500), failedAt: new Date().toISOString() };
+    await writeFile(`${OUT}/index.json`, JSON.stringify(index, null, 2) + "\n");
   }
 }
-await writeFile(`${OUT}/index.json`, JSON.stringify(index, null, 2) + "\n");
-if (failures && failures === (only.length || TRIP.stations.length)) process.exit(1);
+for (const [s, r] of loaded) {
+  if (r.rateStats.skipped === false) continue;
+  if (ratesDead) { r.rateStats = { ok: 0, failed: 0, stopped: "übersprungen, die API lieferte bei einer früheren Station keine Tagespreise" }; await write(s, r); continue; }
+  await loadRates(s, r);
+  if (r.rateStats.stopped === "API liefert keine Tagespreise") ratesDead = true;
+  await write(s, r);
+}
+console.log(`[${secs()}] fertig: ${loaded.length} von ${stations.length} Stationen`);
+if (failures && failures === stations.length) process.exit(1);
