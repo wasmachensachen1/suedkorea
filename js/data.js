@@ -2,22 +2,45 @@
 // Links im Text: [Text](https://url)
 window.TRIP = {
   title: "Südkorea-Rundreise",
-  subtitle: "Sept./Okt. 2027 · 20 Nächte · 5 Stationen",
+  subtitle: "Sept./Okt. 2027 · {nights:all} Nächte · 5 Stationen",
   departure: "2027-09-15T16:05:00+02:00",
   returnDate: "2027-10-06",
+  travellers: 2, // Reisende; Flugpreise werden pro Person gesucht und mal dieser Zahl gerechnet
   intro:
-    "Abflug am Mittwoch, 15.9.2027, ab Frankfurt nonstop nach Seoul, Rückflug am Mittwoch, 6.10.2027: 20 Nächte in fünf Unterkünften. Die Reihenfolge wurde gegenüber der ersten Skizze gedreht – Jeju kommt direkt nach Seoul. So liegt die Strandwoche Ende September, wenn das Meer noch rund 25 °C hat, und Jeju ist vor der chinesischen Feiertagswoche (1.–7.10.) schon erledigt.",
+    "Abflug am {wday:2027-09-15}, {dy:2027-09-15}, ab {flight:outFromName} {flight:outStops} nach Seoul, Rückflug am {wday:2027-10-06}, {dy:2027-10-06}: {nights:all} Nächte in fünf Unterkünften. Die Reihenfolge wurde gegenüber der ersten Skizze gedreht – Jeju kommt direkt nach Seoul. So liegt die Strandwoche Ende September, wenn das Meer noch rund 25 °C hat, und Jeju ist vor der chinesischen Feiertagswoche (1.–7.10.) schon erledigt.",
   why:
     "Das Erntedankfest Chuseok ist am 14.–16.9.2027. Danach fliegen viele Koreaner aus Europa zurück. Wer am 15.9. hinfliegt, ist vor dieser Welle unterwegs. In Seoul selbst ist es am Chuseok-Tag ruhig, Paläste haben geöffnet. Der Rückflug am 6.10. liegt vor dem langen Wochenende zum Hangeul-Tag (9.–11.10.). Dienstag und Mittwoch sind für Langstrecke meist die günstigsten Flugtage.",
+
+  // Feste Feiertage (wandern bei einer Verschiebung nicht mit). Fällt ein Reisetag darauf,
+  // steht im Tagesplan ein Hinweis.
+  holidays: [
+    { from: "2027-09-14", to: "2027-09-16", name: "Chuseok (Erntedankfest)" },
+    { from: "2027-10-03", name: "Nationalfeiertag" },
+    { from: "2027-10-04", name: "Ersatzfeiertag für den Nationalfeiertag" },
+    { from: "2027-10-09", name: "Hangeul-Tag" },
+    { from: "2027-10-11", name: "Ersatzfeiertag für den Hangeul-Tag" },
+  ],
+
+  // Ruhetage: Steht "match" im Text eines Tages im Tagesplan und fällt der Tag auf den
+  // Wochentag (0 = So … 6 = Sa) bzw. den n-ten Wochentag im Monat, gibt es eine Warnung.
+  // planHotelOnly: nur solange das Planhotel der Station gilt.
+  closures: [
+    { match: "Gyeongbokgung", weekdays: [2], text: "Gyeongbokgung ist dienstags geschlossen." },
+    { match: "Changdeokgung", weekdays: [1], text: "Changdeokgung und der Geheime Garten sind montags geschlossen." },
+    { match: "Spa", station: "busan", nthWeekday: { n: 4, wd: 3 }, planHotelOnly: true, text: "Das Spa Cimer im Paradise Hotel ist am vierten Mittwoch im Monat geschlossen." },
+  ],
 
   costs: {
     title: "Kostenschätzung für zwei Personen (gerundet, 1 € ≈ 1.500 KRW)",
     // Beträge in Euro. Die Zeile "hotels" wird aus den Hotels der Stationen berechnet
     // (gewähltes Hotel aus dem Konfigurator, sonst die Richtwerte priceMin/priceMax).
     rows: [
-      { label: "Flüge Business Class FRA–Seoul hin/zurück", min: 3400, max: 7000 },
-      { id: "hotels", label: "Hotels, 20 Nächte" },
-      { label: "Inlandsflüge, Züge, Taxis, 2 Fahrertage auf Jeju", min: 700, max: 1100 },
+      // "flights" wird durch den in der Flugsuche gewählten Langstreckenflug ersetzt.
+      { id: "flights", label: "Flüge Business Class FRA–Seoul hin/zurück", min: 3400, max: 7000 },
+      { id: "hotels", label: "Hotels, {nights:all} Nächte" },
+      // In "transport" stecken die Inlandsflüge mit domesticMin/domesticMax (2 Personen, beide Flüge laut Transfers).
+      // Sind sie in der Flugsuche gewählt, ersetzt deren Preis diesen Anteil.
+      { id: "transport", label: "Inlandsflüge, Züge, Taxis, 2 Fahrertage auf Jeju", min: 700, max: 1100, domesticMin: 150, domesticMax: 360 },
       { label: "Ausflüge, Touren, Eintritte", min: 800, max: 1300 },
       { label: "Essen und Trinken (ca. 150–250 € pro Tag)", min: 3000, max: 5000 },
     ],
@@ -31,8 +54,6 @@ window.TRIP = {
       nr: 1,
       name: "Seoul",
       area: "Gwanghwamun",
-      dates: "16.–21.9.",
-      nights: 5,
       checkIn: "2027-09-16",
       checkOut: "2027-09-21",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
@@ -72,11 +93,11 @@ window.TRIP = {
         ["[Bukhansan-Wanderung mit Spa](https://english.visitseoul.net/nature/BukhansanNationalPark/ENP000369)", "[Trazy](https://www.trazy.com/experience/detail/private-bukhansan-hiking-tour-with-korean-spa)", "ca. 6 Std.", "auf Anfrage, privat"],
       ],
       days: [
-        ["Do 16.9.", "Landung ca. 10 Uhr, Check-in. Nachmittags Gyeongbokgung (letzter Chuseok-Tag, oft mit Festprogramm), dann Spaziergang am Cheonggyecheon. Früh schlafen."],
-        ["Fr 17.9.", "Changdeokgung mit Geheimem Garten, Bukchon, mittags in Ikseon-dong. Nachmittags Insadong mit Teehaus. Abends Gwangjang-Markt."],
-        ["Sa 18.9.", "Vormittags Inwangsan an der Stadtmauer, danach Cafés in Seochon. Freier Nachmittag mit Sauna im Hotel. 17 Uhr O'ngo Night Dining Tour."],
-        ["So 19.9.", "Tagesausflug Nami-Insel und Garden of Morning Calm."],
-        ["Mo 20.9.", "Bukhansan-Wanderung mit Spa oder ein freier Tag. Abends N Seoul Tower."],
+        ["{wd:2027-09-16}", "Landung ca. {flight:outArr} Uhr, Check-in. Nachmittags Gyeongbokgung (letzter Chuseok-Tag, oft mit Festprogramm), dann Spaziergang am Cheonggyecheon. Früh schlafen."],
+        ["{wd:2027-09-17}", "Changdeokgung mit Geheimem Garten, Bukchon, mittags in Ikseon-dong. Nachmittags Insadong mit Teehaus. Abends Gwangjang-Markt."],
+        ["{wd:2027-09-18}", "Vormittags Inwangsan an der Stadtmauer, danach Cafés in Seochon. Freier Nachmittag mit Sauna im Hotel. 17 Uhr O'ngo Night Dining Tour."],
+        ["{wd:2027-09-19}", "Tagesausflug Nami-Insel und Garden of Morning Calm."],
+        ["{wd:2027-09-20}", "Bukhansan-Wanderung mit Spa oder ein freier Tag. Abends N Seoul Tower."],
       ],
     },
     {
@@ -84,8 +105,6 @@ window.TRIP = {
       nr: 2,
       name: "Jeju",
       area: "Jungmun",
-      dates: "21.–26.9.",
-      nights: 5,
       checkIn: "2027-09-21",
       checkOut: "2027-09-26",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
@@ -128,12 +147,12 @@ window.TRIP = {
         ["Olle-Wanderung (selbst geführt)", "[Jeju Olle Foundation](http://www.jejuolle.org/trail/eng/)", "2 – 3 Std.", "kostenlos"],
       ],
       days: [
-        ["Di 21.9.", "Vormittags Flug nach Jeju, Transfer. Nachmittags am Strand Jungmun Saekdal, Sonnenuntergang an den Basaltsäulen von Daepo."],
-        ["Mi 22.9.", "Olle Route 7 von Oedolgae bis zum Hafen Beophwan, Mittagessen in Seogwipo, Olle-Markt. Abends Cheonjiyeon-Wasserfall."],
-        ["Do 23.9.", "Mit Fahrer in den Osten: früh auf den Seongsan Ilchulbong, Vorführung der Haenyeo, Seopjikoji, Café am Strand Woljeong-ri, Saryeoni Forest Path."],
-        ["Fr 24.9.", "Strand- und Ruhetag: Pool, Spa, Jungmun-Strand. Abends Grillen mit schwarzem Jeju-Schwein."],
-        ["Sa 25.9.", "Mit Fahrer in den Westen: Eoseungsaengak am Hallasan, Osulloc-Teefelder, Hyeopjae Beach, Sanbangsan und Yongmeori-Küste."],
-        ["So 26.9.", "Vormittags Flug nach Busan."],
+        ["{wd:2027-09-21}", "Vormittags Flug nach Jeju, Transfer. Nachmittags am Strand Jungmun Saekdal, Sonnenuntergang an den Basaltsäulen von Daepo."],
+        ["{wd:2027-09-22}", "Olle Route 7 von Oedolgae bis zum Hafen Beophwan, Mittagessen in Seogwipo, Olle-Markt. Abends Cheonjiyeon-Wasserfall."],
+        ["{wd:2027-09-23}", "Mit Fahrer in den Osten: früh auf den Seongsan Ilchulbong, Vorführung der Haenyeo, Seopjikoji, Café am Strand Woljeong-ri, Saryeoni Forest Path."],
+        ["{wd:2027-09-24}", "Strand- und Ruhetag: Pool, Spa, Jungmun-Strand. Abends Grillen mit schwarzem Jeju-Schwein."],
+        ["{wd:2027-09-25}", "Mit Fahrer in den Westen: Eoseungsaengak am Hallasan, Osulloc-Teefelder, Hyeopjae Beach, Sanbangsan und Yongmeori-Küste."],
+        ["{wd:2027-09-26}", "Vormittags Flug nach Busan."],
       ],
     },
     {
@@ -141,8 +160,6 @@ window.TRIP = {
       nr: 3,
       name: "Busan",
       area: "Haeundae",
-      dates: "26.–30.9.",
-      nights: 4,
       checkIn: "2027-09-26",
       checkOut: "2027-09-30",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
@@ -183,11 +200,11 @@ window.TRIP = {
         ["Selbst organisiert mit Taxi: [Haedong Yonggungsa](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000301001001000&uc_seq=261), [Gamcheon](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000301001001000&uc_seq=365), [Jagalchi](https://www.visitbusan.net/index.do?lang_cd=en&menuCd=DOM_000000301003001000&uc_seq=412)", "Taxi über die App Kakao T oder am Taxistand", "halbe Tage", "Taxi ca. 15.000–30.000 KRW pro Fahrt"],
       ],
       days: [
-        ["So 26.9.", "Ankunft, Strand von Haeundae, Uferweg um Dongbaekseom. Abends Blick von The Bay 101 auf Marine City."],
-        ["Mo 27.9.", "Sky Capsule von Mipo nach Cheongsapo, Muschelgrill in Cheongsapo, Beach Train bis Songjeong. Nachmittags Haedong Yonggungsa."],
-        ["Di 28.9.", "Altstadt: Jagalchi-Markt mit Fischmittagessen, Gukje-Markt, Gamcheon Culture Village. Abends am Gwangalli Beach."],
-        ["Mi 29.9.", "Vormittags Igidae Coastal Walk und Oryukdo Skywalk. Nachmittags Thermalbad und Spa im Hotel."],
-        ["Do 30.9.", "Später Check-out, Taxi nach Gyeongju."],
+        ["{wd:2027-09-26}", "Ankunft, Strand von Haeundae, Uferweg um Dongbaekseom. Abends Blick von The Bay 101 auf Marine City."],
+        ["{wd:2027-09-27}", "Sky Capsule von Mipo nach Cheongsapo, Muschelgrill in Cheongsapo, Beach Train bis Songjeong. Nachmittags Haedong Yonggungsa."],
+        ["{wd:2027-09-28}", "Altstadt: Jagalchi-Markt mit Fischmittagessen, Gukje-Markt, Gamcheon Culture Village. Abends am Gwangalli Beach."],
+        ["{wd:2027-09-29}", "Vormittags Igidae Coastal Walk und Oryukdo Skywalk. Nachmittags Thermalbad und Spa im Hotel."],
+        ["{wd:2027-09-30}", "Später Check-out, Taxi nach Gyeongju."],
       ],
     },
     {
@@ -195,8 +212,6 @@ window.TRIP = {
       nr: 4,
       name: "Gyeongju",
       area: "Bomun",
-      dates: "30.9.–3.10.",
-      nights: 3,
       checkIn: "2027-09-30",
       checkOut: "2027-10-03",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
@@ -235,10 +250,10 @@ window.TRIP = {
         ["[Radtour durch die historische Zone](https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=221789)", "selbst organisiert, Verleih am Haupttor von Daereungwon ([Infos der Stadt Gyeongju](https://www.gyeongju.go.kr/tour/eng/page.do?mnu_uid=2768))", "2 – 4 Std.", "ca. 5.000 – 10.000 KRW p. P."],
       ],
       days: [
-        ["Do 30.9.", "Ankunft gegen Mittag, Check-in. Nachmittags Tumuli-Park, Cheomseongdae und Dorf Gyochon. Abends Donggung und Wolji-Teich, Abendessen in Hwangnidan-gil."],
-        ["Fr 1.10.", "Private UNESCO-Tour: Bulguksa und Seokguram am Morgen, danach Nationalmuseum. Am Abend Thermalbad im Innenhof des Hanok."],
-        ["Sa 2.10.", "Früh nach Yangdong (am Feiertagswochenende wird es voller), nachmittags Radtour am Bomun-See."],
-        ["So 3.10.", "Vormittags mit dem KTX nach Seoul."],
+        ["{wd:2027-09-30}", "Ankunft gegen Mittag, Check-in. Nachmittags Tumuli-Park, Cheomseongdae und Dorf Gyochon. Abends Donggung und Wolji-Teich, Abendessen in Hwangnidan-gil."],
+        ["{wd:2027-10-01}", "Private UNESCO-Tour: Bulguksa und Seokguram am Morgen, danach Nationalmuseum. Am Abend Thermalbad im Innenhof des Hanok."],
+        ["{wd:2027-10-02}", "Früh nach Yangdong (am Feiertagswochenende wird es voller), nachmittags Radtour am Bomun-See."],
+        ["{wd:2027-10-03}", "Vormittags mit dem KTX nach Seoul."],
       ],
     },
     {
@@ -246,8 +261,6 @@ window.TRIP = {
       nr: 5,
       name: "Seoul",
       area: "Gangnam",
-      dates: "3.–6.10.",
-      nights: 3,
       checkIn: "2027-10-03",
       checkOut: "2027-10-06",
       // Suche im Hotel-Konfigurator (Xotelo/TripAdvisor). locationKey ist die TripAdvisor-Orts-ID;
@@ -281,10 +294,10 @@ window.TRIP = {
       hikes: [],
       tours: [],
       days: [
-        ["So 3.10.", "Ankunft mit dem KTX, Check-in. Nachmittags Bongeunsa und Starfield Library. Abends Bootsfahrt auf dem Han-Fluss oder Banpo-Park."],
-        ["Mo 4.10.", "Ersatzfeiertag, die Stadt ist voll. Vormittags früh Seoul Sky und Seokchon-See, nachmittags Seongsu-dong."],
-        ["Di 5.10.", "Mangwon-Markt und Yeonnam-dong, Einkaufen in Apgujeong oder Myeongdong. Abschiedsessen in einem Restaurant mit koreanischer Fine-Dining-Küche, Reservierung über die App CatchTable."],
-        ["Mi 6.10.", "Taxi nach Incheon, Rückflug LH713 um ca. 13 Uhr, Ankunft in Frankfurt ca. 19:15 Uhr."],
+        ["{wd:2027-10-03}", "Ankunft mit dem KTX, Check-in. Nachmittags Bongeunsa und Starfield Library. Abends Bootsfahrt auf dem Han-Fluss oder Banpo-Park."],
+        ["{wd:2027-10-04}", "Ersatzfeiertag, die Stadt ist voll. Vormittags früh Seoul Sky und Seokchon-See, nachmittags Seongsu-dong."],
+        ["{wd:2027-10-05}", "Mangwon-Markt und Yeonnam-dong, Einkaufen in Apgujeong oder Myeongdong. Abschiedsessen in einem Restaurant mit koreanischer Fine-Dining-Küche, Reservierung über die App CatchTable."],
+        ["{wd:2027-10-06}", "Taxi nach {flight:retFromName}, Rückflug {flight:retCode} um ca. {flight:retDep} Uhr, Ankunft in {flight:retToName} ca. {flight:retArr} Uhr."],
       ],
     },
   ],
@@ -307,6 +320,27 @@ window.TRIP = {
       { label: "Rückflug", date: "Mi 6.10.2027", code: "LH713", from: "Seoul-Incheon", fromTime: "ca. 13:00", to: "Frankfurt", toTime: "ca. 19:15", alt: "oder KE945 ca. 11:00 → 17:30 (falls Korean Air an dem Tag fliegt)" },
     ],
     proposedNote: "Uhrzeiten laut Flugplan 2026, vor Buchung prüfen.",
+    // Angaben zum Langstreckenflug für die Platzhalter {flight:…} in den Texten (Planvorschlag).
+    // Wird in der Flugsuche ein Flug gewählt, stehen dort dessen Werte.
+    planInfo: {
+      outCode: "LH712", retCode: "LH713", codes: "LH712 / LH713",
+      outDep: "16:05", outArr: "10:00", retDep: "13:00", retArr: "19:15",
+      outFromName: "Frankfurt", outToName: "Incheon", retFromName: "Incheon", retToName: "Frankfurt",
+      outStops: "nonstop",
+    },
+    // Flugsuche (js/flights.js, Action "Flugdaten aktualisieren"): Auswahl der Flughäfen in der Suchmaske
+    search: {
+      origins: [["FRA", "Frankfurt"], ["DUS", "Düsseldorf"], ["CGN", "Köln/Bonn"]],
+      destinations: [["ICN", "Seoul-Incheon"], ["GMP", "Seoul-Gimpo"]],
+      todoId: "flug-langstrecke", // Buchungs-To-do, wird bei der Flugwahl angepasst
+    },
+    // Inlandsflüge für die Flugsuche. Geflogen wird am Abreisetag der Station "after";
+    // "transfer" ist die Strecke in der Transfer-Tabelle, die Reihenfolge entspricht "domestic".
+    domesticRoutes: [
+      { id: "gmp-cju", from: "GMP", to: "CJU", fromName: "Seoul-Gimpo", toName: "Jeju", after: "seoul", transfer: "Gimpo → Jeju" },
+      { id: "cju-pus", from: "CJU", to: "PUS", fromName: "Jeju", toName: "Busan-Gimhae", after: "jeju", transfer: "Jeju → Busan" },
+    ],
+    domesticTodoId: "inlandsfluege",
     priceTips: [
       "Dienstag und Mittwoch als Abflugtag wählen, Freitag und Sonntag meiden.",
       "In Google Flights den Kalender für ±3 Tage ansehen. Wenn der 14.9. oder 16.9. deutlich günstiger ist, verschiebt sich der Plan nur um einen Tag.",
@@ -314,8 +348,8 @@ window.TRIP = {
     ],
     domesticHead: ["Datum", "Strecke", "Dauer", "Airlines", "Preis p. P. (Economy)"],
     domestic: [
-      ["Di 21.9.", "Seoul-Gimpo (GMP) → Jeju (CJU)", "ca. 1 Std. 10 Min.", "Korean Air, Asiana, Jeju Air, Jin Air u. a.", "ca. 60.000 – 150.000 KRW (40 – 100 €)"],
-      ["So 26.9.", "Jeju (CJU) → Busan-Gimhae (PUS)", "ca. 55 Min.", "Korean Air, Air Busan, Jeju Air u. a.", "ca. 50.000 – 120.000 KRW (35 – 80 €)"],
+      ["{wd:2027-09-21}", "Seoul-Gimpo (GMP) → Jeju (CJU)", "ca. 1 Std. 10 Min.", "Korean Air, Asiana, Jeju Air, Jin Air u. a.", "ca. 60.000 – 150.000 KRW (40 – 100 €)"],
+      ["{wd:2027-09-26}", "Jeju (CJU) → Busan-Gimhae (PUS)", "ca. 55 Min.", "Korean Air, Air Busan, Jeju Air u. a.", "ca. 50.000 – 120.000 KRW (35 – 80 €)"],
     ],
     domesticNote:
       "Korean Air bietet auf Inlandsflügen eine Prestige Class mit breiteren Sitzen an. Bei so kurzen Flügen lohnt sich der Aufpreis aber kaum. Ein Flug am Vormittag ist meist günstiger als am späten Nachmittag.",
@@ -327,20 +361,20 @@ window.TRIP = {
     head: ["Datum", "Von → Nach", "Verkehrsmittel", "Dauer", "Preis (2 Pers., Richtwert)"],
     // {hotel:<station-id>} wird durch den Namen des gewählten Hotels ersetzt.
     rows: [
-      ["Mi 15.9.", "Köln/Düsseldorf → Flughafen Frankfurt", "ICE bzw. Lufthansa Express Rail", "1 – 1,5 Std.", "im LH-Ticket enthalten bzw. ca. 60 – 180 €"],
-      ["Do 16.9.", "Incheon → {hotel:seoul}", "Taxi oder Hotellimousine; Alternative: [AREX Express](https://www.arex.or.kr) bis Seoul Station + Taxi", "60 – 75 Min.", "Taxi ca. 80.000 – 110.000 KRW (55 – 75 €); AREX 13.000 KRW p. P."],
-      ["Di 21.9.", "{hotel:seoul} → Flughafen Gimpo", "Taxi", "ca. 35 Min.", "ca. 30.000 – 40.000 KRW (20 – 27 €)"],
-      ["Di 21.9.", "Gimpo → Jeju", "Inlandsflug", "1 Std. 10 Min.", "ca. 120.000 – 300.000 KRW (80 – 200 €)"],
-      ["Di 21.9.", "Flughafen Jeju → {hotel:jeju}", "Taxi; Alternative: Flughafen-Limousinenbus 600", "ca. 50 Min.", "Taxi ca. 50.000 – 60.000 KRW (35 – 40 €)"],
-      ["Do 23.9. + Sa 25.9.", "Inselrundfahrten Jeju", "[Privatwagen mit Fahrer, 9 Std.](https://www.klook.com/activity/174339-jeju-private-transfer/)", "ganztägig", "ca. 250.000 – 350.000 KRW pro Tag (170 – 235 €) inkl. Benzin, Maut, Parken"],
-      ["So 26.9.", "{hotel:jeju} → Flughafen Jeju", "Taxi", "ca. 50 Min.", "ca. 50.000 – 60.000 KRW (35 – 40 €)"],
-      ["So 26.9.", "Jeju → Busan", "Inlandsflug", "55 Min.", "ca. 100.000 – 240.000 KRW (70 – 160 €)"],
-      ["So 26.9.", "Flughafen Gimhae → {hotel:busan}", "Taxi", "35 – 50 Min.", "ca. 40.000 – 50.000 KRW (27 – 33 €)"],
-      ["Do 30.9.", "{hotel:busan} → {hotel:gyeongju}", "Taxi direkt (bequemste Lösung); Alternative: KTX Busan → Gyeongju (30 Min., 11.900 KRW p. P.) plus zwei Taxis", "60 – 70 Min.", "Taxi ca. 110.000 – 140.000 KRW (75 – 95 €)"],
-      ["So 3.10.", "{hotel:gyeongju} → Bahnhof Gyeongju (früher Singyeongju)", "Taxi", "ca. 25 Min.", "ca. 20.000 – 25.000 KRW (15 €)"],
-      ["So 3.10.", "Gyeongju → Seoul Station", "[KTX](https://www.letskorail.com), First Class empfohlen", "ca. 2 Std.", "Standard ca. 89.000 KRW, First ca. 128.000 KRW (60 bzw. 85 €)"],
-      ["So 3.10.", "Seoul Station → {hotel:gangnam}", "Taxi", "30 – 40 Min.", "ca. 20.000 – 25.000 KRW (15 €)"],
-      ["Mi 6.10.", "{hotel:gangnam} → Incheon", "Taxi oder Flughafen-Limousinenbus", "70 – 80 Min.", "Taxi ca. 90.000 – 120.000 KRW (60 – 80 €)"],
+      ["{wd:2027-09-15}", "Köln/Düsseldorf → Flughafen Frankfurt", "ICE bzw. Lufthansa Express Rail", "1 – 1,5 Std.", "im LH-Ticket enthalten bzw. ca. 60 – 180 €"],
+      ["{wd:2027-09-16}", "{flight:outToName} → {hotel:seoul}", "Taxi oder Hotellimousine; Alternative: [AREX Express](https://www.arex.or.kr) bis Seoul Station + Taxi", "60 – 75 Min.", "Taxi ca. 80.000 – 110.000 KRW (55 – 75 €); AREX 13.000 KRW p. P."],
+      ["{wd:2027-09-21}", "{hotel:seoul} → Flughafen Gimpo", "Taxi", "ca. 35 Min.", "ca. 30.000 – 40.000 KRW (20 – 27 €)"],
+      ["{wd:2027-09-21}", "Gimpo → Jeju", "Inlandsflug", "1 Std. 10 Min.", "ca. 120.000 – 300.000 KRW (80 – 200 €)"],
+      ["{wd:2027-09-21}", "Flughafen Jeju → {hotel:jeju}", "Taxi; Alternative: Flughafen-Limousinenbus 600", "ca. 50 Min.", "Taxi ca. 50.000 – 60.000 KRW (35 – 40 €)"],
+      ["{wd:2027-09-23} + {wd:2027-09-25}", "Inselrundfahrten Jeju", "[Privatwagen mit Fahrer, 9 Std.](https://www.klook.com/activity/174339-jeju-private-transfer/)", "ganztägig", "ca. 250.000 – 350.000 KRW pro Tag (170 – 235 €) inkl. Benzin, Maut, Parken"],
+      ["{wd:2027-09-26}", "{hotel:jeju} → Flughafen Jeju", "Taxi", "ca. 50 Min.", "ca. 50.000 – 60.000 KRW (35 – 40 €)"],
+      ["{wd:2027-09-26}", "Jeju → Busan", "Inlandsflug", "55 Min.", "ca. 100.000 – 240.000 KRW (70 – 160 €)"],
+      ["{wd:2027-09-26}", "Flughafen Gimhae → {hotel:busan}", "Taxi", "35 – 50 Min.", "ca. 40.000 – 50.000 KRW (27 – 33 €)"],
+      ["{wd:2027-09-30}", "{hotel:busan} → {hotel:gyeongju}", "Taxi direkt (bequemste Lösung); Alternative: KTX Busan → Gyeongju (30 Min., 11.900 KRW p. P.) plus zwei Taxis", "60 – 70 Min.", "Taxi ca. 110.000 – 140.000 KRW (75 – 95 €)"],
+      ["{wd:2027-10-03}", "{hotel:gyeongju} → Bahnhof Gyeongju (früher Singyeongju)", "Taxi", "ca. 25 Min.", "ca. 20.000 – 25.000 KRW (15 €)"],
+      ["{wd:2027-10-03}", "Gyeongju → Seoul Station", "[KTX](https://www.letskorail.com), First Class empfohlen", "ca. 2 Std.", "Standard ca. 89.000 KRW, First ca. 128.000 KRW (60 bzw. 85 €)"],
+      ["{wd:2027-10-03}", "Seoul Station → {hotel:gangnam}", "Taxi", "30 – 40 Min.", "ca. 20.000 – 25.000 KRW (15 €)"],
+      ["{wd:2027-10-06}", "{hotel:gangnam} → {flight:retFromName}", "Taxi oder Flughafen-Limousinenbus", "70 – 80 Min.", "Taxi ca. 90.000 – 120.000 KRW (60 – 80 €)"],
     ],
     note:
       "Seit dem 1.9.2026 sind KTX und SRT zusammengelegt, und die KTX-Preise sind im Schnitt um etwa 10 % gesunken. Laut [aktueller Preisübersicht](https://www.seoultourism.org/?p=1841) kostet Seoul–Gyeongju rund 44.500 KRW in der Standardklasse, First Class kostet etwa 40–50 % mehr. Tickets gibt es ab einem Monat vor der Fahrt. Am 3.10. ist ein langes Feiertagswochenende, bucht die Züge also gleich zum Verkaufsstart.",
@@ -361,7 +395,7 @@ window.TRIP = {
         "Hotels: 6–9 Monate vorher, Ragung wegen der nur 16 Zimmer zuerst",
         "Geheimer Garten (Changdeokgung): Reservierung online, einige Wochen vorher",
         "Sky Capsules in Busan: Freischaltung jeweils 4 Wochen vorher, dienstags 7 Uhr",
-        "KTX: Verkauf ab einem Monat vorher, Fahrt am 3.10. gleich am ersten Tag buchen",
+        "KTX: Verkauf ab einem Monat vorher, Fahrt am {d:2027-10-03} gleich am ersten Tag buchen",
         "Fahrer auf Jeju: 2–3 Monate vorher",
       ],
     },
@@ -408,6 +442,4 @@ window.TRIP = {
 };
 
 // Geplante Module – werden später ergänzt
-window.MODULES_PLANNED = [
-  { id: "flugsuche", title: "Flugsuche", icon: "🔎", text: "Flüge FRA–ICN vergleichen und Preisalarme im Blick behalten." },
-];
+window.MODULES_PLANNED = [];

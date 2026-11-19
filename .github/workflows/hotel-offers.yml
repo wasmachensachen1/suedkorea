@@ -1,7 +1,8 @@
 name: Hoteldaten aktualisieren
 
 # Holt die Hotels für den Hotel-Konfigurator von der Xotelo-API und speichert sie
-# unter data/hotel-offers/. Läuft täglich, nach Änderungen am Reiseplan und auf Knopfdruck
+# unter data/hotel-offers/. Läuft täglich, nach Änderungen am Reiseplan (auch nach einer Flugwahl,
+# die den Plan verschiebt: data/flights.json) und auf Knopfdruck
 # (Actions → Hoteldaten aktualisieren → Run workflow).
 on:
   schedule:
@@ -16,6 +17,8 @@ on:
     branches: [main]
     paths:
       - js/data.js
+      - js/plan.js
+      - data/flights.json
       - scripts/fetch-hotels.mjs
       - .github/workflows/hotel-offers.yml
 

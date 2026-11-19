@@ -1,0 +1,64 @@
+name: Flugdaten aktualisieren
+
+# Holt Flugdaten für die Flugsuche (js/flights.js) über SerpApi (Google-Flights-Daten), bei Bedarf
+# über die Ersatzquelle fli, und speichert sie unter data/flight-offers/ und data/flight-search/.
+#  - wöchentlich (montags): Raster Langstrecke Business ±3 Tage und die Inlandsflüge
+#  - wenn die Seite einen Suchauftrag speichert (data/flight-search/requests.json)
+#  - wenn ein Flug gewählt wurde und sich der Plan verschiebt (data/flights.json): Inlandsflüge neu
+#  - auf Knopfdruck (Actions → Flugdaten aktualisieren → Run workflow)
+# Der SerpApi-Schlüssel steht im Repository-Secret SERPAPI_KEY (Settings → Secrets and variables → Actions).
+on:
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "grid = Raster + Inlandsflüge, domestic = nur Inlandsflüge, requests = offene Suchaufträge"
+        required: false
+        default: "grid"
+        type: choice
+        options: [grid, domestic, requests]
+  push:
+    branches: [main]
+    paths:
+      - data/flight-search/requests.json
+      - data/flights.json
+
+permissions:
+  contents: write
+
+concurrency:
+  group: flight-offers
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Flugdaten holen
+        timeout-minutes: 15
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          MODE: ${{ github.event_name == 'schedule' && 'grid' || github.event_name == 'workflow_dispatch' && github.event.inputs.mode || 'auto' }}
+        run: node scripts/fetch-flights.mjs "$MODE"
+      - name: Speichern
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/flight-offers data/flight-search/results 2>/dev/null || true
+          if git diff --cached --quiet; then echo "Keine Änderungen."; exit 0; fi
+          git commit -m "Flugdaten aktualisiert"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 5
+          done
+          exit 1

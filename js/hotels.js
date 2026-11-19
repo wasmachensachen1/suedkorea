@@ -12,8 +12,11 @@
   const USD_EUR = 0.92;          // Preisspannen der Hotelliste sind in US-Dollar
   const PAGE_SIZE = 15;          // Treffer pro "Weitere anzeigen"
   const FORM_KEY = "suedkorea-hotel-form";
-  const TRIP_MIN = T.stations[0].checkIn;
-  const TRIP_MAX = T.stations[T.stations.length - 1].checkOut;
+  // Reisezeitraum laut (ggf. durch die Flugwahl verschobenem) Plan
+  const TRIP_MIN = () => T.stations[0].checkIn;
+  const TRIP_MAX = () => T.stations[T.stations.length - 1].checkOut;
+  // Zeitraum einer Station als Platzhalter, damit Texte bei einer Verschiebung mitwandern (js/plan.js)
+  const rangeToken = (s) => `{range:${s.base.checkIn}/${s.base.checkOut}}`;
 
   const U = () => window.TripUtil; // esc, md aus app.js
   const L = (hd, kp) => window.Theme.t(hd, kp); // hochdeutsch / kurpfälzisch
@@ -104,7 +107,7 @@
       if (entry) {
         const rooms = entry.rooms || 1, adults = entry.adults || 2;
         const total = entry.pricePerNight * rooms * s.nights;
-        t.title = `${entry.name} buchen (${s.dates})`;
+        t.title = `${entry.name} buchen (${rangeToken(s)})`;
         t.description = `${s.nights} Nächte, ${rooms} Zimmer für ${adults} ${adults === 1 ? "Person" : "Personen"}. ` +
           `Im Hotel-Konfigurator gewählt: ${entry.estimate ? "ca. " : ""}${eur(entry.pricePerNight)} pro Nacht und Zimmer, ` +
           `zusammen ${entry.estimate ? "ca. " : ""}${eur(total)}. ${entry.priceSource || ""}`.trim();
@@ -115,7 +118,7 @@
         t.links = t.planned.links;
         delete t.planned;
       } else {
-        t.title = `${s.hotel.name} buchen (${s.dates})`;
+        t.title = `${s.hotel.name} buchen (${rangeToken(s)})`;
         t.links = s.hotel.url ? [{ title: s.hotel.name, url: s.hotel.url }] : [];
       }
       if (t.status === "erledigt" && prevName && prevName !== newName) {
@@ -143,9 +146,13 @@
       };
     }
     const rooms = sel.rooms || 1;
+    // Hat die Flugwahl den Plan verschoben, passt der gespeicherte Preis nicht mehr zum Zeitraum
+    const stale = !!(sel.checkIn && (sel.checkIn !== s.checkIn || sel.checkOut !== s.checkOut));
     return {
       selected: true, name: sel.name, url: sel.url, text: sel.text, image: sel.image, sel,
-      rooms,
+      rooms, stale,
+      staleText: stale ? L(`Zeitraum durch die Flugwahl geändert (Preis galt für ${fmtDay(sel.checkIn)}–${fmtDay(sel.checkOut)}, jetzt ${s.dates}). Preis bitte im Hotel-Konfigurator prüfen und das Hotel neu übernehmen.`,
+        `Zeitraum wege de Fliegerwahl geännert (de Breis war fer ${fmtDay(sel.checkIn)}–${fmtDay(sel.checkOut)}, jetzt ${s.dates}). Breis bitte im Hodel-Konfigurador nochmol brife un's Hodel nei iwwernemme.`) : "",
       priceText: `${sel.estimate ? "ca. " : ""}${eur(sel.pricePerNight)} ${L("pro Nacht und Zimmer", "pro Nacht un Zimmer")}` +
         (rooms > 1 ? ` · ${rooms} Zimmer` : ""),
       priceNote: sel.priceSource,
@@ -376,6 +383,7 @@
           <h3 style="margin:.15rem 0 .2rem"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.name)}</a>
             ${e.selected ? `<span class="badge sel">${L("gewählt", "ausgsucht")}</span>` : `<span class="badge">${L("Planvorschlag", "Blanvorschlach")}</span>`}</h3>
           <div class="small">${esc(e.priceText)} · ${L("gesamt", "alles zamme")} ${c.fixed ? eur(c.min) : `${eur(c.min)}–${eur(c.max)}`}</div>
+          ${e.stale ? `<div class="small stale-note">⚠️ ${esc(e.staleText)}</div>` : ""}
           ${e.selected && e.priceNote ? `<div class="small muted">${md(e.priceNote)}</div>` : ""}
         </div>
         ${e.selected ? `<button type="button" class="btn" data-act="reset" ${GH.token() && !state.saving ? "" : "disabled"}>${L("Auf Planvorschlag zurücksetzen", "Zurück uff de Blanvorschlach")}</button>` : ""}
@@ -409,8 +417,8 @@
           <label class="span2">${L("Station", "Schdation")}
             <select name="stationId">${T.stations.map((x) => opt(x.id, `${x.nr} · ${esc(x.name)} (${esc(x.area)}) · ${esc(x.dates)}`, s.id)).join("")}</select>
           </label>
-          <label>${L("Anreise", "Ookumme")}<input type="date" name="checkIn" value="${q.checkIn}" min="${TRIP_MIN}" max="${TRIP_MAX}"></label>
-          <label>${L("Abreise", "Abreis")}<input type="date" name="checkOut" value="${q.checkOut}" min="${TRIP_MIN}" max="${TRIP_MAX}"></label>
+          <label>${L("Anreise", "Ookumme")}<input type="date" name="checkIn" value="${q.checkIn}" min="${TRIP_MIN()}" max="${TRIP_MAX()}"></label>
+          <label>${L("Abreise", "Abreis")}<input type="date" name="checkOut" value="${q.checkOut}" min="${TRIP_MIN()}" max="${TRIP_MAX()}"></label>
           <label>${L("Erwachsene", "Erwachsne")}<select name="adults">${[1, 2, 3, 4, 5, 6].map((v) => opt(v, v, form.adults)).join("")}</select></label>
           <label>Zimmer<select name="rooms">${[1, 2, 3].map((v) => opt(v, v, form.rooms)).join("")}</select></label>
         </div>
@@ -630,6 +638,8 @@
   };
 
   listeners.push(renderStatus);
+  // Plan durch die Flugwahl verschoben: Zeiträume neu anzeigen
+  if (window.Plan) window.Plan.onChange(() => { if (alive()) renderAll(); });
   GH.onTokenChange(load);
   load();
 })();

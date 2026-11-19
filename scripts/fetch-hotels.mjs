@@ -36,10 +36,16 @@ const T0 = Date.now();
 const secs = () => `${Math.round((Date.now() - T0) / 1000)} s`;
 const today = new Date().toISOString().slice(0, 10);
 
-// Reisedaten aus js/data.js lesen
+// Reisedaten aus js/data.js lesen. Ist der Plan nach einer Flugwahl verschoben (data/flights.json),
+// rechnet js/plan.js die Stationsdaten um.
 const sandbox = { window: {} };
 vm.runInNewContext(await readFile("js/data.js", "utf8"), sandbox);
+vm.runInNewContext(await readFile("js/plan.js", "utf8"), sandbox);
 const TRIP = sandbox.window.TRIP;
+try {
+  const fl = JSON.parse(await readFile("data/flights.json", "utf8"));
+  if (fl && fl.plan) sandbox.window.Plan.configure(fl.plan);
+} catch { /* noch keine Flugwahl */ }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const median = (a) => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };

@@ -275,3 +275,14 @@ html[data-theme="vice"] {
   [data-theme="vice"] .vice-art { display: none; }
   [data-theme="vice"] h1, [data-theme="vice"] h2 { text-shadow: none; color: #000; }
 }
+
+/* Flugsuche */
+[data-theme="vice"] .f-day,
+[data-theme="vice"] .f-source select { background: var(--surface); border-color: var(--line); color: var(--ink); }
+[data-theme="vice"] .f-day.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+[data-theme="vice"] .f-returns .h-item { background: rgba(255, 255, 255, .04); }
+[data-theme="vice"] .f-warn { background: rgba(255, 154, 60, .12); }
+[data-theme="vice"] .f-shift { background: rgba(255, 214, 10, .18); color: var(--ink); }
+[data-theme="vice"] .f-late { background: rgba(255, 61, 139, .22); color: var(--ink); }
+[data-theme="vice"] .day-note.closed,
+[data-theme="vice"] .stale-note { color: #ffb86b; }

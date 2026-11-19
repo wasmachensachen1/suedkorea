@@ -326,6 +326,52 @@ td.num { white-space: nowrap; }
 .txt-overdue { color: #b91c1c; }
 
 /* Mobile */
+/* Flugsuche */
+.f-item { grid-template-columns: 1fr auto; }
+.f-seg + .f-seg { margin-top: .8rem; padding-top: .8rem; border-top: 1px dashed var(--line); }
+.f-seg-label { font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: .35rem; }
+.f-seg .flight { margin-bottom: .3rem; }
+.f-seg .flight sup { font-size: .7rem; color: #b45309; margin-left: .1rem; }
+.f-returns { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: .75rem; display: grid; gap: .6rem; }
+.f-returns h4 { margin: 0; font-size: .9rem; }
+.f-returns .h-item { box-shadow: none; background: #fbf9f6; }
+.f-check { display: flex !important; align-items: center; gap: .45rem; align-self: end; padding-bottom: .55rem; font-size: .9rem !important; color: var(--ink) !important; }
+.f-check input { width: auto !important; }
+.f-airports { border: 1px solid var(--line); border-radius: 10px; padding: .45rem .7rem .55rem; margin: 0; grid-column: span 2; display: flex; flex-wrap: wrap; gap: .3rem 1rem; }
+.f-airports legend { font-size: .82rem; font-weight: 600; color: var(--muted); padding: 0 .3rem; }
+.f-airports label { display: flex !important; align-items: center; gap: .35rem; font-weight: 400 !important; color: var(--ink) !important; font-size: .88rem !important; }
+.f-airports input { width: auto !important; }
+.f-source { display: flex; flex-wrap: wrap; align-items: end; gap: .6rem 1rem; margin-top: .9rem; padding-top: .9rem; border-top: 1px solid var(--line); }
+.f-source label { display: grid; gap: .3rem; font-size: .82rem; font-weight: 600; color: var(--muted); flex: 1 1 280px; }
+.f-source select { font: inherit; font-size: .92rem; padding: .5rem .6rem; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--ink); min-width: 0; }
+.f-days { display: flex; gap: .45rem; overflow-x: auto; padding: .2rem 0 .5rem; margin-top: 1rem; }
+.f-day { flex: none; display: grid; gap: .1rem; text-align: left; font: inherit; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 10px; padding: .45rem .7rem; cursor: pointer; }
+.f-day strong { font-size: .88rem; }
+.f-day span { font-size: .78rem; color: var(--muted); }
+.f-day small { font-size: .68rem; color: var(--accent); font-weight: 600; }
+.f-day.cheapest span { color: #166534; font-weight: 600; }
+.f-day.on { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink) inset; }
+.f-wait { display: flex; align-items: center; gap: .6rem; margin-top: 1rem; }
+.f-shift { background: #fef3c7; color: #78350f; }
+.f-late { background: #fee2e2; color: #7f1d1d; }
+.f-route { margin-bottom: 1rem; }
+.f-moves table { width: 100%; border-collapse: collapse; }
+.f-moves td { padding: .2rem .35rem; border-bottom: 1px solid var(--line); }
+.f-mode { border: 1px solid var(--line); border-radius: 10px; padding: .5rem .8rem; display: grid; gap: .35rem; }
+.f-mode legend { font-size: .88rem; font-weight: 600; padding: 0 .3rem; }
+.todo-form .f-mode label { display: flex; gap: .5rem; align-items: flex-start; font-size: .9rem; font-weight: 400; text-align: left; color: var(--ink); }
+.todo-form .f-mode input { width: auto; flex: none; margin: .2rem 0 0; }
+.f-warn { border-left: 4px solid #d97706; background: #fffbeb; padding: .6rem .8rem; border-radius: 10px; }
+.f-warn ul { margin: .3rem 0 0; padding-left: 1.1rem; }
+.flights .todo-dialog { max-width: 640px; }
+.day.dropped > div { text-decoration: line-through; opacity: .55; }
+.day.dropped .day-note { text-decoration: none; }
+.day-note { margin-top: .35rem; font-size: .82rem; }
+.day-note.closed { color: #b45309; font-weight: 600; }
+.day-note.holiday { color: var(--muted); }
+.stale-note { color: #b45309; margin-top: .2rem; }
+.shift-note { border-left: 4px solid #d97706; }
+
 @media (max-width: 860px) {
   .menu-btn { display: inline-block; }
   .layout { grid-template-columns: 1fr; }
@@ -353,6 +399,8 @@ td.num { white-space: nowrap; }
   .h-img { width: 88px; height: 72px; }
   .h-side { grid-column: 1 / -1; grid-template-columns: 1fr auto; align-items: center; justify-items: start; text-align: left; min-width: 0; }
   .hotel-img { width: 64px; height: 64px; }
+  .f-item { grid-template-columns: 1fr; }
+  .f-airports { grid-column: 1 / -1; }
 }
 
 @media print {

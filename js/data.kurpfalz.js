@@ -8,18 +8,18 @@
 window.Theme.registerData({
   "Südkorea-Rundreise":
     "Südkorea-Rundreis",
-  "Sept./Okt. 2027 · 20 Nächte · 5 Stationen":
-    "Sept./Okt. 2027 · 20 Nächt · 5 Schdatione",
-  "Abflug am Mittwoch, 15.9.2027, ab Frankfurt nonstop nach Seoul, Rückflug am Mittwoch, 6.10.2027: 20 Nächte in fünf Unterkünften. Die Reihenfolge wurde gegenüber der ersten Skizze gedreht – Jeju kommt direkt nach Seoul. So liegt die Strandwoche Ende September, wenn das Meer noch rund 25 °C hat, und Jeju ist vor der chinesischen Feiertagswoche (1.–7.10.) schon erledigt.":
-    "Am Mittwoch, 15.9.2027, geht's ab Frankfurt nonstop nach Seoul, retour am Mittwoch, 6.10.2027: 20 Nächt in fünf Unnerkünft. Die Reihefolg hämmer gegeniwwer de erschde Skizz rumgedreht – Jeju kummt direkt nach Seoul. Alla liegt die Schdrandwoch End Septemwer, wenn's Meer noch so um die 25 °C hot, un Jeju is vor de chinesische Feierdaachswoch (1.–7.10.) schun abghakt.",
+  "Sept./Okt. 2027 · {nights:all} Nächte · 5 Stationen":
+    "Sept./Okt. 2027 · {nights:all} Nächt · 5 Schdatione",
+  "Abflug am {wday:2027-09-15}, {dy:2027-09-15}, ab {flight:outFromName} {flight:outStops} nach Seoul, Rückflug am {wday:2027-10-06}, {dy:2027-10-06}: {nights:all} Nächte in fünf Unterkünften. Die Reihenfolge wurde gegenüber der ersten Skizze gedreht – Jeju kommt direkt nach Seoul. So liegt die Strandwoche Ende September, wenn das Meer noch rund 25 °C hat, und Jeju ist vor der chinesischen Feiertagswoche (1.–7.10.) schon erledigt.":
+    "Am {wday:2027-09-15}, {dy:2027-09-15}, geht's ab {flight:outFromName} {flight:outStops} nach Seoul, retour am {wday:2027-10-06}, {dy:2027-10-06}: {nights:all} Nächt in fünf Unnerkünft. Die Reihefolg hämmer gegeniwwer de erschde Skizz rumgedreht – Jeju kummt direkt nach Seoul. Alla liegt die Schdrandwoch End Septemwer, wenn's Meer noch so um die 25 °C hot, un Jeju is vor de chinesische Feierdaachswoch (1.–7.10.) schun abghakt.",
   "Das Erntedankfest Chuseok ist am 14.–16.9.2027. Danach fliegen viele Koreaner aus Europa zurück. Wer am 15.9. hinfliegt, ist vor dieser Welle unterwegs. In Seoul selbst ist es am Chuseok-Tag ruhig, Paläste haben geöffnet. Der Rückflug am 6.10. liegt vor dem langen Wochenende zum Hangeul-Tag (9.–11.10.). Dienstag und Mittwoch sind für Langstrecke meist die günstigsten Flugtage.":
     "Des Erntedankfescht Chuseok is am 14.–16.9.2027. Donn fliege viel Koreaner aus Europa widder hääm. Wer am 15.9. hiefliegt, is vor dere Well unnerwegs. In Seoul selwer is es am Chuseok-Daach ruhisch, die Paläscht hänn uff. De Rickflug am 6.10. liegt vor'm lange Wocheend zum Hangeul-Daach (9.–11.10.). Dienschdaach un Mittwoch sinn fer die Langstreck meischdens die billigschde Fliegdääch.",
   "Kostenschätzung für zwei Personen (gerundet, 1 € ≈ 1.500 KRW)":
     "Was es koscht fer zwaa Leit (gerundet, 1 € ≈ 1.500 KRW)",
   "Flüge Business Class FRA–Seoul hin/zurück":
     "Flieg Business Class FRA–Seoul hie un zurick",
-  "Hotels, 20 Nächte":
-    "Hodels, 20 Nächt",
+  "Hotels, {nights:all} Nächte":
+    "Hodels, {nights:all} Nächt",
   "Inlandsflüge, Züge, Taxis, 2 Fahrertage auf Jeju":
     "Inlandsflieg, Zieg, Taxis, 2 Fahrerdääch uff Jeju",
   "Ausflüge, Touren, Eintritte":
@@ -68,8 +68,8 @@ window.Theme.registerData({
     "[Bukhansan-Wannerung mit Spa](https://english.visitseoul.net/nature/BukhansanNationalPark/ENP000369)",
   "auf Anfrage, privat":
     "uff Ofrag, privat",
-  "Landung ca. 10 Uhr, Check-in. Nachmittags Gyeongbokgung (letzter Chuseok-Tag, oft mit Festprogramm), dann Spaziergang am Cheonggyecheon. Früh schlafen.":
-    "Lannung so gege 10 Uhr, Check-in. Nochmiddags Gyeongbokgung (letschder Chuseok-Daach, oft mit Feschtprogramm), donn Spaziergang am Cheonggyecheon. Frieh ins Bett!",
+  "Landung ca. {flight:outArr} Uhr, Check-in. Nachmittags Gyeongbokgung (letzter Chuseok-Tag, oft mit Festprogramm), dann Spaziergang am Cheonggyecheon. Früh schlafen.":
+    "Lannung so gege {flight:outArr} Uhr, Check-in. Nochmiddags Gyeongbokgung (letschder Chuseok-Daach, oft mit Feschtprogramm), donn Spaziergang am Cheonggyecheon. Frieh ins Bett!",
   "Changdeokgung mit Geheimem Garten, Bukchon, mittags in Ikseon-dong. Nachmittags Insadong mit Teehaus. Abends Gwangjang-Markt.":
     "Changdeokgung mit'm Geheime Gaade, Bukchon, middags in Ikseon-dong. Nochmiddags Insadong mit Deehaus. Owends Gwangjang-Markt.",
   "Vormittags Inwangsan an der Stadtmauer, danach Cafés in Seochon. Freier Nachmittag mit Sauna im Hotel. 17 Uhr O'ngo Night Dining Tour.":
@@ -268,8 +268,8 @@ window.Theme.registerData({
     "Ersatzfeierdaach, die Schdadt is rappelvoll. Vormiddags frieh Seoul Sky un Seokchon-See, nochmiddags Seongsu-dong.",
   "Mangwon-Markt und Yeonnam-dong, Einkaufen in Apgujeong oder Myeongdong. Abschiedsessen in einem Restaurant mit koreanischer Fine-Dining-Küche, Reservierung über die App CatchTable.":
     "Mangwon-Markt un Yeonnam-dong, Eikaafe in Apgujeong odder Myeongdong. Abschiedsesse in me Restaurant mit koreanischer Fine-Dining-Küch, reserviere iwwer die App CatchTable.",
-  "Taxi nach Incheon, Rückflug LH713 um ca. 13 Uhr, Ankunft in Frankfurt ca. 19:15 Uhr.":
-    "Taxi nach Incheon, Rickflug LH713 um ca. 13 Uhr, in Frankfurt ca. 19:15 Uhr. Dehääm!",
+  "Taxi nach {flight:retFromName}, Rückflug {flight:retCode} um ca. {flight:retDep} Uhr, Ankunft in {flight:retToName} ca. {flight:retArr} Uhr.":
+    "Taxi nach {flight:retFromName}, Rickflug {flight:retCode} um ca. {flight:retDep} Uhr, in {flight:retToName} ca. {flight:retArr} Uhr. Dehääm!",
   "Nonstop in Business Class gibt es nur ab Frankfurt. Von Köln und Düsseldorf aus ist man mit dem ICE in etwa 1 bzw. 1,5 Stunden am Frankfurter Flughafen. Mit Lufthansa lässt sich diese Zugfahrt als Lufthansa Express Rail direkt im Flugticket buchen. Nonstop fliegen auf der Strecke [Lufthansa, Korean Air, Asiana und T'way](https://www.flightconnections.com/flights-from-fra-to-icn), die Flugzeit beträgt rund 11 Std. 20 Min. hin und 13–14 Std. zurück.":
     "Nonstop in Business Class gebbt's nur ab Frankfurt. Vun Köln un Düsseldorf aus is mer mit'm ICE in so 1 bzw. 1,5 Schdunne am Frankfurter Flughafe. Bei de Lufthansa kann mer die Zugfahrt als Lufthansa Express Rail direkt im Flugticket mitbuche. Nonstop fliege uff dere Streck [Lufthansa, Korean Air, Asiana un T'way](https://www.flightconnections.com/flights-from-fra-to-icn), mer hockt rund 11 Std. 20 Min. hie un 13–14 Std. zurick im Flieger.",
   "Route":
@@ -376,8 +376,8 @@ window.Theme.registerData({
     "Geheimer Gaade (Changdeokgung): online reserviere, e paar Woche vorher",
   "Sky Capsules in Busan: Freischaltung jeweils 4 Wochen vorher, dienstags 7 Uhr":
     "Sky Capsules in Busan: gehn immer 4 Woche vorher online, dienschdags 7 Uhr",
-  "KTX: Verkauf ab einem Monat vorher, Fahrt am 3.10. gleich am ersten Tag buchen":
-    "KTX: Verkaaf ab ääm Monat vorher, die Fahrt am 3.10. glei am erschde Daach buche",
+  "KTX: Verkauf ab einem Monat vorher, Fahrt am {d:2027-10-03} gleich am ersten Tag buchen":
+    "KTX: Verkaaf ab ääm Monat vorher, die Fahrt am {d:2027-10-03} glei am erschde Daach buche",
   "Fahrer auf Jeju: 2–3 Monate vorher":
     "Fahrer uff Jeju: 2–3 Monat vorher",
   "Wetter":
@@ -404,8 +404,21 @@ window.Theme.registerData({
     "Feierdääch 2027: [publicholidays.co.kr – Chuseok](https://publicholidays.co.kr/chuseok/), [Klook – Feiertage 2027](https://www.klook.com/blog/south-korea-public-holidays/)",
   "KTX-Preise nach der Fusion: [Seoul Tourism – Korail-Pass und Preise 2026](https://www.seoultourism.org/?p=1841), [Financial News – KTX-SRT-Fusion](https://en.fnnews.com/news/202609011328241250)":
     "KTX-Breise nach de Fusion: [Seoul Tourism – Korail-Pass und Preise 2026](https://www.seoultourism.org/?p=1841), [Financial News – KTX-SRT-Fusion](https://en.fnnews.com/news/202609011328241250)",
-  "Flugsuche":
-    "Fliegersuch",
-  "Flüge FRA–ICN vergleichen und Preisalarme im Blick behalten.":
-    "Flieg FRA–ICN vergleiche un die Breisalarme im Aach behalde.",
+  // Feiertage und Ruhetage (Hinweise im Tagesplan, js/plan.js)
+  "Chuseok (Erntedankfest)":
+    "Chuseok (Erntedankfescht)",
+  "Nationalfeiertag":
+    "Nationalfeierdaach",
+  "Ersatzfeiertag für den Nationalfeiertag":
+    "Ersatzfeierdaach fer de Nationalfeierdaach",
+  "Hangeul-Tag":
+    "Hangeul-Daach",
+  "Ersatzfeiertag für den Hangeul-Tag":
+    "Ersatzfeierdaach fer de Hangeul-Daach",
+  "Gyeongbokgung ist dienstags geschlossen.":
+    "Gyeongbokgung hot dienschdaachs zu.",
+  "Changdeokgung und der Geheime Garten sind montags geschlossen.":
+    "Changdeokgung un de Geheime Gaade hänn mondaachs zu.",
+  "Das Spa Cimer im Paradise Hotel ist am vierten Mittwoch im Monat geschlossen.":
+    "'s Spa Cimer im Paradise Hotel hot am vierte Mittwoch im Monat zu.",
 });

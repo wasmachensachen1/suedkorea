@@ -30,7 +30,7 @@
 
   // ---------- Reiseinhalte (data.js) ----------
   // Nicht übersetzt werden technische Felder; alle übrigen Texte werden über das Wörterbuch ersetzt.
-  const SKIP = new Set(["id", "url", "color", "checkIn", "checkOut", "departure", "returnDate", "code", "icon", "hotelSearch"]);
+  const SKIP = new Set(["id", "url", "color", "checkIn", "checkOut", "departure", "returnDate", "code", "icon", "hotelSearch", "base"]);
   let dict = {};
   let entries = []; // [Objekt, Schlüssel, Originaltext]
 
