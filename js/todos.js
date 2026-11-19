@@ -460,6 +460,8 @@
     state,
     load,
     counts,
+    // Änderung an der Liste speichern (z. B. aus dem Hotel-Konfigurator): fn(items) ändert die Liste
+    update: mutate,
     subscribe(fn) { listeners.push(fn); },
     // Zahl für das Menü: überfällig + bald fällig
     attentionCount() { const c = counts(); return c.overdue + c.soon; },

@@ -28,29 +28,8 @@
       }
     },
     "jeju": {
-      "ok": true,
-      "updatedAt": "2026-11-19T13:26:38.897Z",
-      "count": 300,
-      "locationKey": "g294196",
-      "prices": {
-        "rate": 30,
-        "ref": 112,
-        "similar": 158,
-        "none": 0
-      },
-      "seasonFactor": {
-        "value": 1.3356708293307717,
-        "pairs": 26,
-        "source": "Station"
-      },
-      "rates": {
-        "plan": 30,
-        "ref": 138,
-        "occ": 20,
-        "failed": 0,
-        "requested": 233,
-        "planned": 233
-      }
+      "ok": false,
+      "error": "Die bisherige Liste enthielt Hotels aus ganz Südkorea statt aus dem Ort (falsche Orts-ID). Wird beim nächsten Lauf mit der richtigen Orts-ID neu geladen."
     },
     "busan": {
       "ok": true,
@@ -78,29 +57,8 @@
       }
     },
     "gyeongju": {
-      "ok": true,
-      "updatedAt": "2026-11-19T13:26:38.910Z",
-      "count": 300,
-      "locationKey": "g294196",
-      "prices": {
-        "rate": 33,
-        "ref": 113,
-        "similar": 154,
-        "none": 0
-      },
-      "seasonFactor": {
-        "value": 1.3888888888888888,
-        "pairs": 25,
-        "source": "Station"
-      },
-      "rates": {
-        "plan": 33,
-        "ref": 138,
-        "occ": 20,
-        "failed": 0,
-        "requested": 232,
-        "planned": 232
-      }
+      "ok": false,
+      "error": "Die bisherige Liste enthielt Hotels aus ganz Südkorea statt aus dem Ort (falsche Orts-ID). Wird beim nächsten Lauf mit der richtigen Orts-ID neu geladen."
     },
     "gangnam": {
       "ok": true,
