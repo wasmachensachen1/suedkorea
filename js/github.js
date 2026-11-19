@@ -6,6 +6,7 @@
 
   const CFG = { owner: "wasmachensachen1", repo: "suedkorea", branch: "main" };
   const TOKEN_KEY = "suedkorea-gh-token";
+  const L = (hd, kp) => (window.Theme ? window.Theme.t(hd, kp) : hd); // hochdeutsch / kurpfälzisch
 
   const lsGet = (k) => { try { return localStorage.getItem(k) || ""; } catch (e) { return ""; } };
   const lsSet = (k, v) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) { /* egal */ } };
@@ -24,12 +25,14 @@
   }
 
   function message(status, method, path) {
-    if (status === 401) return "Der GitHub-Token ist ungültig oder abgelaufen.";
+    if (status === 401) return L("Der GitHub-Token ist ungültig oder abgelaufen.", "De GitHub-Token is ungildisch odder abgelaafe.");
     if (status === 403 || (status === 404 && method !== "GET"))
-      return `Der Token darf nicht in das Repository schreiben. Er braucht für „${CFG.repo}“ die Berechtigung „Contents: Read and write“.`;
-    if (status === 404) return `Die Datei ${path} oder das Repository wurde nicht gefunden – oder der Token hat keinen Zugriff darauf.`;
-    if (status === 409) return "Die Datei wurde gleichzeitig woanders geändert.";
-    return `GitHub hat mit Fehler ${status} geantwortet.`;
+      return L(`Der Token darf nicht in das Repository schreiben. Er braucht für „${CFG.repo}“ die Berechtigung „Contents: Read and write“.`,
+        `De Token derf net ins Repository schreiwe. Der braucht fer „${CFG.repo}“ die Berechtigung „Contents: Read and write“.`);
+    if (status === 404) return L(`Die Datei ${path} oder das Repository wurde nicht gefunden – oder der Token hat keinen Zugriff darauf.`,
+      `Die Datei ${path} odder des Repository is net zu finne – odder de Token derf net dro.`);
+    if (status === 409) return L("Die Datei wurde gleichzeitig woanders geändert.", "Die Datei is grad gleichzeidisch woanners geännert worre.");
+    return L(`GitHub hat mit Fehler ${status} geantwortet.`, `GitHub hot mit Fehler ${status} geantwortet.`);
   }
 
   async function api(method, path, body, tok) {
@@ -60,14 +63,14 @@
       return { data: JSON.parse(b64decode(j.content)), sha: j.sha };
     }
     const res = await fetch(`${path}?t=${Date.now()}`, { cache: "no-store" });
-    if (!res.ok) throw new Error(`${path} konnte nicht geladen werden (${res.status}).`);
+    if (!res.ok) throw new Error(L(`${path} konnte nicht geladen werden (${res.status}).`, `${path} hot net gelade werre kenne (${res.status}).`));
     return { data: await res.json(), sha: null };
   }
 
   // Schreibt eine JSON-Datei als Commit. build(data) bekommt den frischen Stand und
   // liefert den neuen Inhalt; bei gleichzeitiger Änderung wird bis zu dreimal neu versucht.
   async function updateJson(path, build, commitMessage) {
-    if (!token()) throw new Error("Zum Speichern zuerst einen GitHub-Token hinterlegen (To-dos → Bearbeiten aktivieren).");
+    if (!token()) throw new Error(L("Zum Speichern zuerst einen GitHub-Token hinterlegen (To-dos → Bearbeiten aktivieren).", "Zum Schbeichere erschd mol en GitHub-Token hinnerlege (To-dos → Bearbeide oschalde)."));
     for (let attempt = 0; attempt < 3; attempt++) {
       const { data, sha } = await readJson(path);
       const next = build(data);
@@ -80,7 +83,7 @@
         throw e;
       }
     }
-    throw new Error("Speichern fehlgeschlagen.");
+    throw new Error(L("Speichern fehlgeschlagen.", "Schbeichere is schiefgange."));
   }
 
   window.GitHubStore = {

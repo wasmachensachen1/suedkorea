@@ -16,6 +16,7 @@
   const TRIP_MAX = T.stations[T.stations.length - 1].checkOut;
 
   const U = () => window.TripUtil; // esc, md aus app.js
+  const L = (hd, kp) => window.Theme.t(hd, kp); // hochdeutsch / kurpfälzisch
 
   // ---------- Auswahl (data/hotels.json) ----------
   const state = { selections: {}, loaded: false, loading: false, saving: false, error: "" };
@@ -30,7 +31,7 @@
       state.loaded = true;
       state.error = "";
     } catch (e) {
-      state.error = `Die Hotel-Auswahl konnte nicht geladen werden: ${e.message || e}`;
+      state.error = `${L("Die Hotel-Auswahl konnte nicht geladen werden", "Die Hodel-Auswahl hot net gelade werre kenne")}: ${e.message || e}`;
     } finally {
       state.loading = false; notify();
     }
@@ -52,7 +53,7 @@
       return true;
     } catch (e) {
       state.selections = before;
-      state.error = `Nicht gespeichert: ${e.message || e}`;
+      state.error = `${L("Nicht gespeichert", "Net gspeichert")}: ${e.message || e}`;
       return false;
     } finally {
       state.saving = false; notify();
@@ -89,7 +90,7 @@
     return {
       selected: true, name: sel.name, url: sel.url, text: sel.text, image: sel.image, sel,
       rooms,
-      priceText: `${sel.estimate ? "ca. " : ""}${eur(sel.pricePerNight)} pro Nacht und Zimmer` +
+      priceText: `${sel.estimate ? "ca. " : ""}${eur(sel.pricePerNight)} ${L("pro Nacht und Zimmer", "pro Nacht un Zimmer")}` +
         (rooms > 1 ? ` · ${rooms} Zimmer` : ""),
       priceNote: sel.priceSource,
     };
@@ -113,18 +114,19 @@
     try {
       res = await fetch(`${OFFERS}/${s.id}.json?t=${Math.floor(Date.now() / 600000)}`, { cache: "no-cache" });
     } catch (e) {
-      throw new Error("Die Hoteldaten konnten nicht geladen werden. Bitte Internetverbindung prüfen.");
+      throw new Error(L("Die Hoteldaten konnten nicht geladen werden. Bitte Internetverbindung prüfen.", "Die Hodeldaten hänn net gelade werre kenne. Gugg emol nach'm Internet."));
     }
     if (res.status === 404) {
       let why = "";
       try {
         const idx = await (await fetch(`${OFFERS}/index.json?t=${Date.now()}`, { cache: "no-cache" })).json();
         const st = idx.stations && idx.stations[s.id];
-        if (st && st.error) why = ` Letzter Fehler: ${st.error}`;
+        if (st && st.error) why = ` ${L("Letzter Fehler", "Letschder Fehler")}: ${st.error}`;
       } catch (e) { /* noch kein Lauf */ }
-      throw new Error(`Für ${s.name} liegen noch keine Hoteldaten vor. Sie werden von der GitHub Action „Hoteldaten aktualisieren“ geholt (täglich, oder im Repository unter Actions → Run workflow).${why}`);
+      throw new Error(L(`Für ${s.name} liegen noch keine Hoteldaten vor. Sie werden von der GitHub Action „Hoteldaten aktualisieren“ geholt (täglich, oder im Repository unter Actions → Run workflow).`,
+        `Fer ${s.name} gebbt's noch kää Hodeldaten. Die holt die GitHub Action „Hoteldaten aktualisieren“ (jeden Daach, odder im Repository unner Actions → Run workflow).`) + why);
     }
-    if (!res.ok) throw new Error(`Die Hoteldaten konnten nicht geladen werden (Fehler ${res.status}).`);
+    if (!res.ok) throw new Error(L(`Die Hoteldaten konnten nicht geladen werden (Fehler ${res.status}).`, `Die Hodeldaten hänn net gelade werre kenne (Fehler ${res.status}).`));
     const data = await res.json();
     const usd = data.usdToEur || USD_EUR;
     data.hotels = (data.hotels || []).map((h) => ({
@@ -184,17 +186,19 @@
   function stars(r) {
     if (!r) return "";
     const full = Math.round(r * 2) / 2;
-    return `<span class="h-stars" aria-label="${r} von 5">${"●".repeat(Math.floor(full))}${full % 1 ? "◐" : ""}${"○".repeat(5 - Math.ceil(full))}</span>`;
+    return `<span class="h-stars" aria-label="${r} ${L("von", "vun")} 5">${"●".repeat(Math.floor(full))}${full % 1 ? "◐" : ""}${"○".repeat(5 - Math.ceil(full))}</span>`;
   }
 
-  function describe(h, s) {
+  // hd = true: immer Hochdeutsch (für den Text, der mit der Auswahl gespeichert wird)
+  function describe(h, s, hd) {
+    const l = (a, b) => (hd ? a : L(a, b));
     const parts = [];
     if (h.type) parts.push(h.type);
     if (h.dist != null) parts.push(`${h.dist.toLocaleString("de-DE", { maximumFractionDigits: 1 })} km bis ${s.hotelSearch.centerName}`);
-    if (h.rating) parts.push(`TripAdvisor ${h.rating.toLocaleString("de-DE")}/5 aus ${h.reviews.toLocaleString("de-DE")} Bewertungen`);
+    if (h.rating) parts.push(`TripAdvisor ${h.rating.toLocaleString("de-DE")}/5 aus ${h.reviews.toLocaleString("de-DE")} ${l("Bewertungen", "Bewertunge")}`);
     let text = parts.join(" · ") + ".";
     const extra = [...h.labels, ...h.mentions].slice(0, 6);
-    if (extra.length) text += ` Gäste erwähnen: ${extra.join(", ")}.`;
+    if (extra.length) text += ` ${l("Gäste erwähnen", "Die Gäscht redde vun")}: ${extra.join(", ")}.`;
     return text;
   }
 
@@ -237,19 +241,21 @@
     const p = priceOf(h, q);
     const n = nightsBetween(q.checkIn, q.checkOut);
     if (p.exact) {
-      return `<div class="h-price"><strong>${eur(p.value)}</strong><span>pro Nacht und Zimmer</span>
-        <small>günstigstes von ${p.r.offers} Angebot${p.r.offers > 1 ? "en" : ""}, bei ${esc(p.r.provider)} · ${fmtDay(q.checkIn)}–${fmtDay(q.checkOut)}, ${n} Nächte</small></div>`;
+      return `<div class="h-price"><strong>${eur(p.value)}</strong><span>${L("pro Nacht und Zimmer", "pro Nacht un Zimmer")}</span>
+        <small>${L(`günstigstes von ${p.r.offers} Angebot${p.r.offers > 1 ? "en" : ""}`, `s'billigschde vun ${p.r.offers} Ogebot${p.r.offers > 1 ? "e" : ""}`)}, bei ${esc(p.r.provider)} · ${fmtDay(q.checkIn)}–${fmtDay(q.checkOut)}, ${n} ${L("Nächte", "Nächt")}</small></div>`;
     }
     const why = {
-      dates: "Richtwert ohne Datum. Tagespreise gibt es nur für den Zeitraum laut Reiseplan.",
-      norate: "Richtwert ohne Datum. Tagespreise werden für die beliebtesten und zentralsten Häuser geholt.",
-      none: q.adults / q.rooms > 3 ? "Richtwert ohne Datum. Tagespreise gibt es für bis zu 3 Personen pro Zimmer." : "Richtwert ohne Datum, für den Zeitraum kein Tagespreis verfügbar.",
+      dates: L("Richtwert ohne Datum. Tagespreise gibt es nur für den Zeitraum laut Reiseplan.", "So ungefähr, ohne Datum. Daachesbreise gebbt's nur fer de Zeitraum laut Reiseblan."),
+      norate: L("Richtwert ohne Datum. Tagespreise werden für die beliebtesten und zentralsten Häuser geholt.", "So ungefähr, ohne Datum. Daachesbreise holt mer nur fer die beliebteschde un zentralschde Heiser."),
+      none: q.adults / q.rooms > 3
+        ? L("Richtwert ohne Datum. Tagespreise gibt es für bis zu 3 Personen pro Zimmer.", "So ungefähr, ohne Datum. Daachesbreise gebbt's fer bis zu 3 Leit pro Zimmer.")
+        : L("Richtwert ohne Datum, für den Zeitraum kein Tagespreis verfügbar.", "So ungefähr, ohne Datum – fer den Zeitraum gebbt's kään Daachesbreis."),
     }[p.why];
     const range = h.rangeMin ? `ca. ${eur(h.rangeMin)}${h.rangeMax && h.rangeMax > h.rangeMin ? `–${eur(h.rangeMax)}` : ""}` : "";
     if (range) {
-      return `<div class="h-price"><strong>${range}</strong><span>pro Nacht und Zimmer</span><small>${why}</small></div>`;
+      return `<div class="h-price"><strong>${range}</strong><span>${L("pro Nacht und Zimmer", "pro Nacht un Zimmer")}</span><small>${why}</small></div>`;
     }
-    return `<div class="h-price"><strong>–</strong><small>kein Preis verfügbar</small></div>`;
+    return `<div class="h-price"><strong>–</strong><small>${L("kein Preis verfügbar", "kään Breis do")}</small></div>`;
   }
 
   function itemHtml(h, s, q) {
@@ -258,25 +264,25 @@
     const isSel = cur && cur.hotelKey === h.key;
     const p = priceOf(h, q);
     const canSave = !!GH.token() && !state.saving && p.value != null;
-    const why = !GH.token() ? "Zum Übernehmen GitHub-Token hinterlegen (To-dos → Bearbeiten aktivieren)"
-      : p.value == null ? "Ohne Preis kann das Hotel nicht übernommen werden" : "";
+    const why = !GH.token() ? L("Zum Übernehmen GitHub-Token hinterlegen (To-dos → Bearbeiten aktivieren)", "Zum Iwwernemme GitHub-Token hinnerlege (To-dos → Bearbeide oschalde)")
+      : p.value == null ? L("Ohne Preis kann das Hotel nicht übernommen werden", "Ohne Breis kann mer's Hodel net iwwernemme") : "";
     return `
       <article class="h-item${isSel ? " selected" : ""}" data-key="${esc(h.key)}">
         ${h.image ? `<img class="h-img" src="${esc(h.image)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : `<div class="h-img h-img-empty">🏨</div>`}
         <div class="h-body">
           <h3><a href="${esc(h.url)}" target="_blank" rel="noopener">${esc(h.name)} <span aria-hidden="true">↗</span></a></h3>
           <div class="h-meta">
-            ${h.rating ? `${stars(h.rating)} <span>${h.rating.toLocaleString("de-DE")}</span> <span class="muted">(${h.reviews.toLocaleString("de-DE")})</span>` : `<span class="muted">noch keine Bewertung</span>`}
+            ${h.rating ? `${stars(h.rating)} <span>${h.rating.toLocaleString("de-DE")}</span> <span class="muted">(${h.reviews.toLocaleString("de-DE")})</span>` : `<span class="muted">${L("noch keine Bewertung", "noch kää Bewertung")}</span>`}
             ${h.dist != null ? `<span class="chip">📍 ${h.dist.toLocaleString("de-DE", { maximumFractionDigits: 1 })} km</span>` : ""}
           </div>
           <p class="small h-desc">${esc(describe(h, s))}</p>
-          <a class="small" href="${esc(h.url)}" target="_blank" rel="noopener">Details, Fotos und Bewertungen ansehen ↗</a>
+          <a class="small" href="${esc(h.url)}" target="_blank" rel="noopener">${L("Details, Fotos und Bewertungen ansehen", "Details, Fotos un Bewertunge ogugge")} ↗</a>
         </div>
         <div class="h-side">
           ${priceHtml(h, q)}
           ${isSel
-            ? `<span class="h-chosen">✓ Im Reiseplan</span>`
-            : `<button type="button" class="btn primary" data-act="choose" ${canSave ? "" : `disabled title="${esc(why)}"`}>In Reiseplan übernehmen</button>`}
+            ? `<span class="h-chosen">✓ ${L("Im Reiseplan", "Im Reiseblan")}</span>`
+            : `<button type="button" class="btn primary" data-act="choose" ${canSave ? "" : `disabled title="${esc(why)}"`}>${L("In Reiseplan übernehmen", "In de Reiseblan iwwernemme")}</button>`}
         </div>
       </article>`;
   }
@@ -289,22 +295,22 @@
     return `
       <div class="card h-current">
         <div>
-          <div class="muted small">Im Reiseplan für ${esc(s.name)} (${esc(s.area)}) · ${n} Nächte</div>
+          <div class="muted small">${L("Im Reiseplan für", "Im Reiseblan fer")} ${esc(s.name)} (${esc(s.area)}) · ${n} ${L("Nächte", "Nächt")}</div>
           <h3 style="margin:.15rem 0 .2rem"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.name)}</a>
-            ${e.selected ? `<span class="badge sel">gewählt</span>` : `<span class="badge">Planvorschlag</span>`}</h3>
-          <div class="small">${esc(e.priceText)} · gesamt ${c.fixed ? eur(c.min) : `${eur(c.min)}–${eur(c.max)}`}</div>
+            ${e.selected ? `<span class="badge sel">${L("gewählt", "ausgsucht")}</span>` : `<span class="badge">${L("Planvorschlag", "Blanvorschlach")}</span>`}</h3>
+          <div class="small">${esc(e.priceText)} · ${L("gesamt", "alles zamme")} ${c.fixed ? eur(c.min) : `${eur(c.min)}–${eur(c.max)}`}</div>
           ${e.selected && e.priceNote ? `<div class="small muted">${md(e.priceNote)}</div>` : ""}
         </div>
-        ${e.selected ? `<button type="button" class="btn" data-act="reset" ${GH.token() && !state.saving ? "" : "disabled"}>Auf Planvorschlag zurücksetzen</button>` : ""}
+        ${e.selected ? `<button type="button" class="btn" data-act="reset" ${GH.token() && !state.saving ? "" : "disabled"}>${L("Auf Planvorschlag zurücksetzen", "Zurück uff de Blanvorschlach")}</button>` : ""}
       </div>`;
   }
 
   function syncHtml() {
     const { esc } = U();
-    if (state.saving) return `<div class="todo-sync small"><span class="sync-dot busy"></span> Speichere Auswahl auf GitHub …</div>`;
+    if (state.saving) return `<div class="todo-sync small"><span class="sync-dot busy"></span> ${L("Speichere Auswahl auf GitHub …", "Schbeicher die Auswahl uff GitHub …")}</div>`;
     if (state.error) return `<div class="card todo-error" role="alert">${esc(state.error)}</div>`;
-    if (!GH.token()) return `<div class="todo-sync small"><span class="sync-dot"></span> Nur ansehen. Zum Übernehmen in den Reiseplan einmalig unter <a href="#todos">To-dos → Bearbeiten aktivieren</a> den GitHub-Token hinterlegen.</div>`;
-    return `<div class="todo-sync small"><span class="sync-dot ok"></span> Übernahme aktiv · Auswahl wird im Repository gespeichert</div>`;
+    if (!GH.token()) return `<div class="todo-sync small"><span class="sync-dot"></span> ${L(`Nur ansehen. Zum Übernehmen in den Reiseplan einmalig unter <a href="#todos">To-dos → Bearbeiten aktivieren</a> den GitHub-Token hinterlegen.`, `Nur gugge. Zum Iwwernemme in de Reiseblan ämol unner <a href="#todos">To-dos → Bearbeide oschalde</a> de GitHub-Token hinnerlege.`)}</div>`;
+    return `<div class="todo-sync small"><span class="sync-dot ok"></span> ${L("Übernahme aktiv · Auswahl wird im Repository gespeichert", "Iwwernemme geht · die Auswahl landet im Repository")}</div>`;
   }
 
   function opt(v, label, cur) { return `<option value="${v}"${String(cur) === String(v) ? " selected" : ""}>${label}</option>`; }
@@ -318,20 +324,20 @@
     const data = offers.get(s.id);
     const updated = data && data.updatedAt ? new Date(data.updatedAt).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) : "";
     return `
-      <h1>🏨 Hotel-Konfigurator</h1>
-      <p class="muted" style="max-width:72ch">Hotels für eine Station suchen, filtern und eines davon in den Reiseplan übernehmen. Pro Station gilt immer genau ein Hotel; eine neue Wahl ersetzt die bisherige. Stationsseiten, Transfers und Kosten passen sich automatisch an.</p>
+      <h1>🏨 ${L("Hotel-Konfigurator", "Hodel-Konfigurador")}</h1>
+      <p class="muted" style="max-width:72ch">${L("Hotels für eine Station suchen, filtern und eines davon in den Reiseplan übernehmen. Pro Station gilt immer genau ein Hotel; eine neue Wahl ersetzt die bisherige. Stationsseiten, Transfers und Kosten passen sich automatisch an.", "Hodels fer e Schdation suche, filtere un ääns devun in de Reiseblan iwwernemme. Pro Schdation gilt immer genau ään Hodel; wer nei aussucht, schmeißt's alde raus. Schdationsseide, Fahrerei un Koschde basse sich vun selwer o.")}</p>
 
       <form class="card h-form" id="hForm" onsubmit="return false">
         <div class="h-grid">
-          <label class="span2">Station
+          <label class="span2">${L("Station", "Schdation")}
             <select name="stationId">${T.stations.map((x) => opt(x.id, `${x.nr} · ${esc(x.name)} (${esc(x.area)}) · ${esc(x.dates)}`, s.id)).join("")}</select>
           </label>
-          <label>Anreise<input type="date" name="checkIn" value="${q.checkIn}" min="${TRIP_MIN}" max="${TRIP_MAX}"></label>
-          <label>Abreise<input type="date" name="checkOut" value="${q.checkOut}" min="${TRIP_MIN}" max="${TRIP_MAX}"></label>
-          <label>Erwachsene<select name="adults">${[1, 2, 3, 4, 5, 6].map((v) => opt(v, v, form.adults)).join("")}</select></label>
+          <label>${L("Anreise", "Ookumme")}<input type="date" name="checkIn" value="${q.checkIn}" min="${TRIP_MIN}" max="${TRIP_MAX}"></label>
+          <label>${L("Abreise", "Abreis")}<input type="date" name="checkOut" value="${q.checkOut}" min="${TRIP_MIN}" max="${TRIP_MAX}"></label>
+          <label>${L("Erwachsene", "Erwachsne")}<select name="adults">${[1, 2, 3, 4, 5, 6].map((v) => opt(v, v, form.adults)).join("")}</select></label>
           <label>Zimmer<select name="rooms">${[1, 2, 3].map((v) => opt(v, v, form.rooms)).join("")}</select></label>
         </div>
-        <p class="small muted" style="margin:.6rem 0 0">${n > 0 ? `${n} Nächte` : "Abreise muss nach der Anreise liegen"}${custom ? ` · abweichend vom Reiseplan (${esc(s.dates)}) · <button type="button" class="btn-link" data-act="plan-dates">Zeitraum aus Reiseplan</button>` : " · Zeitraum laut Reiseplan"}</p>
+        <p class="small muted" style="margin:.6rem 0 0">${n > 0 ? `${n} ${L("Nächte", "Nächt")}` : L("Abreise muss nach der Anreise liegen", "Die Abreis muss nach'm Ookumme sei, gell")}${custom ? ` · ${L("abweichend vom Reiseplan", "annerschd wie im Reiseblan")} (${esc(s.dates)}) · <button type="button" class="btn-link" data-act="plan-dates">${L("Zeitraum aus Reiseplan", "Zeitraum aus'm Reiseblan")}</button>` : ` · ${L("Zeitraum laut Reiseplan", "Zeitraum laut Reiseblan")}`}</p>
       </form>
 
       <div id="hSync">${syncHtml()}</div>
@@ -339,30 +345,30 @@
 
       <div class="card h-filters" id="hFilters">
         <div class="h-grid">
-          <label>Preis ab (€/Nacht)<input type="number" name="priceMin" min="0" step="10" inputmode="numeric" placeholder="beliebig" value="${esc(f.priceMin)}"></label>
-          <label>Preis bis (€/Nacht)<input type="number" name="priceMax" min="0" step="10" inputmode="numeric" placeholder="beliebig" value="${esc(f.priceMax)}"></label>
+          <label>${L("Preis ab", "Breis ab")} (€/Nacht)<input type="number" name="priceMin" min="0" step="10" inputmode="numeric" placeholder="${L("beliebig", "egal")}" value="${esc(f.priceMin)}"></label>
+          <label>${L("Preis bis", "Breis bis")} (€/Nacht)<input type="number" name="priceMax" min="0" step="10" inputmode="numeric" placeholder="${L("beliebig", "egal")}" value="${esc(f.priceMax)}"></label>
           <label>Bewertung ab
-            <select name="minRating">${[["0", "alle"], ["3.5", "3,5 ★"], ["4", "4,0 ★"], ["4.5", "4,5 ★"], ["5", "5,0 ★"]].map(([v, l]) => opt(v, l, f.minRating)).join("")}</select>
+            <select name="minRating">${[["0", L("alle", "all")], ["3.5", "3,5 ★"], ["4", "4,0 ★"], ["4.5", "4,5 ★"], ["5", "5,0 ★"]].map(([v, l]) => opt(v, l, f.minRating)).join("")}</select>
           </label>
-          <label>Lage: höchstens
+          <label>${L("Lage: höchstens", "Lag: hechschdens")}
             <select name="maxDist">${[["", "egal"], ["0.5", "500 m"], ["1", "1 km"], ["2", "2 km"], ["3", "3 km"], ["5", "5 km"], ["10", "10 km"]].map(([v, l]) => opt(v, l, f.maxDist)).join("")}</select>
           </label>
-          <label>Anzahl Bewertungen
+          <label>${L("Anzahl Bewertungen", "Wieviel Bewertunge")}
             <select name="minReviews">${[["0", "egal"], ["50", "ab 50"], ["200", "ab 200"], ["500", "ab 500"], ["1000", "ab 1.000"]].map(([v, l]) => opt(v, l, f.minReviews)).join("")}</select>
           </label>
-          <label>Unterkunftsart
-            <select name="type">${opt("", "alle", f.type)}${types.map((t) => opt(esc(t), esc(t), f.type)).join("")}</select>
+          <label>${L("Unterkunftsart", "Was fer e Unnerkunft")}
+            <select name="type">${opt("", L("alle", "all"), f.type)}${types.map((t) => opt(esc(t), esc(t), f.type)).join("")}</select>
           </label>
-          <label>Name enthält<input type="search" name="query" placeholder="z. B. Shilla" value="${esc(f.query)}"></label>
-          <label>Sortieren nach
-            <select name="sort">${[["popularity", "Beliebtheit"], ["price", "Preis aufsteigend"], ["priceDesc", "Preis absteigend"], ["rating", "Bewertung"], ["distance", "Nähe zum Zentrum"]].map(([v, l]) => opt(v, l, f.sort)).join("")}</select>
+          <label>${L("Name enthält", "Im Name schdeht")}<input type="search" name="query" placeholder="z. B. Shilla" value="${esc(f.query)}"></label>
+          <label>${L("Sortieren nach", "Sordiere nach")}
+            <select name="sort">${[["popularity", "Beliebtheit"], ["price", L("Preis aufsteigend", "Billisch zuerschd")], ["priceDesc", L("Preis absteigend", "Deier zuerschd")], ["rating", "Bewertung"], ["distance", L("Nähe zum Zentrum", "Nah am Zentrum")]].map(([v, l]) => opt(v, l, f.sort)).join("")}</select>
           </label>
         </div>
-        <p class="small muted" style="margin:.6rem 0 0">Lage = Luftlinie zum Bezugspunkt <strong>${esc(s.hotelSearch.centerName)}</strong>. Preise pro Nacht und Zimmer inkl. Steuern, soweit der Anbieter sie nennt. <button type="button" class="btn-link" data-act="clear">Filter zurücksetzen</button></p>
+        <p class="small muted" style="margin:.6rem 0 0">${L("Lage", "Lag")} = Luftlinie zum Bezugspunkt <strong>${esc(s.hotelSearch.centerName)}</strong>. ${L("Preise pro Nacht und Zimmer inkl. Steuern, soweit der Anbieter sie nennt.", "Breise pro Nacht un Zimmer mit Schdeiern, wenn de Anbieder se nennt.")} <button type="button" class="btn-link" data-act="clear">${L("Filter zurücksetzen", "Filter zurücksetze")}</button></p>
       </div>
 
       <div id="hResults"></div>
-      <p class="small muted">Hoteldaten und Preise: <a href="https://xotelo.com" target="_blank" rel="noopener">Xotelo</a> (TripAdvisor)${updated ? `, Stand ${updated}` : ""}. Preisspannen ohne Datum sind aus US-Dollar umgerechnet (1 $ ≈ ${USD_EUR.toLocaleString("de-DE")} €). Vor der Buchung den Preis beim Anbieter prüfen.</p>
+      <p class="small muted">${L("Hoteldaten und Preise", "Hodeldaten un Breise")}: <a href="https://xotelo.com" target="_blank" rel="noopener">Xotelo</a> (TripAdvisor)${updated ? `, ${L("Stand", "Schdand")} ${updated}` : ""}. ${L("Preisspannen ohne Datum sind aus US-Dollar umgerechnet", "Breisspanne ohne Datum sinn aus US-Dollar umgerechnet")} (1 $ ≈ ${USD_EUR.toLocaleString("de-DE")} €). ${L("Vor der Buchung den Preis beim Anbieter prüfen.", "Vor'm Buche de Breis beim Anbieder nochmol brife.")}</p>
       <dialog class="todo-dialog" id="hDialog"></dialog>`;
   }
 
@@ -371,19 +377,19 @@
     const el = mounted.querySelector("#hResults");
     const { esc } = U();
     const s = station(), q = query();
-    if (listState === "loading") { el.innerHTML = `<p class="muted">Lade Hotels für ${esc(s.name)} …</p>`; return; }
+    if (listState === "loading") { el.innerHTML = `<p class="muted">${L("Lade Hotels für", "Lad Hodels fer")} ${esc(s.name)} …</p>`; return; }
     if (listState === "error") {
-      el.innerHTML = `<div class="card todo-error" role="alert">${esc(listError)} <button type="button" class="btn-link" data-act="retry">Erneut versuchen</button></div>`;
+      el.innerHTML = `<div class="card todo-error" role="alert">${esc(listError)} <button type="button" class="btn-link" data-act="retry">${L("Erneut versuchen", "Nochmol browiere")}</button></div>`;
       return;
     }
-    if (nightsBetween(q.checkIn, q.checkOut) <= 0) { el.innerHTML = `<div class="card todo-error">Bitte einen gültigen Zeitraum wählen.</div>`; return; }
+    if (nightsBetween(q.checkIn, q.checkOut) <= 0) { el.innerHTML = `<div class="card todo-error">${L("Bitte einen gültigen Zeitraum wählen.", "Bitte en gscheide Zeitraum aussuche.")}</div>`; return; }
     const list = filtered();
     const page = list.slice(0, shown);
     el.innerHTML = `
-      <div class="h-count"><strong>${list.length}</strong> von ${hotels.length} Unterkünften passen</div>
+      <div class="h-count"><strong>${list.length}</strong> ${L(`von ${hotels.length} Unterkünften passen`, `vun ${hotels.length} Unnerkünft basse`)}</div>
       ${page.length ? `<div class="h-list">${page.map((h) => itemHtml(h, s, q)).join("")}</div>`
-        : `<div class="card soon-card"><p style="margin:0">Keine Unterkunft passt zu den Filtern. Filter lockern oder <button type="button" class="btn-link" data-act="clear">zurücksetzen</button>.</p></div>`}
-      ${list.length > shown ? `<div style="text-align:center;margin-top:1rem"><button type="button" class="btn" data-act="more">Weitere ${Math.min(PAGE_SIZE, list.length - shown)} anzeigen</button></div>` : ""}`;
+        : `<div class="card soon-card"><p style="margin:0">${L("Keine Unterkunft passt zu den Filtern. Filter lockern oder", "Kää Unnerkunft basst zu de Filter. Filter e bissel locker mache odder")} <button type="button" class="btn-link" data-act="clear">${L("zurücksetzen", "zurücksetze")}</button>.</p></div>`}
+      ${list.length > shown ? `<div style="text-align:center;margin-top:1rem"><button type="button" class="btn" data-act="more">${L(`Weitere ${Math.min(PAGE_SIZE, list.length - shown)} anzeigen`, `Noch ${Math.min(PAGE_SIZE, list.length - shown)} mehr zeige`)}</button></div>` : ""}`;
   }
 
   function renderStatus() {
@@ -427,13 +433,13 @@
     const dlg = mounted.querySelector("#hDialog");
     dlg.innerHTML = `
       <form method="dialog" class="todo-form">
-        <h2>Hotel übernehmen</h2>
-        <p style="margin:0"><strong>${esc(h.name)}</strong> wird das Hotel für <strong>${esc(s.name)} (${esc(s.area)})</strong> und ersetzt <em>${esc(cur.name)}</em>.</p>
-        <p class="small" style="margin:0">${p.exact ? "" : "ca. "}${eur(p.value)} pro Nacht und Zimmer × ${form.rooms} Zimmer × ${s.nights} Nächte = <strong>${p.exact ? "" : "ca. "}${eur(total)}</strong></p>
-        ${nightsBetween(q.checkIn, q.checkOut) !== s.nights ? `<p class="small muted" style="margin:0">Der gesuchte Zeitraum weicht vom Reiseplan ab; die Kosten werden mit den ${s.nights} Nächten des Reiseplans gerechnet.</p>` : ""}
+        <h2>${L("Hotel übernehmen", "Hodel iwwernemme")}</h2>
+        <p style="margin:0">${L(`<strong>${esc(h.name)}</strong> wird das Hotel für <strong>${esc(s.name)} (${esc(s.area)})</strong> und ersetzt <em>${esc(cur.name)}</em>.`, `<strong>${esc(h.name)}</strong> werd's Hodel fer <strong>${esc(s.name)} (${esc(s.area)})</strong> un schmeißt <em>${esc(cur.name)}</em> raus.`)}</p>
+        <p class="small" style="margin:0">${p.exact ? "" : "ca. "}${eur(p.value)} ${L("pro Nacht und Zimmer", "pro Nacht un Zimmer")} × ${form.rooms} Zimmer × ${s.nights} ${L("Nächte", "Nächt")} = <strong>${p.exact ? "" : "ca. "}${eur(total)}</strong></p>
+        ${nightsBetween(q.checkIn, q.checkOut) !== s.nights ? `<p class="small muted" style="margin:0">${L(`Der gesuchte Zeitraum weicht vom Reiseplan ab; die Kosten werden mit den ${s.nights} Nächten des Reiseplans gerechnet.`, `De gsuchte Zeitraum is annerschd wie im Reiseblan; gerechnet werd mit de ${s.nights} Nächt aus'm Reiseblan.`)}</p>` : ""}
         <div class="form-actions">
-          <button type="button" class="btn" data-close>Abbrechen</button>
-          <button type="submit" class="btn primary">Übernehmen</button>
+          <button type="button" class="btn" data-close>${L("Abbrechen", "Loss es")}</button>
+          <button type="submit" class="btn primary">${L("Übernehmen", "Iwwernemme")}</button>
         </div>
       </form>`;
     dlg.querySelector("[data-close]").addEventListener("click", () => dlg.close());
@@ -446,7 +452,7 @@
         name: h.name,
         url: h.url,
         image: h.image,
-        text: describe(h, s),
+        text: describe(h, s, true),
         pricePerNight: Math.round(p.value),
         estimate: !p.exact,
         priceSource: p.exact
@@ -515,7 +521,7 @@
     else if (act === "plan-dates") { delete form.dates[station().id]; persistForm(); renderAll(); }
     else if (act === "reset") {
       const s = station();
-      if (confirm(`Für ${s.name} (${s.area}) wieder den Planvorschlag „${s.hotel.name}“ verwenden?`)) reset(s);
+      if (confirm(L(`Für ${s.name} (${s.area}) wieder den Planvorschlag „${s.hotel.name}“ verwenden?`, `Fer ${s.name} (${s.area}) widder de Blanvorschlach „${s.hotel.name}“ nemme?`))) reset(s);
     } else if (act === "choose") {
       const key = b.closest(".h-item").dataset.key;
       const h = hotels.find((x) => x.key === key);

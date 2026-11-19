@@ -1,0 +1,269 @@
+/* Kurpfalz-Modus: Neon-Sonnenuntergang im Stil von GTA VI.
+   Greift nur, wenn <html data-theme="vice"> gesetzt ist (siehe js/theme.js);
+   die normale Optik in style.css bleibt unverändert. */
+
+@font-face {
+  font-family: "Anton";
+  src: url("../fonts/anton.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+html[data-theme="vice"] {
+  --bg: #12061f;
+  --surface: #1c0b31;
+  --surface-2: #28113f;
+  --ink: #fbefff;
+  --muted: #c7abdf;
+  --line: #3b1c5c;
+  --accent: #ff4f98;
+  --accent-soft: rgba(255, 79, 152, .12);
+  --link: #ff8cc2;
+  --orange: #ff9a3c;
+  --teal: #19d3c5;
+  --yellow: #ffd23f;
+  --violet: #9b4dff;
+  --grad: linear-gradient(90deg, #ffb13b 0%, #ff3d8b 52%, #9b4dff 100%);
+  --shadow: 0 0 0 1px rgba(255, 61, 139, .06), 0 10px 30px rgba(0, 0, 0, .35);
+  --display: "Anton", Impact, "Arial Narrow Bold", "Helvetica Neue", sans-serif;
+  color-scheme: dark;
+}
+
+[data-theme="vice"] body {
+  background:
+    radial-gradient(1100px 520px at 85% 115%, rgba(255, 61, 139, .22), transparent 60%),
+    radial-gradient(900px 420px at -10% -10%, rgba(25, 211, 197, .10), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+[data-theme="vice"] ::selection { background: var(--accent); color: #fff; }
+[data-theme="vice"] a { color: var(--link); }
+
+/* Überschriften im Plakatstil */
+[data-theme="vice"] h1 {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase; letter-spacing: .015em;
+  line-height: 1.05; color: #fff;
+  text-shadow: 3px 3px 0 #ff3d8b, 6px 6px 0 rgba(155, 77, 255, .55);
+}
+[data-theme="vice"] h1 .muted { color: var(--yellow); text-shadow: 3px 3px 0 rgba(255, 61, 139, .6); }
+[data-theme="vice"] h2 {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase; letter-spacing: .03em;
+  color: var(--orange); text-shadow: 0 0 18px rgba(255, 154, 60, .35);
+}
+[data-theme="vice"] h2 .muted { color: var(--muted); text-shadow: none; }
+
+/* Kopfzeile */
+[data-theme="vice"] .topbar { background: rgba(18, 6, 31, .88); border-bottom-color: transparent; }
+[data-theme="vice"] .topbar::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--grad);
+}
+[data-theme="vice"] .brand-mark { background: var(--grad); color: #fff; box-shadow: 0 0 18px rgba(255, 61, 139, .45); }
+[data-theme="vice"] .brand strong { font-family: var(--display); font-weight: 400; text-transform: uppercase; letter-spacing: .04em; font-size: 1.15rem; }
+[data-theme="vice"] .brand small { color: var(--teal); }
+[data-theme="vice"] .countdown { color: var(--muted); }
+[data-theme="vice"] .countdown strong {
+  font-family: var(--display); font-weight: 400; font-size: 1.45rem; letter-spacing: .03em;
+  color: #73ff9f; text-shadow: 2px 2px 0 #000, 0 0 12px rgba(115, 255, 159, .45);
+}
+[data-theme="vice"] .menu-btn { background: var(--surface); border-color: var(--line); color: var(--ink); }
+
+/* Umschalter */
+[data-theme="vice"] .theme-toggle {
+  background: var(--surface); color: #fff; border-color: var(--accent);
+  box-shadow: 0 0 14px rgba(255, 61, 139, .35);
+}
+[data-theme="vice"] .theme-toggle:hover { background: var(--accent); color: #fff; }
+
+/* Seitenleiste */
+[data-theme="vice"] .sidebar { border-right-color: var(--line); }
+[data-theme="vice"] .nav-label { font-family: var(--display); font-size: .8rem; letter-spacing: .14em; color: var(--teal); }
+[data-theme="vice"] .nav-link { color: var(--ink); }
+[data-theme="vice"] .nav-link:hover { background: rgba(255, 255, 255, .06); }
+[data-theme="vice"] .nav-link.active { background: var(--grad); color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .35); box-shadow: 0 0 18px rgba(255, 61, 139, .35); }
+[data-theme="vice"] .nav-link .dot { box-shadow: 0 0 8px currentColor; }
+[data-theme="vice"] .nav-link.soon { color: var(--muted); }
+[data-theme="vice"] .badge { background: #2e1650; color: var(--muted); }
+[data-theme="vice"] .badge.count { background: var(--yellow); color: #2a1300; }
+[data-theme="vice"] .badge.count.alert { background: #ff3b3b; color: #fff; box-shadow: 0 0 10px rgba(255, 59, 59, .6); }
+[data-theme="vice"] .badge.sel { background: rgba(34, 197, 94, .2); color: #86efac; }
+
+/* Illustrationen */
+[data-theme="vice"] .vice-art svg { display: block; width: 100%; height: 100%; }
+[data-theme="vice"] .station-art {
+  height: clamp(150px, 24vw, 250px); margin: 0 0 1.25rem;
+  border-radius: calc(var(--radius) + 4px); overflow: hidden;
+  border: 1px solid var(--line); box-shadow: 0 12px 40px rgba(255, 61, 139, .18);
+}
+
+/* Startseite: Bild hinter dem Text */
+[data-theme="vice"] .hero {
+  background: #14051f; min-height: 340px;
+  border: 1px solid var(--line); box-shadow: 0 16px 50px rgba(255, 61, 139, .2);
+}
+[data-theme="vice"] .hero > .hero-art { position: absolute; inset: 0; z-index: 0; }
+[data-theme="vice"] .hero > .hero-art::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, rgba(18, 6, 31, .94) 0%, rgba(18, 6, 31, .78) 42%, rgba(18, 6, 31, .15) 75%, transparent 100%);
+}
+[data-theme="vice"] .hero > :not(.hero-art) { position: relative; z-index: 1; }
+[data-theme="vice"] .hero::after { z-index: 1; color: var(--yellow); opacity: .1; }
+[data-theme="vice"] .hero p { color: #eadcf5; }
+[data-theme="vice"] .hero .kicker { color: var(--teal); font-family: var(--display); font-size: .95rem; letter-spacing: .16em; }
+[data-theme="vice"] .stat strong { font-family: var(--display); font-weight: 400; font-size: 2rem; color: var(--yellow); text-shadow: 2px 2px 0 #ff3d8b; }
+[data-theme="vice"] .stat span { color: var(--muted); }
+
+/* Karten und Listen */
+[data-theme="vice"] .card,
+[data-theme="vice"] .route-item,
+[data-theme="vice"] .list-plain li,
+[data-theme="vice"] .day,
+[data-theme="vice"] .stat-box,
+[data-theme="vice"] .todo,
+[data-theme="vice"] .h-item,
+[data-theme="vice"] .table-wrap { background: var(--surface); border-color: var(--line); }
+[data-theme="vice"] a.card { transition: border-color .12s ease, box-shadow .12s ease, transform .12s ease; }
+[data-theme="vice"] a.card:hover,
+[data-theme="vice"] .route-item:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 24px rgba(255, 61, 139, .3); transform: translateY(-2px); }
+[data-theme="vice"] .callout {
+  background: linear-gradient(135deg, rgba(255, 61, 139, .16), rgba(255, 154, 60, .08));
+  border-color: rgba(255, 61, 139, .45);
+}
+[data-theme="vice"] .callout strong:first-child { color: var(--yellow); }
+[data-theme="vice"] .chip { background: rgba(25, 211, 197, .12); color: #8ff3ea; border: 1px solid rgba(25, 211, 197, .35); }
+[data-theme="vice"] .soon-card { background: transparent; border-color: var(--line); }
+
+[data-theme="vice"] .route-nr { font-family: var(--display); font-weight: 400; font-size: 1.4rem; box-shadow: 0 0 18px rgba(255, 61, 139, .35); text-shadow: 1px 1px 0 rgba(0, 0, 0, .35); }
+[data-theme="vice"] .route-item .sub,
+[data-theme="vice"] .route-item .nights { color: var(--muted); }
+[data-theme="vice"] .route-item .nights strong { color: var(--yellow); }
+[data-theme="vice"] .route-bar { box-shadow: 0 0 16px rgba(255, 61, 139, .45); }
+
+/* Stationsseite */
+[data-theme="vice"] .station-head .kicker { font-family: var(--display); font-weight: 400; text-transform: uppercase; letter-spacing: .1em; font-size: .95rem; }
+[data-theme="vice"] .hotel-icon,
+[data-theme="vice"] .hotel-img,
+[data-theme="vice"] .h-img { background: var(--surface-2); }
+[data-theme="vice"] .hotel .price { color: var(--yellow); }
+[data-theme="vice"] .tabs { border-bottom-color: var(--line); }
+[data-theme="vice"] .tab { color: var(--muted); }
+[data-theme="vice"] .tab[aria-selected="true"] { color: #fff; text-shadow: 0 0 12px var(--c, var(--accent)); }
+[data-theme="vice"] .day-date { font-family: var(--display); font-weight: 400; font-size: 1.1rem; letter-spacing: .03em; }
+
+/* Tabellen */
+[data-theme="vice"] th { background: #241039; color: var(--teal); border-bottom-color: var(--line); }
+[data-theme="vice"] td { border-bottom-color: var(--line); }
+[data-theme="vice"] tr.total td { background: rgba(255, 210, 63, .08); color: var(--yellow); }
+
+/* Flüge */
+[data-theme="vice"] .flight .end strong { font-family: var(--display); font-weight: 400; font-size: 1.35rem; letter-spacing: .02em; }
+[data-theme="vice"] .flight .mid .line { background: var(--grad); }
+[data-theme="vice"] .flight .mid .line::after { background: var(--surface); color: var(--yellow); }
+[data-theme="vice"] .flight-label { color: var(--teal); }
+
+/* Buttons und Formulare */
+[data-theme="vice"] .btn { background: var(--surface-2); border-color: var(--line); color: var(--ink); }
+[data-theme="vice"] .btn:hover { border-color: var(--accent); }
+[data-theme="vice"] .btn.primary {
+  background: var(--grad); border-color: transparent; color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, .35); box-shadow: 0 0 16px rgba(255, 61, 139, .35);
+}
+[data-theme="vice"] .btn.danger,
+[data-theme="vice"] .btn-link.danger { color: #ff7b7b; }
+[data-theme="vice"] .btn-link { color: var(--link); }
+[data-theme="vice"] .seg { background: var(--surface); border-color: var(--line); }
+[data-theme="vice"] .seg button { color: var(--muted); }
+[data-theme="vice"] .seg button + button { border-left-color: var(--line); }
+[data-theme="vice"] .seg button[aria-pressed="true"] { background: var(--grad); color: #fff; }
+[data-theme="vice"] .h-grid label,
+[data-theme="vice"] .todo-form label { color: var(--muted); }
+[data-theme="vice"] .h-grid input,
+[data-theme="vice"] .h-grid select,
+[data-theme="vice"] .todo-form input,
+[data-theme="vice"] .todo-form select,
+[data-theme="vice"] .todo-form textarea { background: var(--bg); border-color: var(--line); color: var(--ink); }
+[data-theme="vice"] .todo-dialog { background: var(--surface); color: var(--ink); border: 1px solid var(--accent); box-shadow: 0 0 40px rgba(255, 61, 139, .35); }
+[data-theme="vice"] .todo-dialog::backdrop { background: rgba(8, 2, 18, .72); }
+
+/* To-dos */
+[data-theme="vice"] .todo.overdue { background: rgba(255, 59, 59, .1); }
+[data-theme="vice"] .todo.overdue .todo-due,
+[data-theme="vice"] .txt-overdue { color: #ff7b7b; }
+[data-theme="vice"] .todo.soon .todo-due { color: var(--yellow); }
+[data-theme="vice"] .todo-status { background: var(--surface-2); border-color: var(--line); color: var(--ink); }
+[data-theme="vice"] .todo-status.st-in_arbeit { background: rgba(61, 155, 255, .18); border-color: rgba(61, 155, 255, .45); color: #a9d1ff; }
+[data-theme="vice"] .todo-status.st-erledigt { background: rgba(34, 197, 94, .18); border-color: rgba(34, 197, 94, .45); color: #86efac; }
+[data-theme="vice"] .todo-status.st-entfaellt { background: var(--surface-2); color: var(--muted); }
+[data-theme="vice"] .stat-box strong { font-family: var(--display); font-weight: 400; font-size: 1.8rem; }
+[data-theme="vice"] .stat-box.overdue { background: rgba(255, 59, 59, .12); border-color: rgba(255, 59, 59, .45); }
+[data-theme="vice"] .stat-box.overdue strong { color: #ff7b7b; }
+[data-theme="vice"] .stat-box.soon { background: rgba(255, 210, 63, .08); border-color: rgba(255, 210, 63, .4); }
+[data-theme="vice"] .stat-box.soon strong { color: var(--yellow); }
+[data-theme="vice"] .todo-error { background: rgba(255, 59, 59, .12); border-color: rgba(255, 59, 59, .45); color: #ffb4b4; }
+[data-theme="vice"] .todo-error-inline { color: #ff7b7b; }
+[data-theme="vice"] .todo-teaser li { border-left-color: var(--line); }
+[data-theme="vice"] .todo-teaser li.soon { border-left-color: var(--yellow); }
+[data-theme="vice"] .todo-teaser li.overdue { border-left-color: #ff3b3b; }
+
+/* Hotel-Konfigurator */
+[data-theme="vice"] .h-body h3 a { color: var(--ink); }
+[data-theme="vice"] .h-body h3 a:hover { color: var(--link); }
+[data-theme="vice"] .h-stars { color: var(--yellow); }
+[data-theme="vice"] .h-price strong { font-family: var(--display); font-weight: 400; font-size: 1.45rem; color: #73ff9f; letter-spacing: .02em; }
+[data-theme="vice"] .h-count strong { color: var(--yellow); }
+[data-theme="vice"] .h-chosen { color: #86efac; }
+
+/* Passwortseite */
+[data-theme="vice"].locked body { min-height: 100vh; }
+[data-theme="vice"].locked .gate {
+  background: var(--surface); border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(255, 61, 139, .25), 0 0 60px rgba(255, 61, 139, .3);
+  margin-top: 10vh; overflow: hidden;
+}
+[data-theme="vice"] .gate-art { width: calc(100% + 3rem); height: 150px; margin: -.25rem -1.5rem .25rem; }
+[data-theme="vice"] .gate-art svg { display: block; width: 100%; height: 100%; }
+[data-theme="vice"] .gate h1 { text-shadow: 2px 2px 0 #ff3d8b; }
+[data-theme="vice"] .gate input[type="password"] { background: var(--bg); border-color: var(--line); color: var(--ink); }
+[data-theme="vice"] .gate button[type="submit"] { background: var(--grad); text-shadow: 0 1px 1px rgba(0, 0, 0, .35); font-family: var(--display); font-weight: 400; letter-spacing: .08em; text-transform: uppercase; font-size: 1.05rem; }
+[data-theme="vice"] .gate .gate-toggle { background: var(--surface); color: #fff; border-color: var(--accent); }
+[data-theme="vice"] .gate .gate-error { color: #ff7b7b; }
+
+/* Einblender beim Einschalten */
+.vice-splash {
+  position: fixed; inset: 0; z-index: 100; pointer-events: none;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 50%, rgba(18, 6, 31, .85), rgba(18, 6, 31, 0) 70%);
+  animation: vice-splash-bg 1.7s ease forwards;
+}
+.vice-splash div { text-align: center; animation: vice-splash-text 1.7s cubic-bezier(.2, .9, .3, 1.2) forwards; }
+.vice-splash strong {
+  display: block; font-family: "Anton", Impact, sans-serif; font-weight: 400; text-transform: uppercase;
+  font-size: clamp(3rem, 12vw, 7rem); line-height: 1; color: #fff;
+  text-shadow: 4px 4px 0 #ff3d8b, 8px 8px 0 rgba(155, 77, 255, .7);
+}
+.vice-splash span {
+  display: inline-block; margin-top: .6rem; padding: .2rem .8rem;
+  font-family: "Anton", Impact, sans-serif; letter-spacing: .12em; text-transform: uppercase;
+  color: #12061f; background: #ffd23f; font-size: clamp(.9rem, 3vw, 1.3rem);
+}
+@keyframes vice-splash-bg { 0% { opacity: 0; } 15% { opacity: 1; } 75% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes vice-splash-text {
+  0% { transform: scale(.6) rotate(-4deg); opacity: 0; }
+  20% { transform: scale(1.05) rotate(-2deg); opacity: 1; }
+  80% { transform: scale(1) rotate(-2deg); opacity: 1; }
+  100% { transform: scale(1.1) rotate(-2deg); opacity: 0; }
+}
+
+/* Mobil */
+@media (max-width: 860px) {
+  [data-theme="vice"] .sidebar { background: var(--bg); box-shadow: 4px 0 30px rgba(0, 0, 0, .5); }
+  [data-theme="vice"] .hero > .hero-art::after {
+    background: linear-gradient(180deg, rgba(18, 6, 31, .55) 0%, rgba(18, 6, 31, .88) 55%, rgba(18, 6, 31, .95) 100%);
+  }
+}
+
+/* Druck immer hell */
+@media print {
+  [data-theme="vice"] body { background: #fff; color: #000; }
+  [data-theme="vice"] .vice-art { display: none; }
+  [data-theme="vice"] h1, [data-theme="vice"] h2 { text-shadow: none; color: #000; }
+}
