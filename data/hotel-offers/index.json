@@ -1,52 +1,135 @@
 {
-  "updatedAt": "2026-11-19T11:45:59.366Z",
+  "updatedAt": "2026-11-19T13:12:39.807Z",
   "source": "Xotelo (TripAdvisor)",
   "stations": {
     "seoul": {
       "ok": true,
-      "updatedAt": "2026-11-19T11:49:35.386Z",
+      "updatedAt": "2026-11-19T13:26:38.890Z",
       "count": 300,
       "locationKey": "g294197",
+      "prices": {
+        "rate": 28,
+        "ref": 88,
+        "similar": 184,
+        "none": 0
+      },
+      "seasonFactor": {
+        "value": 1.349179400113186,
+        "pairs": 22,
+        "source": "Station"
+      },
       "rates": {
-        "ok": 84,
-        "failed": 0,
-        "requested": 189,
-        "planned": 189
+        "plan": 28,
+        "ref": 110,
+        "occ": 20,
+        "failed": 20,
+        "requested": 233,
+        "planned": 233
       }
     },
     "jeju": {
-      "ok": false,
-      "error": "search (https://data.xotelo.com/api/search?query=The+Shilla+Jeju): API-Fehler: {\"status_code\":401,\"message\":\"This endpoint is available only for RapidAPI (see more at https://rapidapi.com/anastue-pGK7lGUO-Wo/api/xotelo-hotel-prices)\"}",
-      "failedAt": "2026-11-19T11:46:05.899Z"
+      "ok": true,
+      "updatedAt": "2026-11-19T13:26:38.897Z",
+      "count": 300,
+      "locationKey": "g294196",
+      "prices": {
+        "rate": 30,
+        "ref": 112,
+        "similar": 158,
+        "none": 0
+      },
+      "seasonFactor": {
+        "value": 1.3356708293307717,
+        "pairs": 26,
+        "source": "Station"
+      },
+      "rates": {
+        "plan": 30,
+        "ref": 138,
+        "occ": 20,
+        "failed": 0,
+        "requested": 233,
+        "planned": 233
+      }
     },
     "busan": {
       "ok": true,
-      "updatedAt": "2026-11-19T11:53:24.552Z",
+      "updatedAt": "2026-11-19T13:26:38.905Z",
       "count": 300,
       "locationKey": "g297884",
+      "prices": {
+        "rate": 19,
+        "ref": 105,
+        "similar": 176,
+        "none": 0
+      },
+      "seasonFactor": {
+        "value": 1.3299492385786802,
+        "pairs": 17,
+        "source": "Station"
+      },
       "rates": {
-        "ok": 57,
+        "plan": 19,
+        "ref": 122,
+        "occ": 20,
         "failed": 0,
-        "requested": 177,
-        "planned": 177
+        "requested": 229,
+        "planned": 229
       }
     },
     "gyeongju": {
-      "ok": false,
-      "error": "search (https://data.xotelo.com/api/search?query=Gyeongju): API-Fehler: {\"status_code\":401,\"message\":\"This endpoint is available only for RapidAPI (see more at https://rapidapi.com/anastue-pGK7lGUO-Wo/api/xotelo-hotel-prices)\"}",
-      "failedAt": "2026-11-19T11:46:11.761Z"
+      "ok": true,
+      "updatedAt": "2026-11-19T13:26:38.910Z",
+      "count": 300,
+      "locationKey": "g294196",
+      "prices": {
+        "rate": 33,
+        "ref": 113,
+        "similar": 154,
+        "none": 0
+      },
+      "seasonFactor": {
+        "value": 1.3888888888888888,
+        "pairs": 25,
+        "source": "Station"
+      },
+      "rates": {
+        "plan": 33,
+        "ref": 138,
+        "occ": 20,
+        "failed": 0,
+        "requested": 232,
+        "planned": 232
+      }
     },
     "gangnam": {
       "ok": true,
-      "updatedAt": "2026-11-19T11:56:22.535Z",
+      "updatedAt": "2026-11-19T13:26:38.916Z",
       "count": 300,
       "locationKey": "g294197",
+      "prices": {
+        "rate": 31,
+        "ref": 104,
+        "similar": 165,
+        "none": 0
+      },
+      "seasonFactor": {
+        "value": 1.5532259151891052,
+        "pairs": 26,
+        "source": "Station"
+      },
       "rates": {
-        "ok": 93,
+        "plan": 31,
+        "ref": 130,
+        "occ": 20,
         "failed": 0,
-        "requested": 183,
-        "planned": 183
+        "requested": 231,
+        "planned": 231
       }
     }
+  },
+  "occFactor": {
+    "1": 1,
+    "3": 1.26
   }
 }
