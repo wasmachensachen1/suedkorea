@@ -1,4 +1,23 @@
 {
   "version": 1,
-  "selections": {}
+  "selections": {
+    "seoul": {
+      "hotelKey": "g294197-d299776",
+      "name": "JW Marriott Hotel Seoul",
+      "url": "https://www.tripadvisor.com/Hotel_Review-g294197-d299776-Reviews-JW_Marriott_Hotel_Seoul-Seoul.html",
+      "image": "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/35/09/b9/a3/hotel-exterior-image.jpg",
+      "text": "Hotel · 7,9 km bis Gwanghwamun-Platz · TripAdvisor 4,9/5 aus 2.437 Bewertungen.",
+      "pricePerNight": 465,
+      "estimate": false,
+      "priceSource": "Tagespreis bei Vio.com für 16.9.–21.9., abgerufen am 19.11.2026",
+      "rooms": 1,
+      "adults": 2,
+      "checkIn": "2027-09-16",
+      "checkOut": "2027-09-21",
+      "rating": 4.9,
+      "reviews": 2437,
+      "distanceKm": 7.9,
+      "selectedAt": "2026-11-19T13:01:30.721Z"
+    }
+  }
 }
