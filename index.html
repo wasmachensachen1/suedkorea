@@ -4,20 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#faf7f2">
   <title>Südkorea-Rundreise 2027</title>
-  <link rel="stylesheet" href="css/style.css?v=20261119-1">
-  <script src="js/gate.js?v=20261119-1"></script>
+  <link rel="stylesheet" href="css/style.css?v=20261119-3">
+  <link rel="stylesheet" href="css/vice.css?v=20261119-3">
+  <script src="js/theme.js?v=20261119-3"></script>
+  <script src="js/gate.js?v=20261119-3"></script>
 </head>
 <body>
   <form class="gate" id="gate" autocomplete="off">
+    <button type="button" class="theme-toggle gate-toggle" data-theme-toggle aria-pressed="false">🌴 Mense-Modus</button>
+    <div class="gate-art" data-vice-art="overview" aria-hidden="true"></div>
     <span class="brand-mark">한</span>
     <h1>Südkorea 2027</h1>
-    <p>Bitte Passwort eingeben.</p>
+    <p data-kp="Gebb emol des Passwort ei.">Bitte Passwort eingeben.</p>
     <label for="gatePw" class="sr-only">Passwort</label>
     <input type="password" id="gatePw" placeholder="Passwort" required>
-    <label class="gate-remember"><input type="checkbox" id="gateRemember" checked> Auf diesem Gerät merken</label>
-    <button type="submit">Öffnen</button>
-    <p class="gate-error" id="gateError" role="alert" hidden>Das Passwort stimmt nicht.</p>
+    <label class="gate-remember"><input type="checkbox" id="gateRemember" checked> <span data-kp="Uff dem Gerät merke">Auf diesem Gerät merken</span></label>
+    <button type="submit" data-kp="Uffmache">Öffnen</button>
+    <p class="gate-error" id="gateError" role="alert" hidden data-kp="Nee, des Passwort stimmt net.">Das Passwort stimmt nicht.</p>
   </form>
 
   <header class="topbar">
@@ -30,6 +35,7 @@
       </span>
     </a>
     <div class="countdown" id="countdown"></div>
+    <button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false">🌴 Mense-Modus</button>
   </header>
 
   <div class="layout">
@@ -37,10 +43,12 @@
     <main id="view" tabindex="-1"></main>
   </div>
 
-  <script src="js/data.js?v=20261119-1"></script>
-  <script src="js/github.js?v=20261119-1"></script>
-  <script src="js/todos.js?v=20261119-1"></script>
-  <script src="js/hotels.js?v=20261119-1"></script>
-  <script src="js/app.js?v=20261119-1"></script>
+  <script src="js/data.js?v=20261119-3"></script>
+  <script src="js/data.kurpfalz.js?v=20261119-3"></script>
+  <script src="js/vice-art.js?v=20261119-3"></script>
+  <script src="js/github.js?v=20261119-3"></script>
+  <script src="js/todos.js?v=20261119-3"></script>
+  <script src="js/hotels.js?v=20261119-3"></script>
+  <script src="js/app.js?v=20261119-3"></script>
 </body>
 </html>
