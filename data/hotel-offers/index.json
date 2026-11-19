@@ -1,93 +1,135 @@
 {
-  "updatedAt": "2026-11-19T13:12:39.807Z",
+  "updatedAt": "2026-11-19T16:44:23.755Z",
   "source": "Xotelo (TripAdvisor)",
   "stations": {
     "seoul": {
       "ok": true,
-      "updatedAt": "2026-11-19T13:26:38.890Z",
+      "updatedAt": "2026-11-19T16:57:27.539Z",
       "count": 300,
       "locationKey": "g294197",
       "prices": {
         "rate": 28,
-        "ref": 88,
-        "similar": 184,
+        "ref": 199,
+        "similar": 73,
         "none": 0
       },
       "seasonFactor": {
-        "value": 1.349179400113186,
-        "pairs": 22,
+        "value": 1.3387096774193548,
+        "pairs": 27,
         "source": "Station"
       },
       "rates": {
-        "plan": 28,
-        "ref": 110,
-        "occ": 20,
-        "failed": 20,
-        "requested": 233,
-        "planned": 233
+        "plan": 0,
+        "ref": 116,
+        "occ": 0,
+        "failed": 0,
+        "requested": 150,
+        "planned": 150
       }
     },
     "jeju": {
-      "ok": false,
-      "error": "Die bisherige Liste enthielt Hotels aus ganz Südkorea statt aus dem Ort (falsche Orts-ID). Wird beim nächsten Lauf mit der richtigen Orts-ID neu geladen."
+      "ok": true,
+      "updatedAt": "2026-11-19T16:57:27.549Z",
+      "count": 300,
+      "locationKey": "g297892",
+      "prices": {
+        "rate": 14,
+        "ref": 86,
+        "similar": 200,
+        "none": 0
+      },
+      "seasonFactor": {
+        "value": 1.3466731898238748,
+        "pairs": 14,
+        "source": "Station"
+      },
+      "rates": {
+        "plan": 14,
+        "ref": 100,
+        "occ": 20,
+        "failed": 0,
+        "requested": 224,
+        "planned": 224
+      }
     },
     "busan": {
       "ok": true,
-      "updatedAt": "2026-11-19T13:26:38.905Z",
+      "updatedAt": "2026-11-19T16:57:27.556Z",
       "count": 300,
       "locationKey": "g297884",
       "prices": {
         "rate": 19,
-        "ref": 105,
-        "similar": 176,
+        "ref": 163,
+        "similar": 118,
         "none": 0
       },
       "seasonFactor": {
-        "value": 1.3299492385786802,
-        "pairs": 17,
+        "value": 1.3348837209302327,
+        "pairs": 19,
         "source": "Station"
       },
       "rates": {
-        "plan": 19,
-        "ref": 122,
-        "occ": 20,
+        "plan": 0,
+        "ref": 60,
+        "occ": 0,
         "failed": 0,
-        "requested": 229,
-        "planned": 229
+        "requested": 150,
+        "planned": 150
       }
     },
     "gyeongju": {
-      "ok": false,
-      "error": "Die bisherige Liste enthielt Hotels aus ganz Südkorea statt aus dem Ort (falsche Orts-ID). Wird beim nächsten Lauf mit der richtigen Orts-ID neu geladen."
+      "ok": true,
+      "updatedAt": "2026-11-19T16:57:27.561Z",
+      "count": 300,
+      "locationKey": "g297888",
+      "prices": {
+        "rate": 9,
+        "ref": 45,
+        "similar": 246,
+        "none": 0
+      },
+      "seasonFactor": {
+        "value": 1.3104351329572925,
+        "pairs": 8,
+        "source": "Station"
+      },
+      "rates": {
+        "plan": 9,
+        "ref": 53,
+        "occ": 18,
+        "failed": 0,
+        "requested": 232,
+        "planned": 232
+      }
     },
     "gangnam": {
       "ok": true,
-      "updatedAt": "2026-11-19T13:26:38.916Z",
+      "updatedAt": "2026-11-19T16:57:27.567Z",
       "count": 300,
       "locationKey": "g294197",
       "prices": {
         "rate": 31,
-        "ref": 104,
-        "similar": 165,
+        "ref": 208,
+        "similar": 61,
         "none": 0
       },
       "seasonFactor": {
         "value": 1.5532259151891052,
-        "pairs": 26,
+        "pairs": 30,
         "source": "Station"
       },
       "rates": {
-        "plan": 31,
-        "ref": 130,
-        "occ": 20,
+        "plan": 0,
+        "ref": 108,
+        "occ": 0,
         "failed": 0,
-        "requested": 231,
-        "planned": 231
+        "requested": 150,
+        "planned": 150
       }
     }
   },
   "occFactor": {
     "1": 1,
-    "3": 1.26
+    "3": 1.24
   }
 }
