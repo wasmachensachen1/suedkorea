@@ -95,7 +95,7 @@
     },
   ].filter((g) => g.items.length);
 
-  // Illustration (nur im Kurpfalz-Modus)
+  // Illustration (nur im Mense-Modus)
   const art = (key, label, cls = "") => (Theme.on() && window.ViceArt
     ? `<div class="vice-art ${cls}">${window.ViceArt.scene(key, label)}</div>` : "");
 

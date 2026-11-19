@@ -1,8 +1,8 @@
-// Kurpfälzische Fassung der Reiseinhalte aus js/data.js (für den Kurpfalz-Modus).
+// Kurpfälzische Fassung der Reiseinhalte aus js/data.js (für den Mense-Modus).
 //
 // Aufbau: "Originaltext aus data.js": "Text uff Kurpfälzisch". Links [Text](URL) und **fett**
 // funktionieren wie in data.js.
-// Wird ein Text in data.js geändert, passt der Eintrag hier nicht mehr, und im Kurpfalz-Modus
+// Wird ein Text in data.js geändert, passt der Eintrag hier nicht mehr, und im Mense-Modus
 // erscheint an der Stelle wieder das Original. Dann hier Schlüssel und Übersetzung anpassen.
 // Kontrolle in der Browser-Konsole: Theme.check() listet fehlende und verwaiste Einträge.
 window.Theme.registerData({

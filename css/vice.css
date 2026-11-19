@@ -1,4 +1,4 @@
-/* Kurpfalz-Modus: Neon-Sonnenuntergang im Stil von GTA VI.
+/* Mense-Modus: Neon-Sonnenuntergang im Stil von GTA VI.
    Greift nur, wenn <html data-theme="vice"> gesetzt ist (siehe js/theme.js);
    die normale Optik in style.css bleibt unverändert. */
 
@@ -106,7 +106,7 @@ html[data-theme="vice"] {
   background: linear-gradient(90deg, rgba(18, 6, 31, .94) 0%, rgba(18, 6, 31, .78) 42%, rgba(18, 6, 31, .15) 75%, transparent 100%);
 }
 [data-theme="vice"] .hero > :not(.hero-art) { position: relative; z-index: 1; }
-[data-theme="vice"] .hero::after { z-index: 1; color: var(--yellow); opacity: .1; }
+[data-theme="vice"] .hero::after { display: none; } /* Wasserzeichen: die Grafik übernimmt */
 [data-theme="vice"] .hero p { color: #eadcf5; }
 [data-theme="vice"] .hero .kicker { color: var(--teal); font-family: var(--display); font-size: .95rem; letter-spacing: .16em; }
 [data-theme="vice"] .stat strong { font-family: var(--display); font-weight: 400; font-size: 2rem; color: var(--yellow); text-shadow: 2px 2px 0 #ff3d8b; }
@@ -256,9 +256,17 @@ html[data-theme="vice"] {
 /* Mobil */
 @media (max-width: 860px) {
   [data-theme="vice"] .sidebar { background: var(--bg); box-shadow: 4px 0 30px rgba(0, 0, 0, .5); }
-  [data-theme="vice"] .hero > .hero-art::after {
-    background: linear-gradient(180deg, rgba(18, 6, 31, .55) 0%, rgba(18, 6, 31, .88) 55%, rgba(18, 6, 31, .95) 100%);
+  /* Handy: Grafik als Bild über dem Text statt dahinter */
+  [data-theme="vice"] .hero { min-height: 0; }
+  [data-theme="vice"] .hero > .hero-art {
+    position: relative; inset: auto; height: 170px;
+    margin: -1.5rem -1.5rem 1.25rem;
   }
+  [data-theme="vice"] .hero > .hero-art::after { background: linear-gradient(180deg, transparent 60%, #14051f 100%); }
+}
+@media (max-width: 560px) {
+  [data-theme="vice"] .brand strong { font-size: 1rem; white-space: nowrap; }
+  [data-theme="vice"] .countdown strong { font-size: 1.25rem; }
 }
 
 /* Druck immer hell */

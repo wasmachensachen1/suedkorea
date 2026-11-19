@@ -45,7 +45,7 @@ p { margin: 0 0 1em; }
 }
 .countdown { margin-left: auto; font-size: .85rem; color: var(--muted); text-align: right; }
 
-/* Umschalter Kurpfalz-Modus (Optik im Kurpfalz-Modus: css/vice.css) */
+/* Umschalter Mense-Modus (Optik im Mense-Modus: css/vice.css) */
 .theme-toggle {
   display: inline-flex; align-items: center; gap: .35rem; flex: none;
   font: inherit; font-size: .82rem; font-weight: 600; white-space: nowrap; cursor: pointer;
@@ -91,7 +91,7 @@ p { margin: 0 0 1em; }
   background: #ece6dc; color: var(--muted);
 }
 
-main { padding: 2rem clamp(1rem, 4vw, 3rem) 4rem; max-width: 1100px; width: 100%; outline: none; }
+main { padding: 2rem clamp(1rem, 4vw, 3rem) 4rem; max-width: 1100px; width: 100%; min-width: 0; outline: none; }
 
 /* Hero */
 .hero {

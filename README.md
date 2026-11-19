@@ -22,10 +22,10 @@ scripts/fetch-hotels.mjs   holt die Hoteldaten (läuft als GitHub Action)
 data/hotel-offers/         Hoteldaten pro Station (von der Action erzeugt)
 data/hotels.json  gewählte Hotels pro Station (wird von der Seite selbst gespeichert)
 js/gate.js        Passwortabfrage (Sichtschutz)
-js/theme.js       Kurpfalz-Modus: Umschalter, Texte hochdeutsch/kurpfälzisch
+js/theme.js       Mense-Modus: Umschalter, Texte hochdeutsch/kurpfälzisch
 js/data.kurpfalz.js        Reiseinhalte auf Kurpfälzisch (Wörterbuch zu data.js)
-js/vice-art.js    Illustrationen (SVG) für den Kurpfalz-Modus
-css/vice.css      Neon-Optik des Kurpfalz-Modus
+js/vice-art.js    Illustrationen (SVG) für den Mense-Modus
+css/vice.css      Neon-Optik des Mense-Modus
 fonts/            Überschriften-Schrift Anton (SIL Open Font License, lokal eingebunden)
 ```
 
@@ -53,12 +53,12 @@ Pro Station werden bis zu 300 Unterkünfte geladen. Tagespreise (günstigstes An
 
 Bezugspunkt und Suchort pro Station stehen in `data.js` unter `hotelSearch` (`center`, `centerName`, `locationKey` = TripAdvisor-Orts-ID oder `query` für die automatische Ortssuche; nach einer Änderung die Action laufen lassen). In Texten von `data.js` wird `{hotel:<station-id>}` durch das gewählte Hotel ersetzt.
 
-## Kurpfalz-Modus
+## Mense-Modus
 
-Der Button „🌴 Kurpfalz-Modus“ oben rechts (auch auf der Passwortseite) schaltet eine zweite Optik ein: Neon-Sonnenuntergang im Stil von GTA VI, mit eigenen Illustrationen pro Station, und alle Texte auf Kurpfälzisch. „↩ Widder normal“ schaltet zurück. Die Wahl wird pro Gerät im Browser gespeichert.
+Der Button „🌴 Mense-Modus“ oben rechts (auch auf der Passwortseite) schaltet eine zweite Optik ein: Neon-Sonnenuntergang im Stil von GTA VI, mit eigenen Illustrationen pro Station, und alle Texte auf Kurpfälzisch. „↩ Widder normal“ schaltet zurück. Die Wahl wird pro Gerät im Browser gespeichert.
 
 - **Oberflächentexte** stehen direkt im Code als Paar: `L("Hochdeutsch", "Kurpfälzisch")` (in `app.js`, `todos.js`, `hotels.js`, `github.js`). Statische Texte in `index.html` haben ein Attribut `data-kp="…"`.
-- **Reiseinhalte** aus `data.js` werden über `js/data.kurpfalz.js` ersetzt: `"Originaltext": "Text uff Kurpfälzisch"`. Wird ein Text in `data.js` geändert, passt der Eintrag nicht mehr, und im Kurpfalz-Modus erscheint dort wieder das Hochdeutsche, bis die Übersetzung nachgezogen ist. In der Browser-Konsole zeigt `Theme.check()` Texte ohne Übersetzung und verwaiste Einträge.
+- **Reiseinhalte** aus `data.js` werden über `js/data.kurpfalz.js` ersetzt: `"Originaltext": "Text uff Kurpfälzisch"`. Wird ein Text in `data.js` geändert, passt der Eintrag nicht mehr, und im Mense-Modus erscheint dort wieder das Hochdeutsche, bis die Übersetzung nachgezogen ist. In der Browser-Konsole zeigt `Theme.check()` Texte ohne Übersetzung und verwaiste Einträge.
 - **Nicht übersetzt** werden To-dos und gespeicherte Hotel-Auswahlen (das sind Daten aus dem Repository) sowie Commit-Nachrichten.
 - Die Illustrationen sind eigene SVG-Zeichnungen (`js/vice-art.js`), keine Bilder aus dem Spiel.
 

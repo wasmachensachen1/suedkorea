@@ -1,5 +1,5 @@
-// Illustrationen für den Kurpfalz-Modus: Neon-Sonnenuntergänge als SVG, eine Szene pro Station.
-// Eigene Zeichnungen (keine fremden Bilder), werden nur im Kurpfalz-Modus eingebunden.
+// Illustrationen für den Mense-Modus: Neon-Sonnenuntergänge als SVG, eine Szene pro Station.
+// Eigene Zeichnungen (keine fremden Bilder), werden nur im Mense-Modus eingebunden.
 (function () {
   "use strict";
 

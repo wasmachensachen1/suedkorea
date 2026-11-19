@@ -1,8 +1,8 @@
-// Zweite Optik: „Kurpfalz-Modus“ – Neon-Sonnenuntergang im Stil von GTA VI, alle Texte auf Kurpfälzisch.
+// Zweite Optik: „Mense-Modus“ – Neon-Sonnenuntergang im Stil von GTA VI, alle Texte auf Kurpfälzisch.
 // Umschalten über den Button in der Kopfzeile (und auf der Passwortseite); die Wahl wird pro Gerät gemerkt.
 //
 // Für Entwickler:
-//   Theme.on()            true, wenn der Kurpfalz-Modus aktiv ist
+//   Theme.on()            true, wenn der Mense-Modus aktiv ist
 //   Theme.t(hd, kp)       liefert je nach Modus den hochdeutschen oder den kurpfälzischen Text
 //   Theme.onChange(fn)    fn wird nach jedem Umschalten aufgerufen (Seite neu zeichnen)
 //   Theme.color(station)  Stationsfarbe passend zur Optik
@@ -65,7 +65,7 @@
     const words = (s) => (s.replace(/\[[^\]]*\]\([^)]*\)/g, "").match(/[a-zäöüß]{2,}/gi) || []).length;
     const missing = [...originals].filter((s) => !(s in dict) && words(s) >= 4);
     const orphaned = Object.keys(dict).filter((k) => !originals.has(k));
-    console.log(`Kurpfalz-Modus: ${Object.keys(dict).length} Übersetzungen, ${missing.length} Texte ohne Übersetzung (bleiben Hochdeutsch), ${orphaned.length} verwaiste Einträge.`);
+    console.log(`Mense-Modus: ${Object.keys(dict).length} Übersetzungen, ${missing.length} Texte ohne Übersetzung (bleiben Hochdeutsch), ${orphaned.length} verwaiste Einträge.`);
     if (missing.length) console.table(missing.map((s) => ({ "ohne Übersetzung": s })));
     if (orphaned.length) console.table(orphaned.map((s) => ({ "verwaist (Original geändert?)": s })));
     return { missing, orphaned };
@@ -86,10 +86,10 @@
     });
     document.querySelectorAll("[data-theme-toggle]").forEach((btn) => {
       btn.setAttribute("aria-pressed", String(active));
-      btn.title = active ? "Zurück zur normalen Ansicht" : "Kurpfalz-Modus: Neon-Optik und alle Texte auf Kurpfälzisch";
+      btn.title = active ? "Zurück zur normalen Ansicht" : "Mense-Modus: Neon-Optik und alle Texte auf Kurpfälzisch";
       btn.innerHTML = active
         ? `<span class="tt-ic" aria-hidden="true">↩</span><span class="tt-txt">Widder normal</span>`
-        : `<span class="tt-ic" aria-hidden="true">🌴</span><span class="tt-txt">Kurpfalz-Modus</span>`;
+        : `<span class="tt-ic" aria-hidden="true">🌴</span><span class="tt-txt">Mense-Modus</span>`;
     });
   }
 
@@ -99,7 +99,7 @@
     const el = document.createElement("div");
     el.className = "vice-splash";
     el.setAttribute("aria-hidden", "true");
-    el.innerHTML = `<div><strong>Allee hopp!</strong><span>Kurpfalz-Modus is aa</span></div>`;
+    el.innerHTML = `<div><strong>Allee hopp!</strong><span>Mense-Modus is aa</span></div>`;
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 1700);
   }
