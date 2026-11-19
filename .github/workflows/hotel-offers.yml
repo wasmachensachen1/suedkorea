@@ -29,13 +29,14 @@ concurrency:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - name: Hoteldaten holen
+        timeout-minutes: 20
         run: node scripts/fetch-hotels.mjs ${{ github.event.inputs.stations }}
       - name: Speichern
         if: always()
