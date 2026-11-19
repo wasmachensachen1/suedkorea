@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-11-19T20:34:42.769Z",
+  "updatedAt": "2026-11-19T21:53:42.224Z",
   "serpapi": {
     "active": true,
     "problem": null,
     "callsLastRun": 7,
-    "left": 242,
+    "left": 234,
     "perMonth": 250,
-    "checkedAt": "2026-11-19T20:34:42.769Z"
+    "checkedAt": "2026-11-19T21:53:42.224Z"
   },
   "lastRun": {
     "mode": "auto",
-    "at": "2026-11-19T20:34:42.769Z",
+    "at": "2026-11-19T21:53:42.224Z",
     "problems": []
   }
 }
