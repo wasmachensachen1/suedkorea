@@ -42,7 +42,15 @@ Unter „Planung → Hotels“ (oder über „Hotels vergleichen“ auf jeder St
 
 Datenquelle ist die kostenlose [Xotelo-API](https://xotelo.com) (TripAdvisor-Daten, ohne Anmeldung und Schlüssel). Weil Browser die API nicht direkt abfragen dürfen (keine CORS-Freigabe), holt die GitHub Action **„Hoteldaten aktualisieren“** (`.github/workflows/hotel-offers.yml`, Skript `scripts/fetch-hotels.mjs`) die Daten und legt sie unter `data/hotel-offers/` ab. Sie läuft täglich, nach Änderungen an `js/data.js` und auf Knopfdruck (Actions → Hoteldaten aktualisieren → Run workflow). Fehler stehen in `data/hotel-offers/index.json` und im Actions-Log.
 
-Pro Station werden bis zu 300 Unterkünfte geladen. Tagespreise (günstigstes Angebot pro Nacht und Zimmer) holt die Action für die 70 beliebtesten und die 40 zentralsten Häuser, für den Zeitraum laut Reiseplan und 1–3 Erwachsene pro Zimmer. Für andere Häuser, Zeiträume oder Belegungen steht die allgemeine Preisspanne als Richtwert da.
+Pro Station werden bis zu 300 Unterkünfte geladen. Jedes Haus bekommt einen Preis pro Nacht und Zimmer, in dieser Reihenfolge:
+
+1. **Tagespreis** für den Zeitraum laut Reiseplan (günstigstes Angebot). Für 2027 haben viele Portale noch keine Preise, deshalb gibt es das nur für einen Teil der Häuser.
+2. **Aktueller Preis × Saisonfaktor**: Preis für einen Termin in gut 30 Tagen (gleicher Wochentag, gleiche Nächtezahl, Feiertage gemieden), hochgerechnet mit dem Faktor, der sich aus den Häusern mit beiden Preisen ergibt.
+3. **Vergleichshäuser**: Median der 7 ähnlichsten Häuser derselben Station (Kategorie, Bewertung, Zahl der Bewertungen, Lage).
+
+Für 1 oder 3 Personen pro Zimmer wird der Preis für 2 Personen mit Faktoren aus einer Stichprobe umgerechnet. Geschätzte Preise sind in der Liste als „geschätzt“ markiert und erklärt. Abgefragte Preise werden gespeichert und bei späteren Läufen wiederverwendet (Tagespreise 2 Tage, aktuelle Preise 14 Tage), so werden die Schätzungen mit jedem täglichen Lauf genauer.
+
+Die Orts-ID für Jeju und Gyeongju ermittelt die Action über den Ortsnamen in den TripAdvisor-Links (`urlMatch`), weil die Suchfunktion der API nur noch kostenpflichtig über RapidAPI nutzbar ist.
 
 „In Reiseplan übernehmen“ speichert das Hotel in `data/hotels.json`, pro Station genau eins; eine neue Wahl ersetzt die alte, „Auf Planvorschlag zurücksetzen“ nimmt sie zurück. Das braucht denselben GitHub-Token wie die To-dos. Stationsseiten, Übersicht, Transfers und Kosten nehmen dann das gewählte Hotel; die Hotelkosten rechnen mit Preis × Zimmer × Nächte laut Reiseplan.
 

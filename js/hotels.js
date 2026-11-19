@@ -138,15 +138,38 @@
     return data;
   }
 
-  // Tagespreis pro Nacht für EIN Zimmer – nur für den Zeitraum des Reiseplans und
-  // bis 3 Erwachsene pro Zimmer vorab geholt. Sonst untere Grenze der Preisspanne.
+  // Preis pro Nacht für EIN Zimmer. Exakt: Tagespreis für den Zeitraum laut Reiseplan.
+  // Sonst die Schätzung der Action (h.est, für 2 Personen), umgerechnet auf die Belegung.
+  function occFactor(apr) {
+    const occ = (offers.get(station().id) || {}).occFactor || { 1: 0.93, 3: 1.2 };
+    if (apr === 2) return 1;
+    if (apr <= 3) return occ[apr] || 1;
+    return (occ[3] || 1.2) * (1 + 0.15 * (apr - 3));
+  }
   function priceOf(h, f) {
     const s = station();
     const apr = Math.ceil(f.adults / f.rooms);
     const planDates = f.checkIn === s.checkIn && f.checkOut === s.checkOut;
     const r = planDates && h.rates ? h.rates[apr] : null;
     if (r && r.price) return { value: r.price, exact: true, r };
-    return { value: h.rangeMin, exact: false, r: null, why: !planDates ? "dates" : !h.rates ? "norate" : "none" };
+    if (h.est && h.est.price) return { value: Math.round(h.est.price * occFactor(apr)), exact: false, est: h.est, apr, planDates };
+    if (h.rangeMin) return { value: h.rangeMin, exact: false, range: true, apr, planDates };
+    return { value: null, exact: false };
+  }
+
+  // Erklärung, wie ein geschätzter Preis zustande kam
+  function estimateNote(p) {
+    const data = offers.get(station().id) || {};
+    const parts = [];
+    if (p.range) parts.push("Richtwert aus der allgemeinen Preisspanne");
+    else if (p.est.method === "rate") parts.push("aus dem Tagespreis für 2 Personen im Reisezeitraum");
+    else if (p.est.method === "ref") {
+      const rw = data.refWindow;
+      parts.push(`Schätzung: aktueller Preis ${eur(p.est.ref)}${rw ? ` (${fmtDay(rw.checkIn)}–${fmtDay(rw.checkOut)})` : ""} × Saisonfaktor ${String(p.est.factor).replace(".", ",")}`);
+    } else if (p.est.method === "similar") parts.push(`grobe Schätzung aus ${p.est.n || "mehreren"} vergleichbaren Häusern (Kategorie, Bewertung, Beliebtheit, Lage)`);
+    if (p.apr && p.apr !== 2) parts.push(`umgerechnet auf ${p.apr} ${p.apr === 1 ? "Person" : "Personen"} pro Zimmer`);
+    if (p.planDates === false) parts.push("bezogen auf den Zeitraum laut Reiseplan");
+    return parts.join(", ") + ".";
   }
 
   // ---------- Formular ----------
@@ -240,14 +263,9 @@
       return `<div class="h-price"><strong>${eur(p.value)}</strong><span>pro Nacht und Zimmer</span>
         <small>günstigstes von ${p.r.offers} Angebot${p.r.offers > 1 ? "en" : ""}, bei ${esc(p.r.provider)} · ${fmtDay(q.checkIn)}–${fmtDay(q.checkOut)}, ${n} Nächte</small></div>`;
     }
-    const why = {
-      dates: "Richtwert ohne Datum. Tagespreise gibt es nur für den Zeitraum laut Reiseplan.",
-      norate: "Richtwert ohne Datum. Tagespreise werden für die beliebtesten und zentralsten Häuser geholt.",
-      none: q.adults / q.rooms > 3 ? "Richtwert ohne Datum. Tagespreise gibt es für bis zu 3 Personen pro Zimmer." : "Richtwert ohne Datum, für den Zeitraum kein Tagespreis verfügbar.",
-    }[p.why];
-    const range = h.rangeMin ? `ca. ${eur(h.rangeMin)}${h.rangeMax && h.rangeMax > h.rangeMin ? `–${eur(h.rangeMax)}` : ""}` : "";
-    if (range) {
-      return `<div class="h-price"><strong>${range}</strong><span>pro Nacht und Zimmer</span><small>${why}</small></div>`;
+    if (p.value != null) {
+      const label = p.range && h.rangeMax > h.rangeMin ? `ca. ${eur(h.rangeMin)}–${eur(h.rangeMax)}` : `ca. ${eur(p.value)}`;
+      return `<div class="h-price est"><strong>${label}</strong><span>pro Nacht und Zimmer · geschätzt</span><small>${esc(estimateNote(p))}</small></div>`;
     }
     return `<div class="h-price"><strong>–</strong><small>kein Preis verfügbar</small></div>`;
   }
@@ -430,6 +448,7 @@
         <h2>Hotel übernehmen</h2>
         <p style="margin:0"><strong>${esc(h.name)}</strong> wird das Hotel für <strong>${esc(s.name)} (${esc(s.area)})</strong> und ersetzt <em>${esc(cur.name)}</em>.</p>
         <p class="small" style="margin:0">${p.exact ? "" : "ca. "}${eur(p.value)} pro Nacht und Zimmer × ${form.rooms} Zimmer × ${s.nights} Nächte = <strong>${p.exact ? "" : "ca. "}${eur(total)}</strong></p>
+        ${p.exact ? "" : `<p class="small muted" style="margin:0">Der Preis ist geschätzt: ${esc(estimateNote(p))}</p>`}
         ${nightsBetween(q.checkIn, q.checkOut) !== s.nights ? `<p class="small muted" style="margin:0">Der gesuchte Zeitraum weicht vom Reiseplan ab; die Kosten werden mit den ${s.nights} Nächten des Reiseplans gerechnet.</p>` : ""}
         <div class="form-actions">
           <button type="button" class="btn" data-close>Abbrechen</button>
@@ -451,7 +470,7 @@
         estimate: !p.exact,
         priceSource: p.exact
           ? `Tagespreis bei ${p.r.provider} für ${fmtDay(q.checkIn)}–${fmtDay(q.checkOut)}, abgerufen am ${today}`
-          : `Richtwert ohne Datum (TripAdvisor), abgerufen am ${today}`,
+          : `Geschätzt (${estimateNote(p).replace(/\.$/, "")}), Stand ${today}`,
         rooms: form.rooms,
         adults: form.adults,
         checkIn: q.checkIn,
