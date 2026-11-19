@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "plan": {
+    "shift": 0,
+    "late": 0,
+    "mode": "first"
+  },
+  "longhaul": null,
+  "domestic": {}
+}

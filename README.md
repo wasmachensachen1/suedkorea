@@ -13,6 +13,7 @@ Kein Build-Schritt nötig: `index.html` im Browser öffnen oder per GitHub Pages
 index.html        Grundgerüst
 css/style.css     Gestaltung
 js/data.js        alle Reiseinhalte (hier Texte, Preise, Links pflegen)
+js/plan.js        Reisedaten nach der Flugwahl: Verschiebung, Platzhalter {d:…}, Ruhetage
 js/app.js         Navigation (Hash-Routing) und Darstellung
 js/github.js      gemeinsamer Lese-/Schreibzugriff auf JSON-Dateien im Repository
 js/todos.js       To-do-Liste mit GitHub-Sync und Kalender-Export
@@ -21,6 +22,12 @@ js/hotels.js      Hotel-Konfigurator (Filter, Ergebnisliste, Auswahl pro Station
 scripts/fetch-hotels.mjs   holt die Hoteldaten (läuft als GitHub Action)
 data/hotel-offers/         Hoteldaten pro Station (von der Action erzeugt)
 data/hotels.json  gewählte Hotels pro Station (wird von der Seite selbst gespeichert)
+js/flights.js     Flugsuche (Suchmaske, Ergebnisse, Auswahl, Verschiebung des Plans)
+scripts/fetch-flights.mjs  holt die Flugdaten (läuft als GitHub Action)
+scripts/fli_search.py      Ersatzquelle für Flugdaten (Google Flights über fli)
+data/flight-offers/        Flugdaten: wöchentliches Raster und Inlandsflüge (von der Action erzeugt)
+data/flight-search/        Suchaufträge der Seite und deren Ergebnisse
+data/flights.json gewählte Flüge und Verschiebung des Plans (wird von der Seite selbst gespeichert)
 js/gate.js        Passwortabfrage (Sichtschutz)
 js/theme.js       Mense-Modus: Umschalter, Texte hochdeutsch/kurpfälzisch
 js/data.kurpfalz.js        Reiseinhalte auf Kurpfälzisch (Wörterbuch zu data.js)
@@ -61,6 +68,38 @@ Die Orts-IDs (TripAdvisor) stehen in `js/data.js` unter `hotelSearch.locationKey
 
 Bezugspunkt und Suchort pro Station stehen in `data.js` unter `hotelSearch` (`center`, `centerName`, `locationKey` = TripAdvisor-Orts-ID oder `query` für die automatische Ortssuche; nach einer Änderung die Action laufen lassen). In Texten von `data.js` wird `{hotel:<station-id>}` durch das gewählte Hotel ersetzt.
 
+## Flugsuche
+
+Unter „Planung → Flugsuche“, mit zwei Reitern: **Langstrecke** und **Inlandsflüge**.
+
+**Suchmaske Langstrecke:** Hinflugdatum (Standard: Abflug laut Plan) mit „± 3 Tage“, Rückflug ergibt sich aus der Reiselänge des Plans (21 Tage), Reiseklasse (Economy, Premium Economy, Business, First), Abflughäfen (FRA, DUS, CGN), Ziel (ICN, GMP). Filter, die sofort wirken: Stopps (nonstop, höchstens 1 oder 2), Airlines (IATA-Codes, z. B. „LH, KE“), Höchstpreis gesamt, Abflugzeit von/bis, maximale Reisedauer, Sortierung nach Preis, Dauer, Abflugzeit oder Stopps. Bei ±3 Tagen zeigt eine Tagesleiste den günstigsten Preis je Abflugtag.
+
+**Datenquellen:** Google-Flights-Daten über [SerpApi](https://serpapi.com/google-flights-api) (kostenloser Plan: 250 Abfragen pro Monat). Fällt SerpApi aus (kein Schlüssel, Kontingent leer, Fehler), nimmt die Action die Open-Source-Bibliothek [fli](https://github.com/punitarani/fli) (PyPI-Paket `flights`, ebenfalls Google Flights, inoffiziell, ohne Kontingent). Gesucht wird für eine Person; angezeigt wird der Preis mal `travellers` (data.js, 2) und pro Person.
+
+Einrichtung: Konto auf serpapi.com anlegen, den API-Schlüssel im Repository unter Settings → Secrets and variables → Actions als **`SERPAPI_KEY`** speichern.
+
+Wie bei den Hotels darf der Browser die API nicht direkt abfragen, und der Schlüssel muss geheim bleiben. Deshalb läuft alles über die GitHub Action **„Flugdaten aktualisieren“** (`.github/workflows/flight-offers.yml`, Skript `scripts/fetch-flights.mjs`):
+
+- **Wöchentliches Raster** (montags, oder Actions → Run workflow → `grid`): Langstrecke Business, Abflug laut Plan ±3 Tage, alle Stopps, alle Flughäfen der Suchmaske, dazu die beiden Inlandsflüge. Das sind 9 Abfragen pro Woche. Unter „Ergebnisse aus“ ist das Raster sofort verfügbar.
+- **Neue Suche** (Knopf „Neue Suche starten“): Die Seite schreibt einen Suchauftrag nach `data/flight-search/requests.json`. Das startet die Action; nach 1–3 Minuten liegt das Ergebnis unter `data/flight-search/results/` und erscheint auf der Seite. Eine Suche kostet 1 Abfrage, mit ±3 Tagen 7. Reicht das Kontingent nicht, sucht die Action gleich über fli.
+- **Rückflüge**: SerpApi liefert zu einem Hinflug den Preis für Hin und Rück, die Rückflüge aber erst mit einer weiteren Abfrage („Rückflüge anzeigen“). Über fli kommen Hin- und Rückflug gleich zusammen.
+
+Für Suchen braucht es denselben GitHub-Token wie für die To-dos (Contents: Read and write), keine weiteren Rechte. Abfragen und verbleibendes Kontingent stehen in `data/flight-offers/index.json` und unten auf der Seite.
+
+**In Reiseplan übernehmen** speichert Hin- und Rückflug in `data/flights.json` (ein Angebot, Gesamtpreis). Vorher kommt eine Sicherheitsabfrage. Liegt der Flug an einem anderen Tag als der Plan, verschiebt sich der ganze Plan um diese Tage: Stationen, Hotels, Tagespläne, Touren, Transfers, Inlandsflugtage, Datumsangaben in Texten und To-dos sowie **alle Fristen der To-dos**. Kommt der Flug später in Seoul an als ein Nonstop-Flug (z. B. mit Umstieg), fragt der Dialog, ob die erste Station kürzer wird oder der Plan mit der Ankunft beginnt und die letzte Station kürzer wird; wegfallende Tage sind im Tagesplan durchgestrichen. Außerdem:
+
+- Kosten: Die Flugzeile nimmt den gewählten Preis.
+- Das Buchungs-To-do (`flights.search.todoId`, `flug-langstrecke`) bekommt Flugnummern, Zeiten, Preis und Link. War es schon erledigt, geht es mit Storno-Hinweis zurück auf „offen“.
+- Gewählte Hotels behalten ihren Preis, sind aber als „zu prüfen“ markiert, bis sie im Hotel-Konfigurator neu übernommen werden. Die Hotel-Action startet nach der Flugwahl automatisch und holt Preise für die neuen Daten.
+- Feste Termine (Feiertage, Anbieterfristen) wandern nicht mit. Begründungen im Text bleiben stehen; ein Hinweis sagt, dass sie sich auf den ursprünglichen Termin beziehen.
+- Ruhetage (`closures` in data.js) und Feiertage (`holidays`) werden im Tagesplan angezeigt, Ruhetage zusätzlich als Warnung in der Übersicht und in der Sicherheitsabfrage.
+
+„Auf Planvorschlag zurücksetzen“ nimmt die Flugwahl zurück und schiebt alle Daten auf den ursprünglichen Plan.
+
+**Inlandsflüge** (Gimpo → Jeju, Jeju → Busan, `flights.domesticRoutes`) werden nur am Reisetag laut Plan gesucht und ändern keine Daten. Eine Wahl ändert Kosten (Anteil der Inlandsflüge in der Transport-Zeile), Transfers, die Tabelle auf der Flüge-Seite und das To-do `inlandsfluege`. Verschiebt sich der Plan später, ist ein gewählter Inlandsflug als „passt nicht mehr“ markiert und zählt nicht mehr in den Kosten.
+
+**Platzhalter in Texten:** Datumsangaben, die am Plan hängen, stehen in `data.js` und `data/todos.json` als Platzhalter mit dem ursprünglichen Datum: `{d:2027-09-21}` → „21.9.“, `{wd:2027-09-21}` → „Di 21.9.“, `{dy:…}` → „21.9.2027“, `{wday:…}` → „Dienstag“, `{range:2027-09-16/2027-09-21}` → „16.–21.9.“, `{nights:all}` → Zahl der Nächte. `{flight:outCode}`, `{flight:retDep}` usw. stehen für den gewählten Langstreckenflug (Standard in `flights.planInfo`). Neue Texte mit Reisedaten bitte ebenso schreiben. In To-dos, die man auf der Seite bearbeitet, bleiben die Platzhalter erhalten, solange der Text nicht geändert wird; eine Frist wird beim Speichern auf den ursprünglichen Plan zurückgerechnet.
+
 ## Mense-Modus
 
 Der Button „🌴 Mense-Modus“ oben rechts (auch auf der Passwortseite) schaltet eine zweite Optik ein: Neon-Sonnenuntergang im Stil von GTA VI, mit eigenen Illustrationen pro Station, und alle Texte auf Kurpfälzisch. „↩ Widder normal“ schaltet zurück. Die Wahl wird pro Gerät im Browser gespeichert.
@@ -76,8 +115,6 @@ Vor der Seite steht eine Passwortabfrage. Sie ist **nur ein Sichtschutz**: Die I
 
 Passwort ändern: SHA-256 des neuen Passworts erzeugen (`printf '%s' 'neues-passwort' | sha256sum`) und in `js/gate.js` bei `PASSWORD_SHA256` eintragen.
 
-## Geplante Module
-
-- Flugsuche
+## Neue Module
 
 Neue Module: Eintrag in `MODULES_PLANNED` (data.js) bzw. eine Render-Funktion in `VIEWS` (app.js) ergänzen.

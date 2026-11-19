@@ -7,7 +7,7 @@
       "category": "Flüge",
       "due": "2026-11-30",
       "status": "offen",
-      "description": "Für den Hinflug am Mi 15.9.2027 und den Rückflug am Mi 6.10.2027 in Business Class. Den Kalender für ±3 Tage beobachten: Ist der 14.9. oder 16.9. deutlich günstiger, verschiebt sich der Plan nur um einen Tag.",
+      "description": "Für den Hinflug am {wd:2027-09-15}2027 und den Rückflug am {wd:2027-10-06}2027 in Business Class. Den Kalender für ±3 Tage beobachten: Ist der 14.9. oder 16.9. deutlich günstiger, verschiebt sich der Plan nur um einen Tag.",
       "links": [
         {
           "title": "Google Flights",
@@ -21,7 +21,7 @@
     },
     {
       "id": "hotel-ragung",
-      "title": "Ragung in Gyeongju buchen (30.9.–3.10.)",
+      "title": "Ragung in Gyeongju buchen ({range:2027-09-30/2027-10-03})",
       "category": "Hotels",
       "due": "2026-12-31",
       "status": "offen",
@@ -57,7 +57,7 @@
     },
     {
       "id": "hotel-fourseasons",
-      "title": "GLAD Mapo buchen (16.–21.9.)",
+      "title": "GLAD Mapo buchen ({range:2027-09-16/2027-09-21})",
       "category": "Hotels",
       "due": "2027-03-15",
       "status": "offen",
@@ -81,7 +81,7 @@
     },
     {
       "id": "hotel-shilla",
-      "title": "The Shilla Jeju buchen (21.–26.9.)",
+      "title": "The Shilla Jeju buchen ({range:2027-09-21/2027-09-26})",
       "category": "Hotels",
       "due": "2027-03-21",
       "status": "offen",
@@ -95,11 +95,11 @@
     },
     {
       "id": "hotel-paradise",
-      "title": "Paradise Hotel Busan buchen (26.–30.9.)",
+      "title": "Paradise Hotel Busan buchen ({range:2027-09-26/2027-09-30})",
       "category": "Hotels",
       "due": "2027-03-26",
       "status": "offen",
-      "description": "4 Nächte, Zimmer mit Balkon zum Meer. Einen späten Check-out am 30.9. anfragen.",
+      "description": "4 Nächte, Zimmer mit Balkon zum Meer. Einen späten Check-out am {d:2027-09-30} anfragen.",
       "links": [
         {
           "title": "Paradise Hotel Busan",
@@ -113,7 +113,7 @@
       "category": "Flüge",
       "due": "2027-03-31",
       "status": "offen",
-      "description": "Vorschlag: LH712 am 15.9. ab Frankfurt ca. 16:05 Uhr, LH713 am 6.10. ab Incheon ca. 13:00 Uhr. Alternativ Korean Air, falls sie an den Tagen fliegt. Uhrzeiten vor der Buchung prüfen. Die Zugfahrt nach Frankfurt als **Lufthansa Express Rail** gleich mitbuchen und Sitzplätze bei der Buchung wählen.",
+      "description": "Vorschlag: LH712 am {d:2027-09-15} ab Frankfurt ca. 16:05 Uhr, LH713 am {d:2027-10-06} ab Incheon ca. 13:00 Uhr. Alternativ Korean Air, falls sie an den Tagen fliegt. Uhrzeiten vor der Buchung prüfen. Die Zugfahrt nach Frankfurt als **Lufthansa Express Rail** gleich mitbuchen und Sitzplätze bei der Buchung wählen.",
       "links": [
         {
           "title": "Lufthansa",
@@ -127,7 +127,7 @@
     },
     {
       "id": "hotel-josun",
-      "title": "Josun Palace Seoul buchen (3.–6.10.)",
+      "title": "Josun Palace Seoul buchen ({range:2027-10-03/2027-10-06})",
       "category": "Hotels",
       "due": "2027-04-03",
       "status": "offen",
@@ -145,12 +145,12 @@
       "category": "Vorbereitung",
       "due": "2027-04-15",
       "status": "offen",
-      "description": "Direkt nach der Flugbuchung: Reicht der Schutz über Kreditkarte oder bestehende Verträge, oder braucht ihr eine eigene Police? Die Auslandskrankenversicherung muss die ganze Reise (15.9.–6.10.) abdecken.",
+      "description": "Direkt nach der Flugbuchung: Reicht der Schutz über Kreditkarte oder bestehende Verträge, oder braucht ihr eine eigene Police? Die Auslandskrankenversicherung muss die ganze Reise ({range:2027-09-15/2027-10-06}) abdecken.",
       "links": []
     },
     {
       "id": "inlandsfluege",
-      "title": "Inlandsflüge buchen: Gimpo → Jeju (21.9.) und Jeju → Busan (26.9.)",
+      "title": "Inlandsflüge buchen: Gimpo → Jeju ({d:2027-09-21}) und Jeju → Busan ({d:2027-09-26})",
       "category": "Flüge",
       "due": "2027-06-30",
       "status": "offen",
@@ -168,7 +168,7 @@
     },
     {
       "id": "jeju-fahrer",
-      "title": "Fahrer auf Jeju buchen (23.9. und 25.9.)",
+      "title": "Fahrer auf Jeju buchen ({d:2027-09-23} und {d:2027-09-25})",
       "category": "Touren",
       "due": "2027-07-01",
       "status": "offen",
@@ -182,7 +182,7 @@
     },
     {
       "id": "tour-nami",
-      "title": "Tagesausflug Nami-Insel und Garden of Morning Calm buchen (19.9.)",
+      "title": "Tagesausflug Nami-Insel und Garden of Morning Calm buchen ({d:2027-09-19})",
       "category": "Touren",
       "due": "2027-07-31",
       "status": "offen",
@@ -200,7 +200,7 @@
     },
     {
       "id": "tour-bukhansan",
-      "title": "Bukhansan-Wanderung mit Spa anfragen (20.9.)",
+      "title": "Bukhansan-Wanderung mit Spa anfragen ({d:2027-09-20})",
       "category": "Touren",
       "due": "2027-07-31",
       "status": "offen",
@@ -214,7 +214,7 @@
     },
     {
       "id": "tour-ongo",
-      "title": "Night Dining Tour in Jongno buchen (18.9., 17 Uhr)",
+      "title": "Night Dining Tour in Jongno buchen ({d:2027-09-18}, 17 Uhr)",
       "category": "Touren",
       "due": "2027-08-15",
       "status": "offen",
@@ -228,7 +228,7 @@
     },
     {
       "id": "tour-gyeongju",
-      "title": "Private UNESCO-Tour in Gyeongju buchen (1.10.)",
+      "title": "Private UNESCO-Tour in Gyeongju buchen ({d:2027-10-01})",
       "category": "Touren",
       "due": "2027-08-15",
       "status": "offen",
@@ -264,16 +264,16 @@
     },
     {
       "id": "huwon",
-      "title": "Tickets Geheimer Garten (Changdeokgung) reservieren (17.9.)",
+      "title": "Tickets Geheimer Garten (Changdeokgung) reservieren ({d:2027-09-17})",
       "category": "Touren",
       "due": "2027-08-27",
       "status": "offen",
-      "description": "Den Garten sieht man nur mit Führung. Online reservieren, sobald der Verkauf für den 17.9. startet. Montags ist der Palast geschlossen.",
+      "description": "Den Garten sieht man nur mit Führung. Online reservieren, sobald der Verkauf für den {d:2027-09-17} startet. Montags ist der Palast geschlossen.",
       "links": []
     },
     {
       "id": "skycapsule",
-      "title": "Sky Capsule in Busan buchen (27.9.)",
+      "title": "Sky Capsule in Busan buchen ({d:2027-09-27})",
       "category": "Touren",
       "due": "2027-08-31",
       "status": "offen",
@@ -291,7 +291,7 @@
     },
     {
       "id": "ktx",
-      "title": "KTX Gyeongju → Seoul buchen (3.10.)",
+      "title": "KTX Gyeongju → Seoul buchen ({d:2027-10-03})",
       "category": "Transport",
       "due": "2027-09-03",
       "status": "offen",
@@ -305,7 +305,7 @@
     },
     {
       "id": "abschiedsessen",
-      "title": "Abschiedsessen in Seoul reservieren (5.10.)",
+      "title": "Abschiedsessen in Seoul reservieren ({d:2027-10-05})",
       "category": "Touren",
       "due": "2027-09-05",
       "status": "offen",
@@ -341,11 +341,11 @@
     },
     {
       "id": "checkin",
-      "title": "Online-Check-in für LH712",
+      "title": "Online-Check-in für {flight:outCode}",
       "category": "Flüge",
       "due": "2027-09-14",
       "status": "offen",
-      "description": "Sobald der Check-in öffnet (bei Lufthansa etwa 23 Stunden vor Abflug). Abflug am 15.9. um ca. 16:05 Uhr.",
+      "description": "Sobald der Check-in öffnet (bei Lufthansa etwa 23 Stunden vor Abflug). Abflug am {d:2027-09-15} um ca. {flight:outDep} Uhr.",
       "links": [
         {
           "title": "Lufthansa",

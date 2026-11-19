@@ -37,6 +37,16 @@
 
   // ---------- Helfer ----------
   const U = () => window.TripUtil; // esc, md aus app.js
+  // Ansicht eines To-dos im aktuellen Plan: Platzhalter in Titel und Beschreibung ersetzt
+  // ({d:2027-09-21} usw., siehe js/plan.js), Frist um die Verschiebung des Plans verschoben.
+  // Gespeichert wird immer der ursprüngliche Stand.
+  const P = () => window.Plan;
+  function view(t) {
+    const p = P();
+    if (!p) return t;
+    return { ...t, title: p.expand(t.title), description: p.expand(t.description || ""), due: p.shiftDue(t.due), raw: t };
+  }
+  const views = () => state.items.map(view);
   const lsGet = GH.lsGet;
   const lsSet = GH.lsSet;
   const token = GH.token;
@@ -199,7 +209,7 @@
 
   function counts() {
     const c = { offen: 0, in_arbeit: 0, erledigt: 0, entfaellt: 0, overdue: 0, soon: 0 };
-    state.items.forEach((t) => {
+    views().forEach((t) => {
       c[t.status] = (c[t.status] || 0) + 1;
       const u = urgency(t);
       if (u) c[u]++;
@@ -260,7 +270,8 @@
     const { esc } = U();
     const c = counts();
     const tok = token();
-    const items = state.items.slice().sort(byDue);
+    const items = views().sort(byDue);
+    const shift = P() ? P().state.shift : 0;
 
     let sync;
     if (state.saving) sync = `<span class="sync-dot busy"></span> ${L("Speichere auf GitHub …", "Schbeicher uff GitHub …")}`;
@@ -284,6 +295,7 @@
       </div>
 
       ${state.error ? `<div class="card todo-error" role="alert">${esc(state.error)}</div>` : ""}
+      ${shift ? `<div class="card callout shift-note small">📅 ${L(`Der Reiseplan ist durch die Flugwahl um ${shift > 0 ? "+" : ""}${shift} Tag${Math.abs(shift) > 1 ? "e" : ""} verschoben. Reisedaten in den Texten und alle Fristen sind entsprechend angepasst.`, `De Reiseblan is wege de Fliegerwahl um ${shift > 0 ? "+" : ""}${shift} Daach verschowe. Reisedate in de Texte un all Frischde sinn agepasst.`)}</div>` : ""}
 
       <div class="todo-stats">
         <div class="stat-box${c.overdue ? " overdue" : ""}"><strong>${c.overdue}</strong><span>${L("überfällig", "iwwerfällisch")}</span></div>
@@ -323,11 +335,11 @@
     }).filter(Boolean);
   }
 
-  function openEditor(t) {
+  function openEditor(raw) {
     const { esc } = U();
     const dlg = mounted.querySelector("#todoDialog");
-    const isNew = !t;
-    t = t || { title: "", category: "", due: "", status: "offen", description: "", links: [] };
+    const isNew = !raw;
+    const t = raw ? view(raw) : { title: "", category: "", due: "", status: "offen", description: "", links: [] };
     dlg.innerHTML = `
       <form method="dialog" class="todo-form">
         <h2>${isNew ? L("Neues To-do", "Neies To-do") : L("To-do bearbeiten", "To-do bearbeide")}</h2>
@@ -362,6 +374,11 @@
         links: parseLinks(f.namedItem("links").value),
       };
       if (!val.title) return;
+      // Unveränderte Texte behalten ihre Platzhalter; Fristen zurück auf den ursprünglichen Plan rechnen
+      if (!isNew && val.title === t.title) val.title = raw.title;
+      if (!isNew && val.description === (t.description || "").trim()) val.description = raw.description || "";
+      if (!isNew && val.due === t.due) val.due = raw.due || "";
+      else if (val.due && P()) val.due = P().unshiftDue(val.due);
       dlg.close();
       if (isNew) {
         const id = newId();
@@ -434,11 +451,11 @@
     if (act === "reload") load();
     else if (act === "token") openTokenDialog();
     else if (act === "new") openEditor(null);
-    else if (act === "ics-all") download("suedkorea-todos.ics", buildIcs(state.items.filter(OPEN)));
-    else if (act === "ics" && t) download(`todo-${t.id}.ics`, buildIcs([t]));
+    else if (act === "ics-all") download("suedkorea-todos.ics", buildIcs(views().filter(OPEN)));
+    else if (act === "ics" && t) download(`todo-${t.id}.ics`, buildIcs([view(t)]));
     else if (act === "edit" && t) openEditor(t);
     else if (act === "delete" && t) {
-      if (confirm(L(`„${t.title}“ löschen?`, `„${t.title}“ werklich wegmache?`))) {
+      if (confirm(L(`„${view(t).title}“ löschen?`, `„${view(t).title}“ werklich wegmache?`))) {
         const id = t.id;
         mutate((items) => { const i = items.findIndex((x) => x.id === id); if (i >= 0) items.splice(i, 1); }, `To-do gelöscht: ${t.title}`);
       }
@@ -452,7 +469,7 @@
     if (!t) return;
     const id = t.id, status = sel.value;
     mutate((items) => { const x = items.find((i) => i.id === id); if (x) x.status = status; },
-      `To-do „${t.title}“: ${STATUS_LABEL[status]}`);
+      `To-do „${view(t).title}“: ${STATUS_LABEL[status]}`);
   }
 
   // ---------- Öffentliche Schnittstelle ----------
@@ -481,7 +498,7 @@
       const { esc } = U();
       if (!state.loaded) return `<p class="muted small" style="margin:0">${L("Lade To-dos …", "Lad To-dos …")}</p>`;
       const c = counts();
-      const next = state.items.filter((t) => OPEN(t) && t.due).sort(byDue).slice(0, 4);
+      const next = views().filter((t) => OPEN(t) && t.due).sort(byDue).slice(0, 4);
       return `
         <p class="small" style="margin:0 0 .6rem">${c.overdue ? `<strong class="txt-overdue">${c.overdue} ${L("überfällig", "iwwerfällisch")}</strong> · ` : ""}${c.offen + c.in_arbeit} ${L("offen", "offe")} · ${c.erledigt} ${L("erledigt", "erledischt")}</p>
         ${next.length ? `<ul class="todo-teaser">${next.map((t) => `<li class="${urgency(t)}"><span>${esc(t.title)}</span><span class="muted">${esc(fmtDate(t.due))}</span></li>`).join("")}</ul>` : `<p class="muted small" style="margin:0">${L("Nichts offen.", "Nix offe.")}</p>`}`;
@@ -489,5 +506,7 @@
   };
 
   listeners.push(render);
+  // Plan verschoben: Fristen und Texte neu anzeigen
+  if (window.Plan) window.Plan.onChange(() => notify());
   load();
 })();
