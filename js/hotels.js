@@ -1,6 +1,6 @@
 // Hotel-Konfigurator.
-// Hotels kommen aus der kostenlosen Xotelo-API (https://xotelo.com, Daten von TripAdvisor,
-// ohne Anmeldung und ohne Schlüssel). Pro Station kann ein Hotel in den Reiseplan übernommen
+// Hotels kommen aus der kostenlosen Xotelo-API (https://xotelo.com, Daten von TripAdvisor),
+// vorab geholt von der GitHub Action .github/workflows/hotel-offers.yml. Pro Station kann ein Hotel in den Reiseplan übernommen
 // werden; die Auswahl liegt in data/hotels.json und wird wie die To-dos über GitHub gespeichert.
 (function () {
   "use strict";
@@ -8,12 +8,9 @@
   const GH = window.GitHubStore;
   const T = window.TRIP;
   const PATH = "data/hotels.json";
-  const XO = "https://data.xotelo.com/api";
+  const OFFERS = "data/hotel-offers";
   const USD_EUR = 0.92;          // Preisspannen der Hotelliste sind in US-Dollar
-  const LIST_PAGE = 100;         // Hotels pro API-Seite
-  const LIST_PAGES = 3;          // höchstens so viele Seiten pro Ort laden
   const PAGE_SIZE = 15;          // Treffer pro "Weitere anzeigen"
-  const RATE_CONCURRENCY = 4;
   const FORM_KEY = "suedkorea-hotel-form";
   const TRIP_MIN = T.stations[0].checkIn;
   const TRIP_MAX = T.stations[T.stations.length - 1].checkOut;
@@ -105,127 +102,51 @@
     return { min: s.hotel.priceMin * s.nights, max: s.hotel.priceMax * s.nights, fixed: false };
   }
 
-  // ---------- Xotelo-API ----------
-  const memo = new Map();
-  async function xo(endpoint, params) {
-    const url = `${XO}/${endpoint}?${new URLSearchParams(params)}`;
-    if (memo.has(url)) return memo.get(url);
-    try { const c = sessionStorage.getItem("xo:" + url); if (c) { const v = JSON.parse(c); memo.set(url, v); return v; } } catch (e) { /* egal */ }
-    let res;
-    try {
-      res = await fetch(url);
-    } catch (e) {
-      throw new Error("Die Hotel-API (Xotelo) ist gerade nicht erreichbar. Bitte Internetverbindung prüfen und später noch einmal versuchen.");
-    }
-    if (!res.ok) throw new Error(`Die Hotel-API hat mit Fehler ${res.status} geantwortet.`);
-    const j = await res.json();
-    if (j.error) throw new Error(`Hotel-API: ${j.error.message || j.error}`);
-    const result = j.result || {};
-    memo.set(url, result);
-    try { sessionStorage.setItem("xo:" + url, JSON.stringify(result)); } catch (e) { /* Speicher voll – egal */ }
-    return result;
-  }
-
-  // TripAdvisor-Orts-ID: aus data.js, aus dem Feld "Erweitert", oder per Suche nach dem Planhotel.
-  async function locationKey(s) {
-    const override = GH.lsGet(`suedkorea-xo-loc-${s.id}`);
-    if (override) return override;
-    if (s.hotelSearch.locationKey) return s.hotelSearch.locationKey;
-    const cacheKey = `suedkorea-xo-loc-auto-${s.id}`;
-    const cached = GH.lsGet(cacheKey);
-    if (cached) return cached;
-    const r = await xo("search", { query: s.hotelSearch.query || s.hotel.name });
-    const first = (r.list || [])[0];
-    const key = first && (first.location_key || String(first.hotel_key || first.key || "").split("-")[0]);
-    if (!key || !/^g\d+$/.test(key)) throw new Error(`Für ${s.name} wurde kein Ort in der Hotel-API gefunden. Unter „Erweitert“ lässt sich die TripAdvisor-Orts-ID eintragen.`);
-    GH.lsSet(cacheKey, key);
-    return key;
-  }
-
-  function distKm(a, b) {
-    const R = 6371, rad = Math.PI / 180;
-    const dLat = (b[0] - a[0]) * rad, dLon = (b[1] - a[1]) * rad;
-    const x = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * rad) * Math.cos(b[0] * rad) * Math.sin(dLon / 2) ** 2;
-    return 2 * R * Math.asin(Math.sqrt(x));
-  }
-
-  function normalize(h, s, i) {
-    const geo = h.geo || {};
-    const lat = Number(geo.latitude), lon = Number(geo.longitude);
-    const pr = h.price_ranges || {};
-    const rs = h.review_summary || {};
-    return {
-      key: h.key || h.hotel_key,
-      rank: i,
-      name: h.name || "Unbenannt",
-      type: h.accommodation_type || "",
-      url: h.url || "",
-      image: h.image || "",
-      rating: Number(rs.rating) || 0,
-      reviews: Number(rs.count) || 0,
-      dist: isFinite(lat) && isFinite(lon) && (lat || lon) ? distKm(s.hotelSearch.center, [lat, lon]) : null,
-      rangeMin: pr.minimum ? pr.minimum * USD_EUR : null,
-      rangeMax: pr.maximum ? pr.maximum * USD_EUR : null,
-      mentions: (h.mentions || []).filter((m) => typeof m === "string"),
-      labels: (h.merchandising_labels || []).filter((m) => typeof m === "string"),
-    };
-  }
+  // ---------- Hoteldaten (data/hotel-offers/<station>.json) ----------
+  // Der Browser darf die Xotelo-API nicht direkt abfragen (keine CORS-Freigabe). Die GitHub Action
+  // "Hoteldaten aktualisieren" holt die Daten deshalb täglich und legt sie hier ab.
+  const offers = new Map(); // station-id -> Datei-Inhalt
 
   async function loadHotels(s) {
-    const loc = await locationKey(s);
-    const all = [];
-    for (let p = 0; p < LIST_PAGES; p++) {
-      const r = await xo("list", { location_key: loc, offset: p * LIST_PAGE, limit: LIST_PAGE, sort: "popularity" });
-      const list = r.list || [];
-      all.push(...list);
-      if (list.length < LIST_PAGE || (r.total_count && all.length >= r.total_count)) break;
+    if (offers.has(s.id)) return offers.get(s.id);
+    let res;
+    try {
+      res = await fetch(`${OFFERS}/${s.id}.json?t=${Math.floor(Date.now() / 600000)}`, { cache: "no-cache" });
+    } catch (e) {
+      throw new Error("Die Hoteldaten konnten nicht geladen werden. Bitte Internetverbindung prüfen.");
     }
-    const seen = new Set();
-    return all.map((h, i) => normalize(h, s, i)).filter((h) => h.key && !seen.has(h.key) && seen.add(h.key));
+    if (res.status === 404) {
+      let why = "";
+      try {
+        const idx = await (await fetch(`${OFFERS}/index.json?t=${Date.now()}`, { cache: "no-cache" })).json();
+        const st = idx.stations && idx.stations[s.id];
+        if (st && st.error) why = ` Letzter Fehler: ${st.error}`;
+      } catch (e) { /* noch kein Lauf */ }
+      throw new Error(`Für ${s.name} liegen noch keine Hoteldaten vor. Sie werden von der GitHub Action „Hoteldaten aktualisieren“ geholt (täglich, oder im Repository unter Actions → Run workflow).${why}`);
+    }
+    if (!res.ok) throw new Error(`Die Hoteldaten konnten nicht geladen werden (Fehler ${res.status}).`);
+    const data = await res.json();
+    const usd = data.usdToEur || USD_EUR;
+    data.hotels = (data.hotels || []).map((h) => ({
+      ...h,
+      rangeMin: h.rangeUsd ? h.rangeUsd[0] * usd : null,
+      rangeMax: h.rangeUsd ? h.rangeUsd[1] * usd : null,
+      mentions: h.mentions || [],
+      labels: h.labels || [],
+    }));
+    offers.set(s.id, data);
+    return data;
   }
 
-  // Preis pro Nacht für EIN Zimmer: Abfrage mit rooms=1 und den Erwachsenen pro Zimmer.
-  const rates = new Map(); // key -> { status: "loading"|"ok"|"none"|"error", price, provider, offers }
-  const rateKey = (h, f) => `${h.key}|${f.checkIn}|${f.checkOut}|${Math.ceil(f.adults / f.rooms)}`;
-  let rateQueue = [];
-  let rateActive = 0;
-  function queueRates(hotels, f, onDone) {
-    hotels.forEach((h) => {
-      const k = rateKey(h, f);
-      if (!rates.has(k)) { rates.set(k, { status: "loading" }); rateQueue.push({ h, f, k, onDone }); }
-    });
-    pump();
-  }
-  function pump() {
-    while (rateActive < RATE_CONCURRENCY && rateQueue.length) {
-      const job = rateQueue.shift();
-      rateActive++;
-      xo("rates", {
-        hotel_key: job.h.key, chk_in: job.f.checkIn, chk_out: job.f.checkOut,
-        currency: "EUR", rooms: 1, adults: Math.ceil(job.f.adults / job.f.rooms),
-      }).then((r) => {
-        const offers = (r.rates || [])
-          .map((o) => ({ name: o.name || o.code || "Anbieter", price: Number(o.rate) + (Number(o.tax) || 0) }))
-          .filter((o) => o.price > 0)
-          .sort((a, b) => a.price - b.price);
-        rates.set(job.k, offers.length
-          ? { status: "ok", price: offers[0].price, provider: offers[0].name, offers: offers.length }
-          : { status: "none" });
-      }).catch(() => {
-        rates.set(job.k, { status: "error" });
-      }).finally(() => {
-        rateActive--;
-        job.onDone();
-        pump();
-      });
-    }
-  }
-
-  // Bester bekannter Preis: Tagespreis, sonst untere Grenze der Preisspanne.
+  // Tagespreis pro Nacht für EIN Zimmer – nur für den Zeitraum des Reiseplans und
+  // bis 3 Erwachsene pro Zimmer vorab geholt. Sonst untere Grenze der Preisspanne.
   function priceOf(h, f) {
-    const r = rates.get(rateKey(h, f));
-    if (r && r.status === "ok") return { value: r.price, exact: true, r };
-    return { value: h.rangeMin, exact: false, r };
+    const s = station();
+    const apr = Math.ceil(f.adults / f.rooms);
+    const planDates = f.checkIn === s.checkIn && f.checkOut === s.checkOut;
+    const r = planDates && h.rates ? h.rates[apr] : null;
+    if (r && r.price) return { value: r.price, exact: true, r };
+    return { value: h.rangeMin, exact: false, r: null, why: !planDates ? "dates" : !h.rates ? "norate" : "none" };
   }
 
   // ---------- Formular ----------
@@ -319,13 +240,16 @@
       return `<div class="h-price"><strong>${eur(p.value)}</strong><span>pro Nacht und Zimmer</span>
         <small>günstigstes von ${p.r.offers} Angebot${p.r.offers > 1 ? "en" : ""}, bei ${esc(p.r.provider)} · ${fmtDay(q.checkIn)}–${fmtDay(q.checkOut)}, ${n} Nächte</small></div>`;
     }
-    const loading = p.r && p.r.status === "loading";
+    const why = {
+      dates: "Richtwert ohne Datum. Tagespreise gibt es nur für den Zeitraum laut Reiseplan.",
+      norate: "Richtwert ohne Datum. Tagespreise werden für die beliebtesten und zentralsten Häuser geholt.",
+      none: q.adults / q.rooms > 3 ? "Richtwert ohne Datum. Tagespreise gibt es für bis zu 3 Personen pro Zimmer." : "Richtwert ohne Datum, für den Zeitraum kein Tagespreis verfügbar.",
+    }[p.why];
     const range = h.rangeMin ? `ca. ${eur(h.rangeMin)}${h.rangeMax && h.rangeMax > h.rangeMin ? `–${eur(h.rangeMax)}` : ""}` : "";
     if (range) {
-      return `<div class="h-price"><strong>${range}</strong><span>pro Nacht und Zimmer</span>
-        <small>${loading ? "Tagespreis wird geladen …" : "Richtwert ohne Datum, für den Zeitraum kein Tagespreis verfügbar"}</small></div>`;
+      return `<div class="h-price"><strong>${range}</strong><span>pro Nacht und Zimmer</span><small>${why}</small></div>`;
     }
-    return `<div class="h-price"><strong>–</strong><small>${loading ? "Preis wird geladen …" : "kein Preis verfügbar"}</small></div>`;
+    return `<div class="h-price"><strong>–</strong><small>kein Preis verfügbar</small></div>`;
   }
 
   function itemHtml(h, s, q) {
@@ -391,6 +315,8 @@
     const n = nightsBetween(q.checkIn, q.checkOut);
     const types = [...new Set(hotels.map((h) => h.type).filter(Boolean))].sort();
     const custom = form.dates[s.id];
+    const data = offers.get(s.id);
+    const updated = data && data.updatedAt ? new Date(data.updatedAt).toLocaleString("de-DE", { dateStyle: "short", timeStyle: "short" }) : "";
     return `
       <h1>🏨 Hotel-Konfigurator</h1>
       <p class="muted" style="max-width:72ch">Hotels für eine Station suchen, filtern und eines davon in den Reiseplan übernehmen. Pro Station gilt immer genau ein Hotel; eine neue Wahl ersetzt die bisherige. Stationsseiten, Transfers und Kosten passen sich automatisch an.</p>
@@ -433,15 +359,10 @@
           </label>
         </div>
         <p class="small muted" style="margin:.6rem 0 0">Lage = Luftlinie zum Bezugspunkt <strong>${esc(s.hotelSearch.centerName)}</strong>. Preise pro Nacht und Zimmer inkl. Steuern, soweit der Anbieter sie nennt. <button type="button" class="btn-link" data-act="clear">Filter zurücksetzen</button></p>
-        <details class="small h-adv">
-          <summary>Erweitert</summary>
-          <label>TripAdvisor-Orts-ID für ${esc(s.name)} <input name="loc" placeholder="${esc(s.hotelSearch.locationKey || "automatisch")}" value="${esc(GH.lsGet(`suedkorea-xo-loc-${s.id}`))}"></label>
-          <p class="muted" style="margin:.3rem 0 0">Nur nötig, wenn die automatische Ortssuche danebenliegt. Die ID steht in TripAdvisor-Links, z. B. „g294197“ für Seoul.</p>
-        </details>
       </div>
 
       <div id="hResults"></div>
-      <p class="small muted">Hoteldaten und Preise: <a href="https://xotelo.com" target="_blank" rel="noopener">Xotelo</a> (TripAdvisor). Preisspannen ohne Datum sind aus US-Dollar umgerechnet (1 $ ≈ ${USD_EUR.toLocaleString("de-DE")} €). Vor der Buchung den Preis beim Anbieter prüfen.</p>
+      <p class="small muted">Hoteldaten und Preise: <a href="https://xotelo.com" target="_blank" rel="noopener">Xotelo</a> (TripAdvisor)${updated ? `, Stand ${updated}` : ""}. Preisspannen ohne Datum sind aus US-Dollar umgerechnet (1 $ ≈ ${USD_EUR.toLocaleString("de-DE")} €). Vor der Buchung den Preis beim Anbieter prüfen.</p>
       <dialog class="todo-dialog" id="hDialog"></dialog>`;
   }
 
@@ -458,19 +379,11 @@
     if (nightsBetween(q.checkIn, q.checkOut) <= 0) { el.innerHTML = `<div class="card todo-error">Bitte einen gültigen Zeitraum wählen.</div>`; return; }
     const list = filtered();
     const page = list.slice(0, shown);
-    queueRates(page, q, scheduleResults);
     el.innerHTML = `
       <div class="h-count"><strong>${list.length}</strong> von ${hotels.length} Unterkünften passen</div>
       ${page.length ? `<div class="h-list">${page.map((h) => itemHtml(h, s, q)).join("")}</div>`
         : `<div class="card soon-card"><p style="margin:0">Keine Unterkunft passt zu den Filtern. Filter lockern oder <button type="button" class="btn-link" data-act="clear">zurücksetzen</button>.</p></div>`}
       ${list.length > shown ? `<div style="text-align:center;margin-top:1rem"><button type="button" class="btn" data-act="more">Weitere ${Math.min(PAGE_SIZE, list.length - shown)} anzeigen</button></div>` : ""}`;
-  }
-
-  // Preise treffen einzeln ein: Liste gesammelt neu zeichnen.
-  let pending = 0;
-  function scheduleResults() {
-    if (pending) return;
-    pending = requestAnimationFrame(() => { pending = 0; renderResults(); });
   }
 
   function renderStatus() {
@@ -496,7 +409,7 @@
     try {
       const h = await loadHotels(s);
       if (listFor !== s.id) return;
-      hotels = h; listState = "ok";
+      hotels = h.hotels; listState = "ok";
     } catch (e) {
       if (listFor !== s.id) return;
       listState = "error"; listError = e.message || String(e);
@@ -557,7 +470,6 @@
     const t = ev.target;
     if (!t.name) return;
     if (t.closest("#hFilters")) {
-      if (t.name === "loc") return; // erst bei change
       form.filters[t.name] = t.value;
       shown = PAGE_SIZE;
       persistForm();
@@ -568,14 +480,6 @@
   function onChange(ev) {
     const t = ev.target;
     if (!t.name) return;
-    if (t.name === "loc") {
-      const v = t.value.trim();
-      if (v && !/^g\d+$/.test(v)) { alert("Die Orts-ID hat die Form g123456."); return; }
-      GH.lsSet(`suedkorea-xo-loc-${station().id}`, v);
-      listFor = "";
-      ensureList();
-      return;
-    }
     if (!t.closest("#hForm")) return;
     const s = station();
     if (t.name === "stationId") {
@@ -606,7 +510,7 @@
     if (!b) return;
     const act = b.dataset.act;
     if (act === "more") { shown += PAGE_SIZE; renderResults(); }
-    else if (act === "retry") { listFor = ""; ensureList(); }
+    else if (act === "retry") { offers.delete(station().id); listFor = ""; ensureList(); }
     else if (act === "clear") { form.filters = { ...DEFAULT_FILTERS }; persistForm(); shown = PAGE_SIZE; renderAll(); }
     else if (act === "plan-dates") { delete form.dates[station().id]; persistForm(); renderAll(); }
     else if (act === "reset") {
