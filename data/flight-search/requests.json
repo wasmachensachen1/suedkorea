@@ -44,6 +44,28 @@
         "depTo": 23,
         "maxDuration": null
       }
+    },
+    {
+      "id": "r-mworxmgb-stpt",
+      "kind": "search",
+      "createdAt": "2026-11-20T09:25:51.467Z",
+      "params": {
+        "origins": [
+          "FRA"
+        ],
+        "destinations": [
+          "ICN"
+        ],
+        "date": "2027-09-15",
+        "flex": true,
+        "tripDays": 21,
+        "cls": "business",
+        "stops": "any",
+        "airlines": [],
+        "depFrom": 0,
+        "depTo": 23,
+        "maxDuration": null
+      }
     }
   ]
 }
