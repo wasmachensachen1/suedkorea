@@ -109,21 +109,31 @@
     },
     {
       "id": "flug-langstrecke",
-      "title": "Langstreckenflüge buchen (LH712 / LH713)",
+      "title": "Flüge AY1412 + AY41 / AY42 + AY1411 buchen ({d:2027-09-15} / {d:2027-10-06})",
       "category": "Flüge",
       "due": "2027-03-31",
       "status": "offen",
-      "description": "Vorschlag: LH712 am {d:2027-09-15} ab Frankfurt ca. 16:05 Uhr, LH713 am {d:2027-10-06} ab Incheon ca. 13:00 Uhr. Alternativ Korean Air, falls sie an den Tagen fliegt. Uhrzeiten vor der Buchung prüfen. Die Zugfahrt nach Frankfurt als **Lufthansa Express Rail** gleich mitbuchen und Sitzplätze bei der Buchung wählen.",
+      "description": "In der Flugsuche gewählt (Business): Hinflug {wd:2027-09-15} FRA 11:30 → ICN 11:20 (+1), Finnair AY1412 + AY41, 1 Stopp. Rückflug {wd:2027-10-06} ICN 21:50 → FRA 09:20 (+1), Finnair AY42 + AY1411, 1 Stopp. Preis 2 × 2.413 € = **4.826 €** (Google Flights über SerpApi, Preis für 1 Person × 2, abgerufen 20.11.2026). Preis und Uhrzeiten vor der Buchung prüfen.",
       "links": [
         {
-          "title": "Lufthansa",
-          "url": "https://www.lufthansa.com"
-        },
-        {
-          "title": "Korean Air",
-          "url": "https://www.koreanair.com"
+          "title": "Google Flights",
+          "url": "https://www.google.com/travel/flights?hl=de&gl=de&curr=EUR&tfs=CBwQAhoeEgoyMDI3LTA5LTE0agcIARIDRlJBcgcIARIDSUNOGh4SCjIwMjctMTAtMDVqBwgBEgNJQ05yBwgBEgNGUkFAAUgDcAGYAQE&tfu=EgIIAQ"
         }
-      ]
+      ],
+      "planned": {
+        "title": "Langstreckenflüge buchen (LH712 / LH713)",
+        "description": "Vorschlag: LH712 am {d:2027-09-15} ab Frankfurt ca. 16:05 Uhr, LH713 am {d:2027-10-06} ab Incheon ca. 13:00 Uhr. Alternativ Korean Air, falls sie an den Tagen fliegt. Uhrzeiten vor der Buchung prüfen. Die Zugfahrt nach Frankfurt als **Lufthansa Express Rail** gleich mitbuchen und Sitzplätze bei der Buchung wählen.",
+        "links": [
+          {
+            "title": "Lufthansa",
+            "url": "https://www.lufthansa.com"
+          },
+          {
+            "title": "Korean Air",
+            "url": "https://www.koreanair.com"
+          }
+        ]
+      }
     },
     {
       "id": "hotel-josun",
@@ -181,6 +191,20 @@
       ]
     },
     {
+      "id": "tour-bukhansan",
+      "title": "Bukhansan-Wanderung mit Spa anfragen ({d:2027-09-20})",
+      "category": "Touren",
+      "due": "2027-07-31",
+      "status": "offen",
+      "description": "Private Tour, Preis auf Anfrage. Bei der Anfrage die Kondition angeben, damit die Route passt.",
+      "links": [
+        {
+          "title": "Trazy – Bukhansan Hiking & Korean Spa",
+          "url": "https://www.trazy.com/experience/detail/private-bukhansan-hiking-tour-with-korean-spa"
+        }
+      ]
+    },
+    {
       "id": "tour-nami",
       "title": "Tagesausflug Nami-Insel und Garden of Morning Calm buchen ({d:2027-09-19})",
       "category": "Touren",
@@ -199,16 +223,24 @@
       ]
     },
     {
-      "id": "tour-bukhansan",
-      "title": "Bukhansan-Wanderung mit Spa anfragen ({d:2027-09-20})",
-      "category": "Touren",
-      "due": "2027-07-31",
+      "id": "einreise",
+      "title": "K-ETA bzw. Einreiseformalitäten klären",
+      "category": "Einreise",
+      "due": "2027-08-15",
       "status": "offen",
-      "description": "Private Tour, Preis auf Anfrage. Bei der Anfrage die Kondition angeben, damit die Route passt.",
+      "description": "Die Befreiung von der K-ETA gilt bisher bis 31.12.2026, für 2027 gibt es noch keine Entscheidung. Falls nötig, die K-ETA beantragen (10.000 KRW, Bearbeitung bis zu 72 Std.). Ohne K-ETA vor der Ankunft die elektronische Ankunftskarte ausfüllen.",
       "links": [
         {
-          "title": "Trazy – Bukhansan Hiking & Korean Spa",
-          "url": "https://www.trazy.com/experience/detail/private-bukhansan-hiking-tour-with-korean-spa"
+          "title": "K-ETA (offiziell)",
+          "url": "https://www.k-eta.go.kr"
+        },
+        {
+          "title": "e-Arrival Card (offiziell)",
+          "url": "https://www.e-arrivalcard.go.kr"
+        },
+        {
+          "title": "Passport Index – K-ETA-Befreiung",
+          "url": "https://discover.passportindex.org/policy-and-regulations/south-korea-extends-k-eta-exemption-until-end-of-2026/"
         }
       ]
     },
@@ -237,28 +269,6 @@
         {
           "title": "Private Gyeongju UNESCO Heritage Tour",
           "url": "https://www.expedia.ie/things-to-do/private-gyeongju-unesco-heritage-tour-with-a-local-guide.a52620643.activity-details"
-        }
-      ]
-    },
-    {
-      "id": "einreise",
-      "title": "K-ETA bzw. Einreiseformalitäten klären",
-      "category": "Einreise",
-      "due": "2027-08-15",
-      "status": "offen",
-      "description": "Die Befreiung von der K-ETA gilt bisher bis 31.12.2026, für 2027 gibt es noch keine Entscheidung. Falls nötig, die K-ETA beantragen (10.000 KRW, Bearbeitung bis zu 72 Std.). Ohne K-ETA vor der Ankunft die elektronische Ankunftskarte ausfüllen.",
-      "links": [
-        {
-          "title": "K-ETA (offiziell)",
-          "url": "https://www.k-eta.go.kr"
-        },
-        {
-          "title": "e-Arrival Card (offiziell)",
-          "url": "https://www.e-arrivalcard.go.kr"
-        },
-        {
-          "title": "Passport Index – K-ETA-Befreiung",
-          "url": "https://discover.passportindex.org/policy-and-regulations/south-korea-extends-k-eta-exemption-until-end-of-2026/"
         }
       ]
     },
@@ -313,21 +323,21 @@
       "links": []
     },
     {
-      "id": "esim",
-      "title": "eSIM für Korea kaufen",
-      "category": "Vorbereitung",
-      "due": "2027-09-08",
-      "status": "offen",
-      "description": "Vor der Reise kaufen und installieren, damit Navigation und Taxi-App ab der Landung funktionieren.",
-      "links": []
-    },
-    {
       "id": "apps",
       "title": "Apps installieren und einrichten",
       "category": "Vorbereitung",
       "due": "2027-09-08",
       "status": "offen",
       "description": "Naver Map, Kakao T (Kreditkarte hinterlegen), Papago, CatchTable, Korail Talk.",
+      "links": []
+    },
+    {
+      "id": "esim",
+      "title": "eSIM für Korea kaufen",
+      "category": "Vorbereitung",
+      "due": "2027-09-08",
+      "status": "offen",
+      "description": "Vor der Reise kaufen und installieren, damit Navigation und Taxi-App ab der Landung funktionieren.",
       "links": []
     },
     {
