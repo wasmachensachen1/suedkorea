@@ -1,110 +1,110 @@
 {
-  "updatedAt": "2026-11-21T04:12:13.928Z",
+  "updatedAt": "2026-11-22T04:14:23.013Z",
   "source": "Xotelo (TripAdvisor)",
   "stations": {
     "seoul": {
       "ok": true,
-      "updatedAt": "2026-11-21T04:14:45.192Z",
+      "updatedAt": "2026-11-22T04:23:00.232Z",
       "count": 300,
       "locationKey": "g294197",
       "prices": {
-        "rate": 28,
-        "ref": 208,
+        "rate": 29,
+        "ref": 207,
         "similar": 64,
         "none": 0
       },
       "seasonFactor": {
-        "value": 1.3362573099415205,
-        "pairs": 27,
+        "value": 1.3413127835164236,
+        "pairs": 28,
         "source": "Station"
       },
       "rates": {
-        "plan": 0,
+        "plan": 29,
         "ref": 0,
-        "occ": 0,
+        "occ": 20,
         "failed": 0,
-        "requested": 0,
-        "planned": 0
+        "requested": 83,
+        "planned": 83
       }
     },
     "jeju": {
       "ok": true,
-      "updatedAt": "2026-11-21T04:14:45.202Z",
+      "updatedAt": "2026-11-22T04:23:00.238Z",
       "count": 300,
       "locationKey": "g297892",
       "prices": {
         "rate": 14,
-        "ref": 135,
-        "similar": 151,
+        "ref": 148,
+        "similar": 138,
         "none": 0
       },
       "seasonFactor": {
-        "value": 1.3006673691605197,
-        "pairs": 14,
+        "value": 1.273972602739726,
+        "pairs": 13,
         "source": "Station"
       },
       "rates": {
-        "plan": 0,
-        "ref": 3,
-        "occ": 0,
+        "plan": 14,
+        "ref": 17,
+        "occ": 20,
         "failed": 0,
-        "requested": 26,
-        "planned": 26
+        "requested": 102,
+        "planned": 102
       }
     },
     "busan": {
       "ok": true,
-      "updatedAt": "2026-11-21T04:14:45.214Z",
+      "updatedAt": "2026-11-22T04:23:00.243Z",
       "count": 300,
       "locationKey": "g297884",
       "prices": {
         "rate": 19,
-        "ref": 168,
-        "similar": 113,
+        "ref": 162,
+        "similar": 119,
         "none": 0
       },
       "seasonFactor": {
-        "value": 1.5674418604651164,
+        "value": 1.5534883720930233,
         "pairs": 19,
         "source": "Station"
       },
       "rates": {
-        "plan": 0,
-        "ref": 16,
-        "occ": 0,
+        "plan": 19,
+        "ref": 12,
+        "occ": 20,
         "failed": 0,
-        "requested": 45,
-        "planned": 45
+        "requested": 124,
+        "planned": 124
       }
     },
     "gyeongju": {
       "ok": true,
-      "updatedAt": "2026-11-21T04:14:45.218Z",
+      "updatedAt": "2026-11-22T04:23:00.249Z",
       "count": 300,
       "locationKey": "g297888",
       "prices": {
         "rate": 12,
-        "ref": 93,
-        "similar": 195,
+        "ref": 97,
+        "similar": 191,
         "none": 0
       },
       "seasonFactor": {
-        "value": 1.082191780821918,
+        "value": 1.0684931506849316,
         "pairs": 9,
         "source": "Station"
       },
       "rates": {
-        "plan": 1,
-        "ref": 19,
-        "occ": 2,
+        "plan": 11,
+        "ref": 17,
+        "occ": 20,
         "failed": 0,
-        "requested": 55,
-        "planned": 55
+        "requested": 133,
+        "planned": 133
       }
     },
     "gangnam": {
       "ok": true,
-      "updatedAt": "2026-11-21T04:14:45.223Z",
+      "updatedAt": "2026-11-22T04:23:00.253Z",
       "count": 300,
       "locationKey": "g294197",
       "prices": {
@@ -114,17 +114,17 @@
         "none": 0
       },
       "seasonFactor": {
-        "value": 1.7841433799637447,
+        "value": 1.7125939054601116,
         "pairs": 28,
         "source": "Station"
       },
       "rates": {
-        "plan": 0,
+        "plan": 29,
         "ref": 0,
-        "occ": 0,
+        "occ": 20,
         "failed": 0,
-        "requested": 0,
-        "planned": 0
+        "requested": 81,
+        "planned": 81
       }
     }
   },
